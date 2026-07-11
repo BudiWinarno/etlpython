@@ -1,0 +1,129 @@
+```html
+<!doctype html>
+<html>
+  <head>
+    <title>Edit Mapping</title>
+
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+      }
+
+      select {
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <h2>Edit Mapping</h2>
+
+    <form action="/mapping/update/{{ template.id }}" method="POST">
+
+      <label>Nama Template</label>
+
+      <input
+        type="text"
+        name="template_name"
+        value="{{ template.template_name }}"
+        required
+      />
+
+      <br /><br />
+
+      <label>Nama Agen</label>
+
+      <select name="agent_id" required>
+
+        {% for agent in agents %}
+
+        <option
+          value="{{ agent.id }}"
+          {% if agent.id == template.agent_id %}
+          selected
+          {% endif %}
+        >
+
+          {{ agent.nama_agent }}
+
+        </option>
+
+        {% endfor %}
+
+      </select>
+
+      <br /><br />
+
+      <table>
+
+        <tr>
+
+          <th width="40%">Standard Header</th>
+
+          <th>Header Excel</th>
+
+        </tr>
+
+        {% for standard in standard_headers %}
+
+        {% if standard != "Qty Terjual (Karton)" %}
+
+        <tr>
+
+          <td>{{ standard }}</td>
+
+          <td>
+
+            <select name="{{ standard }}">
+
+              <option value="">-- Pilih Header --</option>
+
+              {% for h in headers %}
+
+              <option
+                value="{{ h }}"
+                {% if mapping_dict.get(standard) == h %}
+                selected
+                {% endif %}
+              >
+
+                {{ h }}
+
+              </option>
+
+              {% endfor %}
+
+            </select>
+
+          </td>
+
+        </tr>
+
+        {% endif %}
+
+        {% endfor %}
+
+      </table>
+
+      <br />
+
+      <button type="submit">
+
+        Update Mapping
+
+      </button>
+
+    </form>
+
+  </body>
+</html>
+```

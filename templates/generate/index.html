@@ -1,0 +1,23 @@
+<h2>Generate Excel</h2>
+
+<form action="/generate" method="POST" enctype="multipart/form-data">
+  Template
+
+  <select name="template_id">
+    {% for t in templates %}
+
+    <option value="{{ t.id }}">{{ t.template_name }}</option>
+
+    {% endfor %}
+  </select>
+
+  <br /><br />
+
+  <input type="file" name="file" />
+
+  <br /><br />
+
+  <button>Generate</button>
+</form>
+
+<a href="/" class="menu">Kembali Ke HomePage</a>

@@ -1,0 +1,75 @@
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f4f4;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 100vh;
+  }
+
+  .container {
+    width: 550px;
+    background: #fff;
+
+    padding: 40px;
+
+    border-radius: 10px;
+
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+  }
+
+  h2 {
+    text-align: center;
+
+    margin-bottom: 40px;
+  }
+
+  .menu {
+    display: block;
+
+    width: 100%;
+
+    padding: 15px;
+
+    margin-bottom: 20px;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    color: #fff;
+
+    background: #1976d2;
+
+    border-radius: 6px;
+
+    font-size: 18px;
+
+    transition: 0.3s;
+  }
+
+  .menu:hover {
+    background: #1565c0;
+  }
+</style>
+
+<body>
+  <div class="container">
+    <h2>ETL Excel Application</h2>
+
+    <a href="/upload" class="menu"> Normalisasi Invoice </a>
+
+    <a href="/mapping" class="menu"> Mapping Invoice </a>
+
+    <a href="/generate" class="menu"> Generate Invoice Excel </a>
+  </div>
+</body>

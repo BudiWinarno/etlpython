@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Normalisasi</title>
+</head>
+
+<body>
+
+<h2>Normalisasi Template Invoice</h2>
+
+<form action="/upload" method="POST" enctype="multipart/form-data">
+
+    <label>Template</label>
+
+    <select name="kode_agent" required>
+
+        <option value="">-- Pilih Template --</option>
+
+        <option value="LK-000019">
+            LK-000019
+        </option>
+
+        <option value="LK-000105">
+            LK-000105
+        </option>
+
+        <option value="LK-000117">
+            LK-000117
+        </option>
+
+    </select>
+
+    <br><br>
+
+    <input type="file" name="file" required>
+
+    <br><br>
+
+    <button type="submit">
+
+        Generate
+
+    </button>
+
+</form>
+
+<br><br>
+
+<a href="/" class="menu">Kembali Ke HomePage</a>
+
+</body>
+
+</html>
