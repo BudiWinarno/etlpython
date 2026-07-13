@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Edit Master Item Agent</title>
+</head>
+
+<body>
+
+<h2>Edit Master Item Agent</h2>
+
+<form action="/item-agent-mapping/update/{{ mapping.id }}" method="POST">
+
+    <label>Agent</label>
+
+    <select name="agent_id">
+
+        {% for agent in agents %}
+
+        <option value="{{ agent.id }}" {% if agent.id == mapping.agent_id %}selected{% endif %}>
+            {{ agent.kode_agent }} - {{ agent.nama_agent }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Kode SKU Agent</label><br>
+
+    <input
+        type="text"
+        name="kode_sku_agent"
+        value="{{ mapping.kode_sku_agent }}"
+    >
+
+    <br><br>
+
+    <label>Kode SKU JIM</label><br>
+
+    <input
+        type="text"
+        name="kode_sku_jim"
+        value="{{ mapping.kode_sku_jim }}"
+    >
+
+    <br><br>
+
+    <label>Nama SKU JIM</label><br>
+
+    <input
+        type="text"
+        name="nama_sku_jim"
+        value="{{ mapping.nama_sku_jim }}"
+    >
+
+    <br><br>
+
+    <label>Item Box</label><br>
+
+    <input
+        type="number"
+        step="0.01"
+        name="item_box"
+        value="{{ mapping.item_box }}"
+    >
+
+    <br><br>
+
+    <label>Item Group</label><br>
+
+    <input
+        type="text"
+        name="item_group"
+        value="{{ mapping.item_group }}"
+    >
+
+    <br><br>
+
+    <button type="submit">
+        Update
+    </button>
+
+</form>
+
+<br><br>
+
+<a href="/item-agent-mapping">
+    Kembali
+</a>
+
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Master Item Agent</title>
+</head>
+
+<body>
+
+<h2>Master Item Agent</h2>
+
+<a href="/item-agent-mapping/create">
+    Tambah Master
+</a>
+
+<br><br>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Agent</th>
+        <th>Kode SKU Agent</th>
+        <th>Kode SKU JIM</th>
+        <th>Nama SKU JIM</th>
+        <th>Item Box</th>
+        <th>Item Group</th>
+        <th>Action</th>
+    </tr>
+
+    {% for item in mappings %}
+
+    <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.agent_id }}</td>
+        <td>{{ item.kode_sku_agent }}</td>
+        <td>{{ item.kode_sku_jim }}</td>
+        <td>{{ item.nama_sku_jim }}</td>
+        <td>{{ item.item_box|int }}</td>
+        <td>{{ item.item_group }}</td>
+        <td>
+
+    <a href="/item-agent-mapping/edit/{{ item.id }}">
+        Edit
+    </a>
+
+    |
+
+    <a href="/item-agent-mapping/delete/{{ item.id }}"
+       onclick="return confirm('Yakin ingin menghapus data ini?')">
+        Delete
+    </a>
+
+</td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+</body>
+
+</html>
