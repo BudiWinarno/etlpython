@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Tambah Master Item Agent</title>
+  </head>
+
+  <body>
+    <h2>Tambah Master Item Agent</h2>
+
+    <form action="/item-agent-mapping/store" method="POST">
+      <label>Agent</label>
+
+      <select name="agent_id">
+        {% for agent in agents %}
+
+        <option value="{{ agent.id }}">
+          {{ agent.kode_agent }} - {{ agent.nama_agent }}
+        </option>
+
+        {% endfor %}
+      </select>
+
+      <br /><br />
+
+      <label>Kode SKU Agent</label><br />
+      <input type="text" name="kode_sku_agent" />
+
+      <br /><br />
+
+      <label>Kode SKU JIM</label><br />
+      <input type="text" name="kode_sku_jim" />
+
+      <br /><br />
+
+      <label>Nama SKU JIM</label><br />
+      <input type="text" name="nama_sku_jim" />
+
+      <br /><br />
+
+      <label>Item Box</label><br />
+      <input type="number" name="item_box" min="1" step="1" />
+
+      <br /><br />
+
+      <label>Item Group</label><br />
+      <input type="text" name="item_group" />
+
+      <br /><br />
+
+      <button type="submit">Simpan</button>
+    </form>
+  </body>
+</html>
