@@ -8,6 +8,7 @@ from models.template import Template
 from models.template_mapping import TemplateMapping
 from routes.generate_routes import generate_bp
 from routes.home_routes import home_bp
+from routes.stock_routes import stock_bp
 
 app = Flask(__name__)
 
@@ -18,6 +19,7 @@ app.register_blueprint(upload_bp)
 app.register_blueprint(mapping_bp)
 app.register_blueprint(generate_bp)
 app.register_blueprint(home_bp)
+app.register_blueprint(stock_bp, url_prefix="/stock")
 
 if __name__ == "__main__":
     app.run(debug=True)
