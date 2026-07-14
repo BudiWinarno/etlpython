@@ -15,6 +15,7 @@ from openpyxl.styles import NamedStyle
 from openpyxl.utils import get_column_letter
 from models.agent_invoice_report import AgentInvoiceReport
 import pandas as pd
+import math
 
 generate_bp = Blueprint("generate", __name__)
 
@@ -106,6 +107,85 @@ def generate():
     # Rename sesuai standard header
     df = df.rename(columns=mapping)
 
+    # ==========================
+    # Join Item Agent Mapping
+    # ==========================
+
+    from models.item_agent_mapping import ItemAgentMapping
+
+    master = (
+        db.query(ItemAgentMapping)
+        .filter(
+            ItemAgentMapping.agent_id == agent.id,
+            ItemAgentMapping.is_active == True
+        )
+        .all()
+    )
+
+    master_df = pd.DataFrame([
+        {
+            "SKU Kode Agen": item.kode_sku_agent,
+            "Kode SKU JIM": item.kode_sku_jim,
+            "Nama SKU JIM": item.nama_sku_jim,
+            "Item Box": item.item_box
+        }
+        for item in master
+    ])
+
+    df = df.merge(
+        master_df,
+        on="SKU Kode Agen",
+        how="left"
+    )
+
+    df["Kode SKU JIM"] = df["Kode SKU JIM"].where(df["Kode SKU JIM"].notna(), None)
+    df["Nama SKU JIM"] = df["Nama SKU JIM"].where(df["Nama SKU JIM"].notna(), None)
+
+    df["Nama Agen"] = agent.nama_agent
+
+    df["Qty Karton"] = (
+        df["Qty Terjual (Pcs)"] /
+        df["Item Box"].astype(float)
+    )
+
+    df["Qty Karton"] = (
+        df["Qty Karton"]
+        .fillna(0)
+        .apply(lambda x: math.floor(x + 0.5))
+    )
+
+    df["Kode SKU JIM"] = df["Kode SKU JIM"].apply(
+        lambda x: None if pd.isna(x) else str(x)
+    )
+
+    df["Nama SKU JIM"] = df["Nama SKU JIM"].apply(
+        lambda x: None if pd.isna(x) else str(x)
+    )
+
+    # ==========================
+    # DEBUG: cek tipe data Kode SKU JIM / Nama SKU JIM
+    # ==========================
+
+    bad_kode = df[
+        df["Kode SKU JIM"].apply(lambda x: x is not None and not isinstance(x, str))
+    ]
+
+    bad_nama = df[
+        df["Nama SKU JIM"].apply(lambda x: x is not None and not isinstance(x, str))
+    ]
+
+    if not bad_kode.empty:
+        print("=== Baris bermasalah di Kode SKU JIM ===")
+        print(bad_kode[["SKU Kode Agen", "Kode SKU JIM"]].to_string())
+
+    if not bad_nama.empty:
+        print("=== Baris bermasalah di Nama SKU JIM ===")
+        print(bad_nama[["SKU Kode Agen", "Nama SKU JIM"]].to_string())
+
+    print("Total baris:", len(df))
+    print("Total bad_kode:", len(bad_kode))
+    print("Total bad_nama:", len(bad_nama))
+
     # Ambil template
     # template = db.query(Template).filter_by(id=template_id).first()
 
@@ -131,7 +211,7 @@ def generate():
         return "Data bulan dan tahun tersebut sudah ada."
 
     # Isi Nama Agen
-    df["Nama Agen"] = agent.nama_agent
+    
 
     # Tambahkan kolom yang belum ada
     for col in STANDARD_HEADERS:
@@ -139,6 +219,35 @@ def generate():
         if col not in df.columns:
 
             df[col] = None
+    
+    df_db = df.copy()
+    
+    df_export = df[
+        [
+            "Nama Agen",
+            "Kode Customer",
+            "Nama Customer",
+            "Alamat Customer",
+            "Nomor Telepon/HP Customer",
+            "Invoice Nomor Agen",
+            "Tanggal Invoice",
+            "Tipe Customer",
+            "Sales",
+            "SKU Kode Agen",
+            "Nama SKU",
+            "Qty Terjual (Karton)",
+            "Qty Terjual (Pcs)",
+            "% Diskon 1 (Reguler)",
+            "% Diskon 2 (Cash)",
+            "% Diskon 3 (DC Fee)",
+            "% Diskon 4 (Promo 1)",
+            "% Diskon 5 (Promo 2)",
+            "% Diskon 6 (Rp)",
+            "Quantity Bonus",
+            "Rafraksi",
+            "Total Invoice Value"
+        ]
+    ]
 
     # Urutkan kolom
     df = df[STANDARD_HEADERS]
@@ -147,7 +256,10 @@ def generate():
     # Insert ke Database
     # ==========================
 
-    for _, row in df.iterrows():
+    df_db["kode_sku_jim"] = df_db["Kode SKU JIM"].fillna("").astype(str)
+
+    # sementara jgn insert dulu
+    for _, row in df_db.iterrows():
 
         report = AgentInvoiceReport(
 
@@ -199,11 +311,30 @@ def generate():
 
             rafraksi=row["Rafraksi"],
 
-            total_invoice_value=row["Total Invoice Value"]
+            total_invoice_value=row["Total Invoice Value"],
+
+            kode_sku_jim=row["Kode SKU JIM"],
+
+            nama_sku_jim=row["Nama SKU JIM"],
+
+            item_box=row["Item Box"],
+
+            qty_karton=row["Qty Karton"]
 
         )
 
         db.add(report)
+
+        # print(
+        #     row["Kode SKU JIM"],
+        #     row["Nama SKU JIM"],
+        #     row["Item Box"],
+        #     row["Qty Karton"]
+        # )
+
+        # break
+
+        print(AgentInvoiceReport.__table__.columns.keys())
 
     db.commit()
 
@@ -212,7 +343,12 @@ def generate():
         "Hasil_Generate_Invoice" + file.filename
     )
 
-    df.to_excel(output, index=False)
+    df_export.to_excel(
+        output,
+        index=False
+    )
+
+    # df.to_excel(output, index=False)
 
     # Buka file Excel yang sudah dibuat
     wb = load_workbook(output)

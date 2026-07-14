@@ -1,4 +1,4 @@
-from sqlalchemy import Column,Integer,String,Numeric,Date,DateTime
+from sqlalchemy import Column,Integer,String,Numeric,Date,DateTime,Text
 from sqlalchemy.sql import func
 
 from database import Base
@@ -60,7 +60,17 @@ class AgentInvoiceReport(Base):
 
     total_invoice_value = Column(Numeric)
 
+    kode_sku_jim = Column(String(100))
+
+    nama_sku_jim = Column(Text)
+
+    item_box = Column(Numeric(18, 2))
+
+    qty_karton = Column(Numeric(18, 2))
+
     created_at = Column(
         DateTime,
         server_default=func.now()
     )
+
+    
