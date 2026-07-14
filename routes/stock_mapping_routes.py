@@ -3,50 +3,47 @@ import os
 
 from config import Config
 from database import SessionLocal
-from models.template_mapping import TemplateMapping
 from models.agent import Agent
-from models.template import Template
-from services.normalize.factory import NormalizeFactory
+from services.normalize.stock.factory import StockNormalizeFactory
+from models.stock_template import StockTemplate
+from models.stock_template_mapping import StockTemplateMapping
 
-mapping_bp = Blueprint("mapping", __name__)
+stock_mapping_bp = Blueprint("stock_mapping", __name__)
 
 STANDARD_HEADERS = [
-    "Kode",
     "Kode SKU Agen",
-    "Kode SKU JIM",
-    "Nama SKU JIM",
-    "QTY (Karton)",
+    "QTY (Pcs)"
 ]
 
-@mapping_bp.route("/mapping")
+@stock_mapping_bp.route("/stock-mapping")
 def index():
 
     db = SessionLocal()
 
     templates = (
-        db.query(Template, Agent)
-        .join(Agent, Template.agent_id == Agent.id)
+        db.query(StockTemplate, Agent)
+        .join(Agent, StockTemplate.agent_id == Agent.id)
         .all()
     )
 
     db.close()
 
     return render_template(
-        "mapping/list.html",
+        "stock_mapping/list.html",
         templates=templates
     )
 
-@mapping_bp.route("/mapping/create")
+@stock_mapping_bp.route("/stock-mapping/create")
 def create():
 
-    return render_template("mapping/upload.html")
+    return render_template("stock_mapping/upload.html")
 
-# @mapping_bp.route("/mapping")
+# @stock_mapping_bp.route("/mapping")
 # def index():
 
 #     return render_template("mapping/upload.html")
 
-@mapping_bp.route("/mapping/upload", methods=["POST"])
+@stock_mapping_bp.route("/stock-mapping/upload", methods=["POST"])
 def upload():
 
     file = request.files["file"]
@@ -62,7 +59,7 @@ def upload():
 
     kode_agent = request.form["kode_agent"]
 
-    normalizer = NormalizeFactory.get(kode_agent)
+    normalizer = StockNormalizeFactory.get(kode_agent)
 
     df = normalizer.normalize(filepath)
 
@@ -75,13 +72,13 @@ def upload():
     db.close()
 
     return render_template(
-    "mapping/index.html",
+    "stock_mapping/index.html",
     headers=headers,
     standard_headers=STANDARD_HEADERS,
     agents=agents
 )
 
-@mapping_bp.route("/mapping/save", methods=["POST"])
+@stock_mapping_bp.route("/stock-mapping/save", methods=["POST"])
 def save():
 
     db = SessionLocal()
@@ -92,7 +89,7 @@ def save():
     # Buat template baru
     template_name = request.form.get("template_name")
 
-    template = Template(
+    template = StockTemplate(
         agent_id=agent_id,
         template_name=template_name,
         is_active=True
@@ -113,7 +110,7 @@ def save():
         if excel_header == "":
             continue
 
-        mapping = TemplateMapping(
+        mapping = StockTemplateMapping(
             template_id=template.id,
             standard_header=standard_header,
             excel_header=excel_header
@@ -124,20 +121,20 @@ def save():
     db.commit()
     db.close()
 
-    return redirect("/mapping")
+    return redirect("/stock-mapping")
 
-@mapping_bp.route("/mapping/delete/<int:id>", methods=["POST"])
+@stock_mapping_bp.route("/stock-mapping/delete/<int:id>", methods=["POST"])
 def delete(id):
 
     db = SessionLocal()
 
     # Hapus semua mapping
-    db.query(TemplateMapping)\
+    db.query(StockTemplateMapping)\
       .filter_by(template_id=id)\
       .delete()
 
     # Hapus template
-    db.query(Template)\
+    db.query(StockTemplate)\
       .filter_by(id=id)\
       .delete()
 
@@ -145,19 +142,19 @@ def delete(id):
 
     db.close()
 
-    return redirect("/mapping")
+    return redirect("/stock-mapping")
 
-@mapping_bp.route("/mapping/edit/<int:id>")
+@stock_mapping_bp.route("/stock-mapping/edit/<int:id>")
 def edit(id):
 
     db = SessionLocal()
 
-    template = db.query(Template).filter_by(id=id).first()
+    template = db.query(StockTemplate).filter_by(id=id).first()
 
     agents = db.query(Agent).all()
 
     mappings = (
-        db.query(TemplateMapping)
+        db.query(StockTemplateMapping)
         .filter_by(template_id=id)
         .all()
     )
@@ -165,14 +162,14 @@ def edit(id):
     db.close()
 
     return render_template(
-        "mapping/edit_upload.html",
+        "stock_mapping/edit_upload.html",
         template=template,
         agents=agents,
         mappings=mappings,
         standard_headers=STANDARD_HEADERS
     )
 
-@mapping_bp.route("/mapping/edit/<int:id>/upload", methods=["POST"])
+@stock_mapping_bp.route("/stock-mapping/edit/<int:id>/upload", methods=["POST"])
 def edit_upload(id):
 
     file = request.files["file"]
@@ -186,17 +183,21 @@ def edit_upload(id):
 
     file.save(filepath)
 
-    df = normalize_lk000019(filepath)
+    kode_agent = request.form["kode_agent"]
+
+    normalizer = StockNormalizeFactory.get(kode_agent)
+
+    df = normalizer.normalize(filepath)
 
     headers = list(df.columns)
 
     db = SessionLocal()
 
-    template = db.query(Template).filter_by(id=id).first()
+    template = db.query(StockTemplate).filter_by(id=id).first()
 
     agents = db.query(Agent).all()
 
-    mappings = db.query(TemplateMapping)\
+    mappings = db.query(StockTemplateMapping)\
                  .filter_by(template_id=id)\
                  .all()
     
@@ -209,7 +210,7 @@ def edit_upload(id):
     db.close()
 
     return render_template(
-        "mapping/edit.html",
+        "stock_mapping/edit.html",
         template=template,
         agents=agents,
         headers=headers,
@@ -217,7 +218,7 @@ def edit_upload(id):
         mapping_dict=mapping_dict
     )
 
-@mapping_bp.route("/mapping/update/<int:id>", methods=["POST"])
+@stock_mapping_bp.route("/stock-mapping/update/<int:id>", methods=["POST"])
 def update(id):
 
     db = SessionLocal()
@@ -226,7 +227,7 @@ def update(id):
     # Update Template
     # ==========================
 
-    template = db.query(Template).filter_by(id=id).first()
+    template = db.query(StockTemplate).filter_by(id=id).first()
 
     template.template_name = request.form.get("template_name")
 
@@ -238,7 +239,7 @@ def update(id):
     # Hapus Mapping Lama
     # ==========================
 
-    db.query(TemplateMapping)\
+    db.query(StockTemplateMapping)\
       .filter_by(template_id=id)\
       .delete()
 
@@ -258,7 +259,7 @@ def update(id):
         if excel_header == "":
             continue
 
-        mapping = TemplateMapping(
+        mapping = StockTemplateMapping(
 
             template_id=id,
 
@@ -274,4 +275,4 @@ def update(id):
 
     db.close()
 
-    return redirect("/mapping")
+    return redirect("/stock-mapping")

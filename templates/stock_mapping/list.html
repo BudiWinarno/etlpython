@@ -1,0 +1,64 @@
+<h2>Daftar Stock Mapping</h2>
+
+<a href="/stock-mapping/create">
+    Tambah Mapping
+</a>
+
+<table border="1">
+
+<tr>
+    <th>ID</th>
+    <th>Template</th>
+    <th>Agent</th>
+    <th>Status</th>
+    <th>Aksi</th>
+</tr>
+
+{% for template, agent in templates %}
+
+<tr>
+
+    <td>{{ template.id }}</td>
+
+    <td>{{ template.template_name }}</td>
+
+    <td>{{ agent.nama_agent }}</td>
+
+    <td>
+        {% if template.is_active %}
+            Aktif
+        {% else %}
+            Non Aktif
+        {% endif %}
+    </td>
+
+    <td>
+
+        <a href="/stock-mapping/edit/{{ template.id }}">
+            Edit
+        </a>
+
+        |
+
+        <form action="/stock-mapping/delete/{{ template.id }}"
+              method="POST"
+              style="display:inline;">
+
+            <button type="submit"
+                    onclick="return confirm('Yakin ingin menghapus template ini?')">
+                Delete
+            </button>
+
+        </form>
+
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br><br>
+
+<a href="/" class="menu">Kembali Ke HomePage</a>

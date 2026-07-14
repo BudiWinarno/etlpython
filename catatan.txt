@@ -22,5 +22,123 @@ CREATE TABLE item_agent_mappings (
 
     CONSTRAINT uq_item_agent_mapping
         UNIQUE (agent_id, kode_sku_agent)
-
 )
+
+14/7/2026 || Budi 
+
+CREATE TABLE stock_templates (
+
+    id SERIAL PRIMARY KEY,
+
+    agent_id INTEGER NOT NULL,
+
+    template_name VARCHAR(255) NOT NULL,
+
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+
+CREATE TABLE stock_template_mappings (
+
+    id SERIAL PRIMARY KEY,
+
+    template_id INTEGER NOT NULL REFERENCES stock_templates(id),
+
+    standard_header VARCHAR(255) NOT NULL,
+
+    excel_header VARCHAR(255) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+--baru
+CREATE TABLE agent_invoice_reports_baru (
+
+    id SERIAL PRIMARY KEY,
+
+    agent_id INTEGER NOT NULL,
+
+    bulan INTEGER NOT NULL,
+
+    tahun INTEGER NOT NULL,
+
+    nama_agen VARCHAR(255),
+
+    kode_customer VARCHAR(100),
+
+    nama_customer TEXT,
+
+    alamat_customer TEXT,
+
+    nomor_telepon_customer VARCHAR(100),
+
+    invoice_nomor_agen VARCHAR(100),
+
+    tanggal_invoice DATE,
+
+    tipe_customer VARCHAR(100),
+
+    sales VARCHAR(255),
+
+    kode_sku_agent VARCHAR(100),
+
+    nama_sku TEXT,
+
+    qty_terjual_karton NUMERIC(18,2),
+
+    qty_terjual_pcs NUMERIC(18,2),
+
+    diskon_1_reguler NUMERIC(10,2),
+
+    diskon_2_cash NUMERIC(10,2),
+
+    diskon_3_dc_fee NUMERIC(10,2),
+
+    diskon_4_promo_1 NUMERIC(10,2),
+
+    diskon_5_promo_2 NUMERIC(10,2),
+
+    diskon_6_rp NUMERIC(18,2),
+
+    quantity_bonus NUMERIC(18,2),
+
+    rafraksi NUMERIC(18,2),
+
+    total_invoice_value NUMERIC(18,2),
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE agent_stock_reports_baru (
+
+    id SERIAL PRIMARY KEY,
+
+    agent_id INTEGER NOT NULL,
+
+    bulan INTEGER NOT NULL,
+
+    tahun INTEGER NOT NULL,
+
+    kode VARCHAR(100),
+
+    kode_sku_agent VARCHAR(100),
+
+    kode_sku_jim VARCHAR(100),
+
+    nama_sku_jim TEXT,
+
+    qty_pcs NUMERIC(18,2),
+
+    item_box NUMERIC(18,2),
+
+    qty_karton NUMERIC(18,2),
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+);
+
+delete from agent_stock_reports_baru
+
+delete from agent_invoice_reports_baru 

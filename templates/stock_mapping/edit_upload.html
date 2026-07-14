@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Edit Mapping</title>
+
+</head>
+
+<body>
+
+<h2>Edit Mapping</h2>
+
+<form action="/mapping/edit/{{ template.id }}/upload"
+      method="POST"
+      enctype="multipart/form-data">
+
+    <label>Nama Template</label>
+
+    <input type="text"
+           value="{{ template.template_name }}"
+           readonly>
+
+    <br><br>
+
+    <label>Nama Agent</label>
+
+    <select disabled>
+
+        {% for agent in agents %}
+
+        <option
+            {% if agent.id == template.agent_id %}
+            selected
+            {% endif %}
+        >
+
+            {{ agent.nama_agent }}
+
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Upload Template Excel</label>
+
+    <input type="file"
+           name="file"
+           required>
+
+    <br><br>
+
+    <button type="submit">
+
+        Lanjut Mapping
+
+    </button>
+
+</form>
+
+</body>
+
+</html>

@@ -36,7 +36,7 @@ def upload():
 
     output = os.path.join(
         Config.OUTPUT_FOLDER,
-        "hasil_" + filename
+        "Hasil_Normalisasi_invoice_" + filename
     )
 
     df.to_excel(output, index=False)
