@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Import Master Item Agent</title>
+  </head>
+
+  <body>
+    <h2>Import Master Item Agent</h2>
+
+    <form
+      action="/item-agent-mapping/import"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <label>Agent</label>
+
+      <select name="agent_id">
+        {% for agent in agents %}
+
+        <option value="{{ agent.id }}">
+          {{ agent.kode_agent }} - {{ agent.nama_agent }}
+        </option>
+
+        {% endfor %}
+      </select>
+
+      <br /><br />
+
+      <input type="file" name="file" accept=".xlsx" required />
+
+      <br /><br />
+
+      <button type="submit">Import</button>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Mapping Header</title>
+
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+      }
+
+      select {
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Mapping Header Stock</h2>
+
+    <form action="/stock-mapping/save" method="POST">
+      <label>Nama Template</label>
+      <input type="text" name="template_name" required />
+
+      <br /><br />
+
+      <label>Nama Agen</label>
+
+      <select name="agent_id" required>
+        <option value="">-- Pilih Agen --</option>
+
+        {% for agent in agents %}
+
+        <option value="{{ agent.id }}">{{ agent.nama_agent }}</option>
+
+        {% endfor %}
+      </select>
+
+      <br /><br />
+
+      <table>
+        <tr>
+          <th width="40%">Standard Header</th>
+
+          <th>Header Excel</th>
+        </tr>
+
+        {% for standard in standard_headers %} {% if standard != "Qty Terjual
+        (Karton)" %}
+
+        <tr>
+          <td>{{ standard }}</td>
+
+          <td>
+            <select name="{{ standard }}">
+              <option value="">-- Pilih Header --</option>
+
+              {% for h in headers %}
+
+              <option value="{{ h }}">{{ h }}</option>
+
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+
+        {% endif %} {% endfor %}
+      </table>
+
+      <br />
+
+      <button type="submit">Simpan Mapping</button>
+    </form>
+
+    <a href="/" class="menu">Kembali Ke HomePage</a>
+  </body>
+</html>

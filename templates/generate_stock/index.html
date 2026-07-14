@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Generate Stock</title>
+</head>
+
+<body>
+
+<h2>Generate Stock</h2>
+
+<form action="/generate-stock" method="POST" enctype="multipart/form-data">
+
+    <label>Template</label>
+
+    <select name="template_id" required>
+
+        {% for t in templates %}
+
+        <option value="{{ t.id }}">
+            {{ t.template_name }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Pilih Bulan</label>
+    <select name="bulan" required>
+
+        {% for i in range(1,13) %}
+
+        <option value="{{ i }}">
+            {{ i }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Tahun</label>
+
+    <select name="tahun" required>
+
+        {% for i in range(2024,2031) %}
+
+        <option value="{{ i }}">
+            {{ i }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>File Stock</label>
+
+    <br>
+
+    <input
+        type="file"
+        name="file"
+        accept=".xlsx,.xls"
+        required
+    >
+
+    <br><br>
+
+    <button type="submit">
+
+        Generate Stock
+
+    </button>
+
+</form>
+
+<br><br>
+
+<a href="/">
+
+    Kembali Ke HomePage
+
+</a>
+
+</body>
+
+</html>

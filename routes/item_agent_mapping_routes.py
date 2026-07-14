@@ -2,6 +2,7 @@ from flask import Blueprint, render_template
 
 from database import SessionLocal
 from models.item_agent_mapping import ItemAgentMapping
+import pandas as pd
 
 from flask import (
     Blueprint,
@@ -26,17 +27,36 @@ def index():
 
     db = SessionLocal()
 
-    mappings = (
-        db.query(ItemAgentMapping)
-        .filter(ItemAgentMapping.is_active == True)
+    agents = (
+        db.query(Agent)
+        .order_by(Agent.kode_agent)
         .all()
     )
+
+    agent_id = request.args.get("agent_id")
+
+    query = (
+        db.query(ItemAgentMapping)
+        .filter(ItemAgentMapping.is_active == True)
+    )
+
+    if agent_id:
+
+        query = query.filter(
+            ItemAgentMapping.agent_id == int(agent_id)
+        )
+
+    mappings = query.order_by(
+        ItemAgentMapping.id
+    ).all()
 
     db.close()
 
     return render_template(
         "item_agent_mapping/index.html",
-        mappings=mappings
+        mappings=mappings,
+        agents=agents,
+        selected_agent=agent_id
     )
 
 @item_agent_mapping_bp.route("/item-agent-mapping/create")
@@ -167,3 +187,120 @@ def delete(id):
     return redirect(
         url_for("item_agent_mapping.index")
     )
+    
+@item_agent_mapping_bp.route("/item-agent-mapping/import")
+def import_form():
+
+    db = SessionLocal()
+
+    agents = (
+        db.query(Agent)
+        .order_by(Agent.kode_agent)
+        .all()
+    )
+
+    db.close()
+
+    return render_template(
+        "item_agent_mapping/import.html",
+        agents=agents
+    )
+    
+@item_agent_mapping_bp.route(
+    "/item-agent-mapping/import",
+    methods=["POST"]
+)
+def import_excel():
+
+    db = SessionLocal()
+
+    try:
+
+        file = request.files["file"]
+
+        agent_id = int(request.form["agent_id"])
+
+        df = pd.read_excel(file)
+
+        for _, row in df.iterrows():
+
+            kode_sku_agent = str(
+                row["kode_sku_agent"]
+            ).strip()
+
+            mapping = (
+                db.query(ItemAgentMapping)
+                .filter(
+                    ItemAgentMapping.agent_id == agent_id,
+                    ItemAgentMapping.kode_sku_agent == kode_sku_agent
+                )
+                .first()
+            )
+
+            if mapping:
+
+                # UPDATE
+                mapping.kode_sku_jim = str(
+                    row["kode_sku_jim"]
+                ).strip()
+
+                mapping.nama_sku_jim = str(
+                    row["nama_sku_jim"]
+                ).strip()
+
+                mapping.item_box = int(
+                    row["item_box"]
+                )
+
+                mapping.item_group = str(
+                    row["item_group"]
+                ).strip()
+
+                mapping.is_active = True
+
+            else:
+
+                # INSERT
+                mapping = ItemAgentMapping(
+
+                    agent_id=agent_id,
+
+                    kode_sku_agent=kode_sku_agent,
+
+                    kode_sku_jim=str(
+                        row["kode_sku_jim"]
+                    ).strip(),
+
+                    nama_sku_jim=str(
+                        row["nama_sku_jim"]
+                    ).strip(),
+
+                    item_box=int(
+                        row["item_box"]
+                    ),
+
+                    item_group=str(
+                        row["item_group"]
+                    ).strip(),
+
+                    is_active=True
+
+                )
+
+                db.add(mapping)
+
+        db.commit()
+
+        return redirect(
+            url_for("item_agent_mapping.index")
+        )
+
+    except Exception as e:
+
+        db.rollback()
+
+        return str(e)
+
+    finally:
+
+        db.close()
