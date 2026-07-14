@@ -209,8 +209,28 @@ def generate():
         db.close()
 
         return "Data bulan dan tahun tersebut sudah ada."
+    
+    # report = AgentInvoiceReport(
+    #     agent_id=1,
+    #     bulan=6,
+    #     tahun=2026,
+    #     nama_agen="TEST",
+    #     kode_customer="1",
+    #     nama_customer="TEST",
+    #     kode_sku_agent="JIMYR067",
+    #     kode_sku_jim="DDR356293A",
+    #     nama_sku_jim="TEST",
+    #     item_box=12,
+    #     qty_karton=1
+    # )
+
+    # db.add(report)
+    # db.commit()
+
+    # return "TEST BERHASIL"
 
     # Isi Nama Agen
+
     
 
     # Tambahkan kolom yang belum ada
@@ -258,72 +278,116 @@ def generate():
 
     df_db["kode_sku_jim"] = df_db["Kode SKU JIM"].fillna("").astype(str)
 
+    for i, (_, row) in enumerate(df_db.iterrows(), start=1):
+        try:
+            report = AgentInvoiceReport(
+                agent_id=agent.id,
+                bulan=bulan,
+                tahun=tahun,
+                nama_agen=row["Nama Agen"],
+                kode_customer=row["Kode Customer"],
+                nama_customer=row["Nama Customer"],
+                alamat_customer=row["Alamat Customer"],
+                nomor_telepon_customer=row["Nomor Telepon/HP Customer"],
+                invoice_nomor_agen=row["Invoice Nomor Agen"],
+                tanggal_invoice=row["Tanggal Invoice"],
+                tipe_customer=row["Tipe Customer"],
+                sales=row["Sales"],
+                kode_sku_agent=row["SKU Kode Agen"],
+                nama_sku=row["Nama SKU"],
+                qty_terjual_karton=row["Qty Terjual (Karton)"],
+                qty_terjual_pcs=row["Qty Terjual (Pcs)"],
+                diskon_1_reguler=row["% Diskon 1 (Reguler)"],
+                diskon_2_cash=row["% Diskon 2 (Cash)"],
+                diskon_3_dc_fee=row["% Diskon 3 (DC Fee)"],
+                diskon_4_promo_1=row["% Diskon 4 (Promo 1)"],
+                diskon_5_promo_2=row["% Diskon 5 (Promo 2)"],
+                diskon_6_rp=row["% Diskon 6 (Rp)"],
+                quantity_bonus=row["Quantity Bonus"],
+                rafraksi=row["Rafraksi"],
+                total_invoice_value=row["Total Invoice Value"],
+                kode_sku_jim=row["Kode SKU JIM"],
+                nama_sku_jim=row["Nama SKU JIM"],
+                item_box=row["Item Box"],
+                qty_karton=row["Qty Karton"]
+            )
+
+            db.add(report)
+            db.flush()   # insert satu-satu
+
+        except Exception as e:
+            print("ERROR BARIS:", i)
+            print(row.to_dict())
+            raise
+
+    db.commit()
+
     # sementara jgn insert dulu
-    for _, row in df_db.iterrows():
+    # for _, row in df_db.iterrows():
 
-        report = AgentInvoiceReport(
+    #     report = AgentInvoiceReport(
 
-            agent_id=agent.id,
+    #         agent_id=agent.id,
 
-            bulan=bulan,
+    #         bulan=bulan,
 
-            tahun=tahun,
+    #         tahun=tahun,
 
-            nama_agen=row["Nama Agen"],
+    #         nama_agen=row["Nama Agen"],
 
-            kode_customer=row["Kode Customer"],
+    #         kode_customer=row["Kode Customer"],
 
-            nama_customer=row["Nama Customer"],
+    #         nama_customer=row["Nama Customer"],
 
-            alamat_customer=row["Alamat Customer"],
+    #         alamat_customer=row["Alamat Customer"],
 
-            nomor_telepon_customer=row["Nomor Telepon/HP Customer"],
+    #         nomor_telepon_customer=row["Nomor Telepon/HP Customer"],
 
-            invoice_nomor_agen=row["Invoice Nomor Agen"],
+    #         invoice_nomor_agen=row["Invoice Nomor Agen"],
 
-            tanggal_invoice=row["Tanggal Invoice"],
+    #         tanggal_invoice=row["Tanggal Invoice"],
 
-            tipe_customer=row["Tipe Customer"],
+    #         tipe_customer=row["Tipe Customer"],
 
-            sales=row["Sales"],
+    #         sales=row["Sales"],
 
-            kode_sku_agent=row["SKU Kode Agen"],
+    #         kode_sku_agent=row["SKU Kode Agen"],
 
-            nama_sku=row["Nama SKU"],
+    #         nama_sku=row["Nama SKU"],
 
-            qty_terjual_karton=row["Qty Terjual (Karton)"],
+    #         qty_terjual_karton=row["Qty Terjual (Karton)"],
 
-            qty_terjual_pcs=row["Qty Terjual (Pcs)"],
+    #         qty_terjual_pcs=row["Qty Terjual (Pcs)"],
 
-            diskon_1_reguler=row["% Diskon 1 (Reguler)"],
+    #         diskon_1_reguler=row["% Diskon 1 (Reguler)"],
 
-            diskon_2_cash=row["% Diskon 2 (Cash)"],
+    #         diskon_2_cash=row["% Diskon 2 (Cash)"],
 
-            diskon_3_dc_fee=row["% Diskon 3 (DC Fee)"],
+    #         diskon_3_dc_fee=row["% Diskon 3 (DC Fee)"],
 
-            diskon_4_promo_1=row["% Diskon 4 (Promo 1)"],
+    #         diskon_4_promo_1=row["% Diskon 4 (Promo 1)"],
 
-            diskon_5_promo_2=row["% Diskon 5 (Promo 2)"],
+    #         diskon_5_promo_2=row["% Diskon 5 (Promo 2)"],
 
-            diskon_6_rp=row["% Diskon 6 (Rp)"],
+    #         diskon_6_rp=row["% Diskon 6 (Rp)"],
 
-            quantity_bonus=row["Quantity Bonus"],
+    #         quantity_bonus=row["Quantity Bonus"],
 
-            rafraksi=row["Rafraksi"],
+    #         rafraksi=row["Rafraksi"],
 
-            total_invoice_value=row["Total Invoice Value"],
+    #         total_invoice_value=row["Total Invoice Value"],
 
-            kode_sku_jim=row["Kode SKU JIM"],
+    #         kode_sku_jim=row["Kode SKU JIM"],
 
-            nama_sku_jim=row["Nama SKU JIM"],
+    #         nama_sku_jim=row["Nama SKU JIM"],
 
-            item_box=row["Item Box"],
+    #         item_box=row["Item Box"],
 
-            qty_karton=row["Qty Karton"]
+    #         qty_karton=row["Qty Karton"]
 
-        )
+    #     )
 
-        db.add(report)
+    #     db.add(report)
 
         # print(
         #     row["Kode SKU JIM"],
@@ -334,9 +398,9 @@ def generate():
 
         # break
 
-        print(AgentInvoiceReport.__table__.columns.keys())
+    #     print(AgentInvoiceReport.__table__.columns.keys())
 
-    db.commit()
+    # db.commit()
 
     output = os.path.join(
         Config.OUTPUT_FOLDER,
