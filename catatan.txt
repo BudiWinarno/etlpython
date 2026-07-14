@@ -142,3 +142,16 @@ CREATE TABLE agent_stock_reports_baru (
 delete from agent_stock_reports_baru
 
 delete from agent_invoice_reports_baru 
+
+lanjut rumah
+ALTER TABLE agent_invoice_reports_baru
+ADD COLUMN kode_sku_jim VARCHAR(100);
+
+ALTER TABLE agent_invoice_reports_baru
+ADD COLUMN nama_sku_jim TEXT;
+
+ALTER TABLE agent_invoice_reports_baru
+ADD COLUMN item_box NUMERIC(18,2);
+
+ALTER TABLE agent_invoice_reports_baru
+ADD COLUMN qty_karton NUMERIC(18,2);
