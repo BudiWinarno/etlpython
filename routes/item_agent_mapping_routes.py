@@ -33,22 +33,39 @@ def index():
         .all()
     )
 
-    agent_id = request.args.get("agent_id")
+    # agent_id = request.args.get("agent_id")
 
-    query = (
-        db.query(ItemAgentMapping)
-        .filter(ItemAgentMapping.is_active == True)
-    )
+    # query = (
+    #     db.query(ItemAgentMapping)
+    #     .filter(ItemAgentMapping.is_active == True)
+    # )
+
+    # if agent_id:
+
+    #     query = query.filter(
+    #         ItemAgentMapping.agent_id == int(agent_id)
+    #     )
+
+    # mappings = query.order_by(
+    #     ItemAgentMapping.id
+    # ).all()
+    
+    agent_id = request.args.get("agent_id")
+    kode_sku_agent = request.args.get("kode_sku_agent")
+
+    query = db.query(ItemAgentMapping)
 
     if agent_id:
-
         query = query.filter(
             ItemAgentMapping.agent_id == int(agent_id)
         )
 
-    mappings = query.order_by(
-        ItemAgentMapping.id
-    ).all()
+    if kode_sku_agent:
+        query = query.filter(
+            ItemAgentMapping.kode_sku_agent.ilike(f"%{kode_sku_agent}%")
+        )
+
+    mappings = query.all()
 
     db.close()
 
@@ -56,7 +73,8 @@ def index():
         "item_agent_mapping/index.html",
         mappings=mappings,
         agents=agents,
-        selected_agent=agent_id
+        selected_agent=agent_id,
+        selected_kode_sku_agent=kode_sku_agent
     )
 
 @item_agent_mapping_bp.route("/item-agent-mapping/create")

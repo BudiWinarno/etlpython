@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Agent</title>
+</head>
+<body>
+
+<h2>Data Agent</h2>
+
+<a href="/agents/create">Tambah Agent</a>
+
+<br><br>
+
+<table border="1" cellpadding="5">
+
+    <tr>
+        <th>ID</th>
+        <th>Kode Agent</th>
+        <th>Nama Agent</th>
+        <th>Aksi</th>
+    </tr>
+
+    {% for agent in agents %}
+    <tr>
+        <td>{{ agent.id }}</td>
+        <td>{{ agent.kode_agent }}</td>
+        <td>{{ agent.nama_agent }}</td>
+        <td>
+            <a href="/agents/edit/{{ agent.id }}">Edit</a> |
+            <a href="/agents/delete/{{ agent.id }}"
+               onclick="return confirm('Hapus data ini?')">
+               Delete
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+<br><br>
+<a href="/" class="menu">Kembali Ke HomePage</a>
+
+</body>
+</html>

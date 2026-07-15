@@ -1,37 +1,27 @@
 <!doctype html>
 <html>
-
-<head>
+  <head>
     <title>Master Item Agent</title>
-</head>
+  </head>
 
-<body>
+  <body>
+    <h2>Master Item Agent</h2>
 
-<h2>Master Item Agent</h2>
+    <a href="/item-agent-mapping/create"> Tambah Master </a>
 
-<a href="/item-agent-mapping/create">
-    Tambah Master
-</a>
+    <br /><br />
 
-<br><br>
+    <a href="/item-agent-mapping/import"> Import Excel </a>
 
-<a href="/item-agent-mapping/import">
-    Import Excel
-</a>
+    <br /><br />
+    <a href="/" class="menu">Kembali Ke HomePage</a>
+    <br /><br />
 
-<br><br>
-<a href="/" class="menu">Kembali Ke HomePage</a>
-<br><br>
+    <form method="GET" action="/item-agent-mapping">
+      <label>Agent</label>
 
-<form method="GET" action="/item-agent-mapping">
-
-    <label>Agent</label>
-
-    <select name="agent_id">
-
-        <option value="">
-            Semua Agent
-        </option>
+      <select name="agent_id">
+        <option value="">Semua Agent</option>
 
         {% for agent in agents %}
 
@@ -45,30 +35,30 @@
         </option>
 
         {% endfor %}
+      </select>
 
-    </select>
+      &nbsp;&nbsp;
 
-    <button type="submit">
+      <label>Kode SKU Agent</label>
 
-        Search
+      <input
+        type="text"
+        name="kode_sku_agent"
+        value="{{ selected_kode_sku_agent or '' }}"
+        placeholder="Masukkan Kode SKU Agent"
+      />
 
-    </button>
+      <button type="submit">Search</button>
 
-    <a href="/item-agent-mapping">
+      <a href="/item-agent-mapping"> Reset </a>
+    </form>
 
-        Reset
+    <br />
 
-    </a>
+    <br /><br />
 
-</form>
-
-<br>
-
-<br><br>
-
-<table border="1">
-
-    <tr>
+    <table border="1">
+      <tr>
         <th>ID</th>
         <th>Agent</th>
         <th>Kode SKU Agent</th>
@@ -77,11 +67,11 @@
         <th>Item Box</th>
         <th>Item Group</th>
         <th>Action</th>
-    </tr>
+      </tr>
 
-    {% for item in mappings %}
+      {% for item in mappings %}
 
-    <tr>
+      <tr>
         <td>{{ item.id }}</td>
         <td>{{ item.agent_id }}</td>
         <td>{{ item.kode_sku_agent }}</td>
@@ -90,25 +80,20 @@
         <td>{{ item.item_box|int }}</td>
         <td>{{ item.item_group }}</td>
         <td>
+          <a href="/item-agent-mapping/edit/{{ item.id }}"> Edit </a>
 
-    <a href="/item-agent-mapping/edit/{{ item.id }}">
-        Edit
-    </a>
+          |
 
-    |
+          <a
+            href="/item-agent-mapping/delete/{{ item.id }}"
+            onclick="return confirm('Yakin ingin menghapus data ini?');"
+          >
+            Delete
+          </a>
+        </td>
+      </tr>
 
-    <a href="/item-agent-mapping/delete/{{ item.id }}"
-       onclick="return confirm('Yakin ingin menghapus data ini?')">
-        Delete
-    </a>
-
-</td>
-    </tr>
-
-    {% endfor %}
-
-</table>
-
-</body>
-
+      {% endfor %}
+    </table>
+  </body>
 </html>
