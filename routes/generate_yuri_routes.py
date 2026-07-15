@@ -62,6 +62,12 @@ def generate():
     bulan = int(request.form["bulan"])
 
     tahun = int(request.form["tahun"])
+    
+    agent = (
+        db.query(Agent)
+        .filter(Agent.id == agent_id)
+        .first()
+    )
 
     # ==========================
     # Sheet 1
@@ -101,6 +107,7 @@ def generate():
             AgentInvoiceReport.bulan == bulan,
             AgentInvoiceReport.tahun == tahun
         )
+        .order_by(AgentInvoiceReport.id)
         .all()
     )
 
@@ -162,9 +169,13 @@ def generate():
     # Export Excel
     # ==========================
 
+    # output = os.path.join(
+    #     Config.OUTPUT_FOLDER,
+    #     f"Template_Yuri_{agent_id}_{bulan}_{tahun}.xlsx"
+    # )
     output = os.path.join(
         Config.OUTPUT_FOLDER,
-        f"Template_Yuri_{agent_id}_{bulan}_{tahun}.xlsx"
+        f"{agent.kode_agent}_{tahun}{bulan:02d}.xlsx"
     )
 
     with pd.ExcelWriter(output, engine="openpyxl") as writer:

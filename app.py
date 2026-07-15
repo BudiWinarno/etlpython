@@ -13,6 +13,7 @@ from routes.item_agent_mapping_routes import item_agent_mapping_bp
 from routes.stock_mapping_routes import stock_mapping_bp
 from routes.generate_stock_routes import generate_stock_bp
 from routes.generate_yuri_routes import generate_yuri_bp
+from routes.generate_cmo import generate_cmo_bp
 
 app = Flask(__name__)
 
@@ -28,6 +29,7 @@ app.register_blueprint(item_agent_mapping_bp)
 app.register_blueprint(stock_mapping_bp)
 app.register_blueprint(generate_stock_bp)
 app.register_blueprint(generate_yuri_bp)
+app.register_blueprint(generate_cmo_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
