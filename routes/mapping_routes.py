@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect
+from flask import Blueprint, request, render_template, redirect, flash
 import os
 
 from config import Config
@@ -158,6 +158,11 @@ def delete(id):
       .delete()
 
     db.commit()
+    
+    flash(
+        "Template Mapping berhasil dihapus.",
+        "success"
+    )
 
     db.close()
 
@@ -170,8 +175,10 @@ def edit(id):
 
     template = db.query(Template).filter_by(id=id).first()
 
-    agents = db.query(Agent).all()
+    agent = db.query(Agent).filter_by(id=template.agent_id).first()
 
+    agents = db.query(Agent).all()
+    
     mappings = (
         db.query(TemplateMapping)
         .filter_by(template_id=id)
@@ -202,24 +209,33 @@ def edit_upload(id):
 
     file.save(filepath)
 
-    df = normalize_lk000019(filepath)
+    db = SessionLocal()
+
+    # Ambil template
+    template = db.query(Template).filter_by(id=id).first()
+
+    # Ambil agent sesuai template
+    agent = db.query(Agent).filter_by(id=template.agent_id).first()
+
+    # Ambil semua agent untuk dropdown
+    agents = db.query(Agent).all()
+
+    # Normalizer dinamis
+    normalizer = NormalizeFactory.get(agent.kode_agent)
+
+    df = normalizer.normalize(filepath)
 
     headers = list(df.columns)
 
-    db = SessionLocal()
+    mappings = (
+        db.query(TemplateMapping)
+        .filter_by(template_id=id)
+        .all()
+    )
 
-    template = db.query(Template).filter_by(id=id).first()
-
-    agents = db.query(Agent).all()
-
-    mappings = db.query(TemplateMapping)\
-                 .filter_by(template_id=id)\
-                 .all()
-    
     mapping_dict = {}
 
     for m in mappings:
-
         mapping_dict[m.standard_header] = m.excel_header
 
     db.close()
@@ -287,6 +303,11 @@ def update(id):
         db.add(mapping)
 
     db.commit()
+    
+    flash(
+        "Template Mapping berhasil diubah.",
+        "success"
+    )
 
     db.close()
 

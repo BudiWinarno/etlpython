@@ -1,65 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Mapping</title>
 
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="bg-light">
 
-<h2>Edit Mapping</h2>
+<div class="container mt-5">
 
-<form action="/mapping/edit/{{ template.id }}/upload"
-      method="POST"
-      enctype="multipart/form-data">
+    <div class="row justify-content-center">
 
-    <label>Nama Template</label>
+        <div class="col-md-7">
 
-    <input type="text"
-           value="{{ template.template_name }}"
-           readonly>
+            <div class="card shadow">
 
-    <br><br>
+                <div class="card-header bg-warning">
+                    <h4 class="mb-0">Edit Mapping</h4>
+                </div>
 
-    <label>Nama Agent</label>
+                <div class="card-body">
 
-    <select disabled>
+                    <form action="/mapping/edit/{{ template.id }}/upload"
+                          method="POST"
+                          enctype="multipart/form-data">
 
-        {% for agent in agents %}
+                        <div class="mb-3">
 
-        <option
-            {% if agent.id == template.agent_id %}
-            selected
-            {% endif %}
-        >
+                            <label class="form-label">
+                                Nama Template
+                            </label>
 
-            {{ agent.nama_agent }}
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ template.template_name }}"
+                                readonly>
 
-        </option>
+                        </div>
 
-        {% endfor %}
+                        <div class="mb-3">
 
-    </select>
+                            <label class="form-label">
+                                Nama Agent
+                            </label>
 
-    <br><br>
+                            <select
+                                class="form-select"
+                                disabled>
 
-    <label>Upload Template Excel</label>
+                                {% for agent in agents %}
 
-    <input type="file"
-           name="file"
-           required>
+                                <option
+                                    {% if agent.id == template.agent_id %}
+                                    selected
+                                    {% endif %}>
 
-    <br><br>
+                                    {{ agent.nama_agent }}
 
-    <button type="submit">
+                                </option>
 
-        Lanjut Mapping
+                                {% endfor %}
 
-    </button>
+                            </select>
 
-</form>
+                        </div>
+
+                        <div class="mb-4">
+
+                            <label class="form-label">
+                                Upload Template Excel
+                            </label>
+
+                            <input
+                                type="file"
+                                name="file"
+                                class="form-control"
+                                accept=".xlsx,.xls,.xlsb"
+                                required>
+
+                            <div class="form-text">
+                                Upload template Excel terbaru untuk melanjutkan proses mapping.
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+
+                            <a href="/mapping"
+                               class="btn btn-secondary">
+                                ← Kembali
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="btn btn-warning">
+
+                                Lanjut Mapping
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

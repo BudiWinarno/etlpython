@@ -1,84 +1,168 @@
-<!doctype html>
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapping Header</title>
 
-    <style>
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-      table,
-      th,
-      td {
-        border: 1px solid #ccc;
-        padding: 8px;
-      }
+<body class="bg-light">
 
-      select {
-        width: 100%;
-      }
-    </style>
-  </head>
+<div class="container mt-5">
 
-  <body>
-    <h2>Mapping Header</h2>
+    <div class="row justify-content-center">
 
-    <form action="/mapping/save" method="POST">
-      <label>Nama Template</label>
-      <input type="text" name="template_name" required />
+        <div class="col-lg-10">
 
-      <br /><br />
+            <div class="card shadow">
 
-      <label>Nama Agen</label>
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Mapping Header</h4>
+                </div>
 
-      <select name="agent_id" required>
-        <option value="">-- Pilih Agen --</option>
+                <div class="card-body">
 
-        {% for agent in agents %}
+                    <form action="/mapping/save" method="POST">
 
-        <option value="{{ agent.id }}">{{ agent.nama_agent }}</option>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Nama Template
+                            </label>
 
-        {% endfor %}
-      </select>
+                            <input
+                                type="text"
+                                name="template_name"
+                                class="form-control"
+                                placeholder="Masukkan Nama Template"
+                                required>
+                        </div>
 
-      <br /><br />
+                        <div class="mb-4">
+                            <label class="form-label">
+                                Nama Agent
+                            </label>
 
-      <table>
-        <tr>
-          <th width="40%">Standard Header</th>
+                            <select
+                                name="agent_id"
+                                class="form-select"
+                                required>
 
-          <th>Header Excel</th>
-        </tr>
+                                <option value="">
+                                    -- Pilih Agen --
+                                </option>
 
-        {% for standard in standard_headers %} {% if standard != "Qty Terjual
-        (Karton)" %}
+                                {% for agent in agents %}
 
-        <tr>
-          <td>{{ standard }}</td>
+                                <option value="{{ agent.id }}">
+                                    {{ agent.nama_agent }}
+                                </option>
 
-          <td>
-            <select name="{{ standard }}">
-              <option value="">-- Pilih Header --</option>
+                                {% endfor %}
 
-              {% for h in headers %}
+                            </select>
 
-              <option value="{{ h }}">{{ h }}</option>
+                        </div>
 
-              {% endfor %}
-            </select>
-          </td>
-        </tr>
+                        <div class="table-responsive">
 
-        {% endif %} {% endfor %}
-      </table>
+                            <table class="table table-bordered table-hover align-middle">
 
-      <br />
+                                <thead class="table-dark">
 
-      <button type="submit">Simpan Mapping</button>
-    </form>
+                                    <tr>
+                                        <th width="40%">
+                                            Standard Header
+                                        </th>
 
-    <a href="/" class="menu">Kembali Ke HomePage</a>
-  </body>
+                                        <th>
+                                            Header Excel
+                                        </th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for standard in standard_headers %}
+
+                                    {% if standard != "Qty Terjual (Karton)" %}
+
+                                    <tr>
+
+                                        <td>
+                                            <strong>{{ standard }}</strong>
+                                        </td>
+
+                                        <td>
+
+                                            <select
+                                                name="{{ standard }}"
+                                                class="form-select">
+
+                                                <option value="">
+                                                    -- Pilih Header --
+                                                </option>
+
+                                                {% for h in headers %}
+
+                                                <option value="{{ h }}">
+                                                    {{ h }}
+                                                </option>
+
+                                                {% endfor %}
+
+                                            </select>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endif %}
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+
+                            <a href="/"
+                               class="btn btn-secondary">
+                                ← Kembali
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+
+                                Simpan Mapping
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
 </html>

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, send_file
+from flask import Blueprint, render_template, request, send_file, flash, redirect
 import os
 
 from config import Config
@@ -100,6 +100,21 @@ def generate():
 
     # Ambil mapping
     mapping = get_mapping(template_id)
+    
+    missing_columns = [
+    col for col in mapping.keys()
+        if col not in df.columns
+    ]
+
+    if missing_columns:
+        db.close()
+
+        flash(
+            "Template Mapping yang dipilih tidak sesuai dengan file hasil normalisasi.",
+            "error"
+        )
+
+        return redirect("/generate")
 
     # Ambil hanya kolom yang dimapping
     df = df[list(mapping.keys())]
@@ -121,6 +136,11 @@ def generate():
         )
         .all()
     )
+    
+    if not master:
+        db.close()
+        flash("Master Kode Agent belum terdaftar. Silakan import Master Item Agent terlebih dahulu.", "error")
+        return redirect("/generate")
 
     master_df = pd.DataFrame([
         {
@@ -131,6 +151,9 @@ def generate():
         }
         for item in master
     ])
+    
+    # print("=== Setelah rename ===")
+    # print(df.columns.tolist())
 
     df = df.merge(
         master_df,

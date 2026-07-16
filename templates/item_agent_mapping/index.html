@@ -1,99 +1,217 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Master Item Agent</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
   </head>
 
-  <body>
-    <h2>Master Item Agent</h2>
+  <body class="bg-light">
+    <div class="container mt-5">
 
-    <a href="/item-agent-mapping/create"> Tambah Master </a>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+              {% for category, message in messages %}
+                  <script>
+                      document.addEventListener("DOMContentLoaded", function () {
+                          Swal.fire({
+                              icon: "{{ category }}",
+                              title: "{{ message }}",
+                              timer: 1800,
+                              showConfirmButton: false
+                          });
+                      });
+                  </script>
+              {% endfor %}
+          {% endif %}
+      {% endwith %}
 
-    <br /><br />
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Master Item Agent</h2>
 
-    <a href="/item-agent-mapping/import"> Import Excel </a>
-
-    <br /><br />
-    <a href="/" class="menu">Kembali Ke HomePage</a>
-    <br /><br />
-
-    <form method="GET" action="/item-agent-mapping">
-      <label>Agent</label>
-
-      <select name="agent_id">
-        <option value="">Semua Agent</option>
-
-        {% for agent in agents %}
-
-        <option
-            value="{{ agent.id }}"
-            {% if selected_agent == agent.id|string %}
-            selected
-            {% endif %}
-        >
-            {{ agent.kode_agent }} - {{ agent.nama_agent }}
-        </option>
-
-        {% endfor %}
-      </select>
-
-      &nbsp;&nbsp;
-
-      <label>Kode SKU Agent</label>
-
-      <input
-        type="text"
-        name="kode_sku_agent"
-        value="{{ selected_kode_sku_agent or '' }}"
-        placeholder="Masukkan Kode SKU Agent"
-      />
-
-      <button type="submit">Search</button>
-
-      <a href="/item-agent-mapping"> Reset </a>
-    </form>
-
-    <br />
-
-    <br /><br />
-
-    <table border="1">
-      <tr>
-        <th>ID</th>
-        <th>Agent</th>
-        <th>Kode SKU Agent</th>
-        <th>Kode SKU JIM</th>
-        <th>Nama SKU JIM</th>
-        <th>Item Box</th>
-        <th>Item Group</th>
-        <th>Action</th>
-      </tr>
-
-      {% for item in mappings %}
-
-      <tr>
-        <td>{{ item.id }}</td>
-        <td>{{ item.agent_id }}</td>
-        <td>{{ item.kode_sku_agent }}</td>
-        <td>{{ item.kode_sku_jim }}</td>
-        <td>{{ item.nama_sku_jim }}</td>
-        <td>{{ item.item_box|int }}</td>
-        <td>{{ item.item_group }}</td>
-        <td>
-          <a href="/item-agent-mapping/edit/{{ item.id }}"> Edit </a>
-
-          |
-
-          <a
-            href="/item-agent-mapping/delete/{{ item.id }}"
-            onclick="return confirm('Yakin ingin menghapus data ini?');"
-          >
-            Delete
+        <div>
+          <a href="/item-agent-mapping/import" class="btn btn-success">
+            Import Excel
           </a>
-        </td>
-      </tr>
 
-      {% endfor %}
-    </table>
+          <a href="/item-agent-mapping/create" class="btn btn-primary">
+            + Tambah Master
+          </a>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <a href="/" class="btn btn-secondary"> ← Kembali ke HomePage </a>
+      </div>
+
+      <!-- Search -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <form method="GET" action="/item-agent-mapping">
+            <div class="row">
+              <div class="col-md-4">
+                <label class="form-label">Agent</label>
+
+                <select name="agent_id" class="form-select">
+                  <option value="">Semua Agent</option>
+
+                  {% for agent in agents %}
+
+                  <option
+                      value="{{ agent.id }}"
+                      {% if selected_agent == agent.id|string %}
+                          selected
+                      {% endif %}
+                  >
+                      {{ agent.kode_agent }} - {{ agent.nama_agent }}
+                  </option>
+
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Kode SKU Agent</label>
+
+                <input
+                  type="text"
+                  name="kode_sku_agent"
+                  class="form-control"
+                  value="{{ selected_kode_sku_agent or '' }}"
+                  placeholder="Masukkan Kode SKU Agent"
+                />
+              </div>
+
+              <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">
+                  Search
+                </button>
+
+                <a href="/item-agent-mapping" class="btn btn-outline-secondary">
+                  Reset
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table
+              class="table table-bordered table-hover table-striped align-middle"
+            >
+              <thead class="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Agent</th>
+                  <th>Kode SKU Agent</th>
+                  <th>Kode SKU JIM</th>
+                  <th>Nama SKU JIM</th>
+                  <th>Item Box</th>
+                  <th>Item Group</th>
+                  <th width="170">Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% for item in mappings %}
+
+                <tr>
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.agent_id }}</td>
+                  <td>{{ item.kode_sku_agent }}</td>
+                  <td>{{ item.kode_sku_jim }}</td>
+                  <td>{{ item.nama_sku_jim }}</td>
+                  <td>{{ item.item_box|int }}</td>
+                  <td>{{ item.item_group }}</td>
+
+                  <td>
+                    <a
+                      href="/item-agent-mapping/edit/{{ item.id }}"
+                      class="btn btn-warning btn-sm"
+                    >
+                      Edit
+                    </a>
+
+                    <a
+                      href="/item-agent-mapping/delete/{{ item.id }}"
+                      class="btn btn-danger btn-sm"
+                      onclick="
+                        return confirm('Yakin ingin menghapus data ini?');
+                      "
+                    >
+                      Delete
+                    </a>
+                  </td>
+                </tr>
+
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {% set total_pages = ((total - 1) // per_page) + 1 %}
+
+        <nav class="mt-4">
+          <ul class="pagination justify-content-center">
+            <!-- Previous -->
+            <li class="page-item {% if page == 1 %}disabled{% endif %}">
+              <a
+                class="page-link"
+                href="?page={{ page - 1 }}&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}"
+              >
+                Previous
+              </a>
+            </li>
+
+            <!-- Nomor Halaman -->
+            {% set start_page = page - 2 %}
+              {% if start_page < 1 %}
+                  {% set start_page = 1 %}
+              {% endif %}
+
+              {% set end_page = page + 2 %}
+              {% if end_page > total_pages %}
+                  {% set end_page = total_pages %}
+              {% endif %}
+
+              {% for i in range(start_page, end_page + 1) %}
+              <li class="page-item {% if i == page %}active{% endif %}">
+                  <a class="page-link"
+                    href="?page={{ i }}&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}">
+                      {{ i }}
+                  </a>
+              </li>
+            {% endfor %}
+
+            <!-- Next -->
+            <li
+              class="page-item {% if page == total_pages %}disabled{% endif %}"
+            >
+              <a
+                class="page-link"
+                href="?page={{ page + 1 }}&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}"
+              >
+                Next
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 </html>
