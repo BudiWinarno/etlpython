@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, flash
 
 from database import SessionLocal
 from models.item_agent_mapping import ItemAgentMapping
@@ -52,6 +52,7 @@ def index():
     
     agent_id = request.args.get("agent_id")
     kode_sku_agent = request.args.get("kode_sku_agent")
+    page = request.args.get("page", 1, type=int)
 
     query = db.query(ItemAgentMapping)
 
@@ -65,7 +66,16 @@ def index():
             ItemAgentMapping.kode_sku_agent.ilike(f"%{kode_sku_agent}%")
         )
 
-    mappings = query.all()
+    per_page = 10
+
+    total = query.count()
+
+    mappings = (
+        query.order_by(ItemAgentMapping.id.desc())
+        .offset((page - 1) * per_page)
+        .limit(per_page)
+        .all()
+    )
 
     db.close()
 
@@ -74,7 +84,10 @@ def index():
         mappings=mappings,
         agents=agents,
         selected_agent=agent_id,
-        selected_kode_sku_agent=kode_sku_agent
+        selected_kode_sku_agent=kode_sku_agent,
+        page=page,
+        per_page=per_page,
+        total=total
     )
 
 @item_agent_mapping_bp.route("/item-agent-mapping/create")
@@ -124,6 +137,11 @@ def store():
     db.add(item)
 
     db.commit()
+    
+    flash(
+        "Master Item Agent berhasil ditambahkan.",
+        "success"
+    )
 
     db.close()
 
@@ -178,6 +196,11 @@ def update(id):
     mapping.item_group = request.form["item_group"]
 
     db.commit()
+    
+    flash(
+        "Master Item Agent berhasil diperbarui.",
+        "success"
+    )
 
     db.close()
 
@@ -199,6 +222,11 @@ def delete(id):
     mapping.is_active = False
 
     db.commit()
+    
+    flash(
+        "Master Item Agent berhasil dihapus.",
+        "success"
+    )
 
     db.close()
 
@@ -308,6 +336,11 @@ def import_excel():
                 db.add(mapping)
 
         db.commit()
+        
+        flash(
+            "Import Master Item Agent berhasil.",
+            "success"
+        )
 
         return redirect(
             url_for("item_agent_mapping.index")

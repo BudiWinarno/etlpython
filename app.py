@@ -16,6 +16,7 @@ from routes.generate_yuri_routes import generate_yuri_bp
 from routes.generate_cmo import generate_cmo_bp
 
 app = Flask(__name__)
+app.secret_key = "secret123"
 
 app.config.from_object(Config)
 

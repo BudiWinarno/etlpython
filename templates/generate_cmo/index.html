@@ -1,87 +1,121 @@
-<!doctype html>
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generate CMO</title>
 
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="bg-light">
 
-<h2>Generate CMO</h2>
+<div class="container mt-5">
 
-<form
-    method="POST"
-    action="/generate-cmo"
->
+    <div class="row justify-content-center">
 
-    <p>Agent</p>
+        <div class="col-md-6">
 
-    <select name="agent_id" required>
+            <div class="card shadow">
 
-        <option value="">
-            -- Pilih Agent --
-        </option>
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Generate CMO</h4>
+                </div>
 
-        {% for agent in agents %}
+                <div class="card-body">
 
-        <option value="{{ agent.id }}">
+                    <form method="POST" action="/generate-cmo">
 
-            {{ agent.kode_agent }} - {{ agent.nama_agent }}
+                        <div class="mb-3">
+                            <label class="form-label">Agent</label>
 
-        </option>
+                            <select
+                                name="agent_id"
+                                class="form-select"
+                                required>
 
-        {% endfor %}
+                                <option value="">
+                                    -- Pilih Agent --
+                                </option>
 
-    </select>
+                                {% for agent in agents %}
 
-    <p>Bulan</p>
+                                <option value="{{ agent.id }}">
+                                    {{ agent.kode_agent }} - {{ agent.nama_agent }}
+                                </option>
 
-    <select
-        name="bulan"
-        required
-    >
+                                {% endfor %}
 
-        {% for i in range(1,13) %}
+                            </select>
 
-        <option value="{{ i }}">
+                        </div>
 
-            {{ "%02d"|format(i) }}
+                        <div class="mb-3">
+                            <label class="form-label">Bulan</label>
 
-        </option>
+                            <select
+                                name="bulan"
+                                class="form-select"
+                                required>
 
-        {% endfor %}
+                                {% for i in range(1,13) %}
 
-    </select>
+                                <option value="{{ i }}">
+                                    {{ "%02d"|format(i) }}
+                                </option>
 
-    <p>Tahun</p>
+                                {% endfor %}
 
-    <input
-        type="number"
-        name="tahun"
-        value="2026"
-        required
-    >
+                            </select>
 
-    <br><br>
+                        </div>
 
-    <button type="submit">
+                        <div class="mb-3">
+                            <label class="form-label">Tahun</label>
 
-        Generate CMO
+                            <input
+                                type="number"
+                                name="tahun"
+                                class="form-control"
+                                value="2026"
+                                min="2024"
+                                max="2035"
+                                required>
 
-    </button>
+                        </div>
 
-</form>
+                        <div class="d-flex justify-content-between">
 
-<br>
+                            <a href="/" class="btn btn-secondary">
+                                ← Kembali
+                            </a>
 
-<a href="/">
+                            <button
+                                type="submit"
+                                class="btn btn-danger">
 
-    Kembali
+                                Generate CMO
 
-</a>
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

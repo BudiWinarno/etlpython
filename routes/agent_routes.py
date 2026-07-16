@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, render_template
+from flask import Blueprint, request, redirect, render_template, flash
 from sqlalchemy import select
 
 from database import SessionLocal
@@ -51,6 +51,8 @@ def store():
 
     db.add(agent)
     db.commit()
+    
+    flash("Data agent berhasil ditambahkan.", "success")
 
     db.close()
 
@@ -89,6 +91,8 @@ def update(id):
     agent.nama_agent = request.form["nama_agent"]
 
     db.commit()
+    
+    flash("Data agent berhasil diperbarui.", "success")
 
     db.close()
 
@@ -108,6 +112,8 @@ def delete(id):
     db.delete(agent)
 
     db.commit()
+    
+    flash("Data agent berhasil dihapus.", "success")
 
     db.close()
 
