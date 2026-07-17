@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, flash
 from database import SessionLocal
 from models.item_agent_mapping import ItemAgentMapping
 import pandas as pd
+from sqlalchemy.orm import joinedload
 
 from flask import (
     Blueprint,
@@ -54,7 +55,10 @@ def index():
     kode_sku_agent = request.args.get("kode_sku_agent")
     page = request.args.get("page", 1, type=int)
 
-    query = db.query(ItemAgentMapping)
+    query = (
+        db.query(ItemAgentMapping)
+        .options(joinedload(ItemAgentMapping.agent))
+    )
 
     if agent_id:
         query = query.filter(

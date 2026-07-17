@@ -1,129 +1,158 @@
-```html
-<!doctype html>
-<html>
-  <head>
-    <title>Edit Mapping</title>
+<!DOCTYPE html>
+<html lang="en">
 
-    <style>
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Mapping Stock</title>
 
-      table,
-      th,
-      td {
-        border: 1px solid #ccc;
-        padding: 8px;
-      }
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-      select {
-        width: 100%;
-      }
-    </style>
-  </head>
+<body class="bg-light">
 
-  <body>
+    <div class="container py-5">
 
-    <h2>Edit Mapping</h2>
+        <div class="row justify-content-center">
 
-    <form action="/mapping/update/{{ template.id }}" method="POST">
+            <div class="col-lg-10">
 
-      <label>Nama Template</label>
+                <div class="card shadow">
 
-      <input
-        type="text"
-        name="template_name"
-        value="{{ template.template_name }}"
-        required
-      />
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Edit Mapping Stock</h4>
+                    </div>
 
-      <br /><br />
+                    <div class="card-body">
 
-      <label>Nama Agen</label>
+                        <form action="/stock-mapping/update/{{ template.id }}" method="POST">
 
-      <select name="agent_id" required>
+                            <div class="mb-3">
+                                <label class="form-label">Nama Template</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="template_name"
+                                    value="{{ template.template_name }}"
+                                    required>
+                            </div>
 
-        {% for agent in agents %}
+                            <div class="mb-4">
+                                <label class="form-label">Nama Agen</label>
+                                <select
+                                    class="form-select"
+                                    name="agent_id"
+                                    required>
 
-        <option
-          value="{{ agent.id }}"
-          {% if agent.id == template.agent_id %}
-          selected
-          {% endif %}
-        >
+                                    {% for agent in agents %}
 
-          {{ agent.nama_agent }}
+                                    <option
+                                        value="{{ agent.id }}"
+                                        {% if agent.id == template.agent_id %}
+                                        selected
+                                        {% endif %}>
+                                        {{ agent.nama_agent }}
+                                    </option>
 
-        </option>
+                                    {% endfor %}
 
-        {% endfor %}
+                                </select>
+                            </div>
 
-      </select>
+                            <div class="table-responsive">
 
-      <br /><br />
+                                <table class="table table-bordered table-hover align-middle">
 
-      <table>
+                                    <thead class="table-primary">
 
-        <tr>
+                                        <tr>
+                                            <th width="40%">Standard Header</th>
+                                            <th>Header Excel</th>
+                                        </tr>
 
-          <th width="40%">Standard Header</th>
+                                    </thead>
 
-          <th>Header Excel</th>
+                                    <tbody>
 
-        </tr>
+                                        {% for standard in standard_headers %}
 
-        {% for standard in standard_headers %}
+                                        {% if standard != "Qty Terjual (Karton)" %}
 
-        {% if standard != "Qty Terjual (Karton)" %}
+                                        <tr>
 
-        <tr>
+                                            <td class="fw-semibold">
+                                                {{ standard }}
+                                            </td>
 
-          <td>{{ standard }}</td>
+                                            <td>
 
-          <td>
+                                                <select
+                                                    class="form-select"
+                                                    name="{{ standard }}">
 
-            <select name="{{ standard }}">
+                                                    <option value="">
+                                                        -- Pilih Header --
+                                                    </option>
 
-              <option value="">-- Pilih Header --</option>
+                                                    {% for h in headers %}
 
-              {% for h in headers %}
+                                                    <option
+                                                        value="{{ h }}"
+                                                        {% if mapping_dict.get(standard) == h %}
+                                                        selected
+                                                        {% endif %}>
+                                                        {{ h }}
+                                                    </option>
 
-              <option
-                value="{{ h }}"
-                {% if mapping_dict.get(standard) == h %}
-                selected
-                {% endif %}
-              >
+                                                    {% endfor %}
 
-                {{ h }}
+                                                </select>
 
-              </option>
+                                            </td>
 
-              {% endfor %}
+                                        </tr>
 
-            </select>
+                                        {% endif %}
 
-          </td>
+                                        {% endfor %}
 
-        </tr>
+                                    </tbody>
 
-        {% endif %}
+                                </table>
 
-        {% endfor %}
+                            </div>
 
-      </table>
+                            <div class="d-flex justify-content-between mt-4">
 
-      <br />
+                                <a href="/stock-mapping"
+                                   class="btn btn-secondary">
+                                    ← Kembali
+                                </a>
 
-      <button type="submit">
+                                <button
+                                    type="submit"
+                                    class="btn btn-success">
+                                    Update Mapping
+                                </button>
 
-        Update Mapping
+                            </div>
 
-      </button>
+                        </form>
 
-    </form>
+                    </div>
 
-  </body>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
 </html>
-```

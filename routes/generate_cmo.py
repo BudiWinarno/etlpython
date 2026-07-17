@@ -11,6 +11,7 @@ from flask import send_file
 from config import Config
 from models.agent_invoice_report import AgentInvoiceReport
 import math
+from models.cmo_template import CMOTemplate
 
 
 generate_cmo_bp = Blueprint(
@@ -237,6 +238,118 @@ def generate():
                 "Avg Qty Outsell Karton"
             ]
         )
+        
+    # ==========================
+    # CMO TEMPLATE
+    # ==========================
+
+    templates = (
+        db.query(CMOTemplate)
+        .filter(
+            CMOTemplate.agent_id == agent_id,
+            CMOTemplate.is_active == True
+        )
+        .all()
+    )
+    
+    sheet_template = pd.DataFrame([
+        {
+            "Kode SKU JIM": item.item_code,
+            "Nama SKU JIM": item.item_name,
+            "Item Group": item.item_group_name,
+            "Customer Name": item.customer_name,
+            "Berat (kg)": item.berat,
+            "Volume (m3)": item.volume,
+            "Item Box": item.item_box,
+            "Buffer (Hari)": item.buffer_hari,
+            "NKA 1": item.nka_1,
+            "NKA 2": item.nka_2,
+            "NKA 3": item.nka_3,
+            "NKA 4": item.nka_4,
+            "Min Stock": item.min_stock,
+            "Min Stock NKA 1": item.min_stock_nka_1,
+            "Min Stock NKA 2": item.min_stock_nka_2,
+            "Order Tambahan": item.order_tambahan
+        }
+        for item in templates
+    ])
+    
+    # ==========================
+    # MERGE STOCK
+    # ==========================
+
+    sheet_cmo = sheet_template.merge(
+        sheet_stock[
+            [
+                "Kode SKU JIM",
+                "Qty Karton"
+            ]
+        ],
+        on="Kode SKU JIM",
+        how="left"
+    )
+    
+    sheet_cmo["Qty Karton"] = (
+        sheet_cmo["Qty Karton"]
+        .fillna(0)
+    )
+    
+    # ==========================
+    # MERGE OUTSELL
+    # ==========================
+
+    sheet_cmo = sheet_cmo.merge(
+        sheet_outsell[
+            [
+                "Kode SKU JIM",
+                "Qty Karton"
+            ]
+        ].rename(
+            columns={
+                "Qty Karton": "Outsell Karton"
+            }
+        ),
+        on="Kode SKU JIM",
+        how="left"
+    )
+
+    sheet_cmo["Outsell Karton"] = (
+        sheet_cmo["Outsell Karton"]
+        .fillna(0)
+    )
+    
+    # ==========================
+    # MERGE AVG OUTSELL
+    # ==========================
+
+    sheet_cmo = sheet_cmo.merge(
+        sheet_avg_outsell[
+            [
+                "Kode SKU JIM",
+                "Avg Qty Outsell Karton"
+            ]
+        ],
+        on="Kode SKU JIM",
+        how="left"
+    )
+
+    sheet_cmo["Avg Qty Outsell Karton"] = (
+        sheet_cmo["Avg Qty Outsell Karton"]
+        .fillna(0)
+    )
+    
+    # sheet_template = pd.DataFrame([
+    #     {
+    #         "Kode SKU JIM": t.item_code,
+    #         "Nama SKU JIM": t.item_name,
+    #         "Buffer": t.buffer_hari,
+    #         "Berat": t.berat,
+    #         "Volume": t.volume,
+    #         "Item Box": t.item_box,
+    #         "Order Tambahan": t.order_tambahan
+    #     }
+    #     for t in templates
+    # ])
 
     # ==========================
     # EXPORT EXCEL
@@ -264,6 +377,18 @@ def generate():
         sheet_avg_outsell.to_excel(
             writer,
             sheet_name="Avg Outsell",
+            index=False
+        )
+        
+        sheet_template.to_excel(
+            writer,
+            sheet_name="CMO Template",
+            index=False
+        )
+        
+        sheet_cmo.to_excel(
+            writer,
+            sheet_name="CMO + Stock",
             index=False
         )
 

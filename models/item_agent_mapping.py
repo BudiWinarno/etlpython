@@ -3,8 +3,11 @@ from sqlalchemy import (
     Integer,
     String,
     Boolean,
-    Numeric
+    Numeric,
+    ForeignKey
 )
+
+from sqlalchemy.orm import relationship
 
 from database import Base
 
@@ -15,7 +18,7 @@ class ItemAgentMapping(Base):
 
     id = Column(Integer, primary_key=True)
 
-    agent_id = Column(Integer)
+    agent_id = Column(Integer, ForeignKey("agents.id"), nullable=False)
 
     kode_sku_agent = Column(String(100))
 
@@ -28,3 +31,6 @@ class ItemAgentMapping(Base):
     item_group = Column(String(100))
 
     is_active = Column(Boolean)
+
+    # Relationship ke Agent
+    agent = relationship("Agent", back_populates="item_mappings")
