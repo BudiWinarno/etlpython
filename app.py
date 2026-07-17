@@ -14,6 +14,7 @@ from routes.stock_mapping_routes import stock_mapping_bp
 from routes.generate_stock_routes import generate_stock_bp
 from routes.generate_yuri_routes import generate_yuri_bp
 from routes.generate_cmo import generate_cmo_bp
+from routes.cmo_template import cmo_template_bp
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -31,6 +32,7 @@ app.register_blueprint(stock_mapping_bp)
 app.register_blueprint(generate_stock_bp)
 app.register_blueprint(generate_yuri_bp)
 app.register_blueprint(generate_cmo_bp)
+app.register_blueprint(cmo_template_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)

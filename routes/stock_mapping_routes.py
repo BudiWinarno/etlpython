@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect
+from flask import Blueprint, request, render_template, redirect, flash
 import os
 
 from config import Config
@@ -183,7 +183,13 @@ def edit_upload(id):
 
     file.save(filepath)
 
-    kode_agent = request.form["kode_agent"]
+    db = SessionLocal()
+
+    template = db.query(StockTemplate).filter_by(id=id).first()
+
+    agent = db.query(Agent).filter_by(id=template.agent_id).first()
+
+    kode_agent = agent.kode_agent
 
     normalizer = StockNormalizeFactory.get(kode_agent)
 
@@ -272,6 +278,8 @@ def update(id):
         db.add(mapping)
 
     db.commit()
+    
+    flash("Mapping berhasil diperbarui.", "success")
 
     db.close()
 

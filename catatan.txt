@@ -155,3 +155,78 @@ ADD COLUMN item_box NUMERIC(18,2);
 
 ALTER TABLE agent_invoice_reports_baru
 ADD COLUMN qty_karton NUMERIC(18,2);
+
+baru 17 juli 2026
+CREATE TABLE cmo_templates (
+    id SERIAL PRIMARY KEY,
+
+    agent_id INT NOT NULL REFERENCES agents(id),
+
+    item_code VARCHAR(100) NOT NULL,
+    item_name VARCHAR(255) NOT NULL,
+    item_group_name VARCHAR(255),
+    customer_name VARCHAR(255),
+
+    berat NUMERIC(10,2),
+    volume NUMERIC(10,4),
+    item_box NUMERIC(10,2),
+
+    buffer_hari INT DEFAULT 45,
+
+    nka_1 NUMERIC(10,2),
+    nka_2 NUMERIC(10,2),
+    nka_3 NUMERIC(10,2),
+    nka_4 NUMERIC(10,2),
+
+    min_stock NUMERIC(10,2),
+    min_stock_nka_1 NUMERIC(10,2),
+    min_stock_nka_2 NUMERIC(10,2),
+
+    order_tambahan NUMERIC(10,2),
+
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    CONSTRAINT uq_cmo_template UNIQUE(agent_id, item_code)
+);
+
+CREATE TABLE cmo_reports (
+
+    id SERIAL PRIMARY KEY,
+
+    agent_id INTEGER NOT NULL
+        REFERENCES agents(id),
+
+    template_id INTEGER NOT NULL
+        REFERENCES cmo_templates(id),
+
+    bulan INTEGER NOT NULL,
+
+    tahun INTEGER NOT NULL,
+
+    stock_akhir_bulan_lalu NUMERIC(12,2),
+
+    avg_qty_outsell_karton NUMERIC(12,2),
+
+    total_sales_qty_insell_karton NUMERIC(12,2),
+
+    total_sales_qty_outsell_karton NUMERIC(12,2),
+
+    stock_akhir_bulan_ini NUMERIC(12,2),
+
+    stock_sap_akhir_bulan_ini NUMERIC(12,2),
+
+    selisih_karton_order_agen NUMERIC(12,2),
+
+    total_cmo NUMERIC(12,2),
+
+    total_berat NUMERIC(12,2),
+
+    total_volume NUMERIC(12,4),
+
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    CONSTRAINT uq_cmo_report
+        UNIQUE(agent_id, template_id, bulan, tahun)
+
+);
