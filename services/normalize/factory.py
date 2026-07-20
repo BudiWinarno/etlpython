@@ -6,6 +6,7 @@ from services.normalize.lk000115 import LK000115Normalizer
 from services.normalize.lk000148 import LK000148InvoiceNormalizer
 from services.normalize.lk000048 import LK000048InvoiceNormalizer
 from services.normalize.lk000065 import LK000065InvoiceNormalizer
+from services.normalize.lk000093 import LK000093InvoiceNormalizer
 
 
 class NormalizeFactory:
@@ -36,5 +37,8 @@ class NormalizeFactory:
         
         elif agent_code == "LK-000065":
             return LK000065InvoiceNormalizer()
+        
+        elif agent_code == "LK-000093":
+            return LK000093InvoiceNormalizer()
 
         raise Exception("Template belum didukung")

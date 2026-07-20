@@ -124,7 +124,48 @@ def generate():
         for item in outsell
     ])
 
+    # if not sheet_outsell.empty:
+
+    #     sheet_outsell = (
+    #         sheet_outsell
+    #         .groupby(
+    #             [
+    #                 "Kode SKU JIM",
+    #                 "Nama SKU JIM"
+    #             ],
+    #             as_index=False
+    #         )
+    #         .agg({
+    #             "Qty PCS": "sum",
+    #             "Item Box": "first"
+    #         })
+    #     )
+
+    #     sheet_outsell["Qty Karton"] = (
+    #         sheet_outsell["Qty PCS"].astype(float) /
+    #         sheet_outsell["Item Box"].astype(float)
+    #     ).apply(lambda x: math.floor(x + 0.5))
+
+    #     sheet_outsell = sheet_outsell[
+    #         [
+    #             "Kode SKU JIM",
+    #             "Nama SKU JIM",
+    #             "Qty Karton"
+    #         ]
+    #     ]
     if not sheet_outsell.empty:
+
+        # Skip data rusak (NaN)
+        sheet_outsell = sheet_outsell.replace("NaN", pd.NA)
+
+        sheet_outsell["Item Box"] = pd.to_numeric(
+            sheet_outsell["Item Box"],
+            errors="coerce"
+        )
+
+        sheet_outsell = sheet_outsell.dropna(
+            subset=["Kode SKU JIM", "Item Box"]
+        )
 
         sheet_outsell = (
             sheet_outsell
@@ -141,18 +182,23 @@ def generate():
             })
         )
 
-        sheet_outsell["Qty Karton"] = (
-            sheet_outsell["Qty PCS"].astype(float) /
-            sheet_outsell["Item Box"].astype(float)
-        ).apply(lambda x: math.floor(x + 0.5))
+        hasil = (
+            sheet_outsell["Qty PCS"].astype(float)
+            / sheet_outsell["Item Box"].astype(float)
+        )
 
-        sheet_outsell = sheet_outsell[
-            [
-                "Kode SKU JIM",
-                "Nama SKU JIM",
-                "Qty Karton"
-            ]
-        ]
+        if hasil.isna().any():
+            print(f"=== OUTSELL BERMASALAH AGENT {agent.kode_agent} ===")
+            print(sheet_outsell[hasil.isna()])
+
+        mask = hasil.notna()
+
+        sheet_outsell = sheet_outsell[mask].copy()
+        hasil = hasil[mask]
+
+        sheet_outsell["Qty Karton"] = (
+            hasil.apply(lambda x: math.floor(x + 0.5))
+        )
 
     else:
 
@@ -190,18 +236,61 @@ def generate():
         )
 
         avg_rows.extend(data)
+        
+        for item in avg_rows:
+            if item.item_box is None:
+                print("MASUKSINIGANNN")
+                print("BULAN :", item.bulan)
+                print("INVOICE :", item.invoice_nomor_agen)
+                print("SKU AGENT :", item.kode_sku_agent)
+                print("SKU JIM :", item.kode_sku_jim)
+                print("ITEM BOX :", item.item_box)
+                print("PCS :", item.qty_terjual_pcs)
 
     sheet_avg_outsell = pd.DataFrame([
         {
             "Kode SKU JIM": item.kode_sku_jim,
             "Nama SKU JIM": item.nama_sku_jim,
-            "Qty Karton": item.qty_karton
+            "Qty PCS": item.qty_terjual_pcs,
+            "Item Box": item.item_box
         }
         for item in avg_rows
     ])
+    
+    print("KUYYYYYYYYYY")
+    print(sheet_avg_outsell.iloc[3598])
+    print("KUYYYYYYYYYYANGNGNGNGNGNG")
+    print(avg_rows[3598])
+    print(vars(avg_rows[3598]))
+    
+    print("Jumlah baris :", len(sheet_avg_outsell))
+
+    print(
+        sheet_avg_outsell[
+            sheet_avg_outsell["Kode SKU JIM"].isna()
+        ]
+    )
+
+    print(
+        sheet_avg_outsell[
+            sheet_avg_outsell["Item Box"].isna()
+        ]
+    )
 
     if not sheet_avg_outsell.empty:
+        
+         # Skip data yang rusak (NaN)
+        sheet_avg_outsell = sheet_avg_outsell.replace("NaN", pd.NA)
 
+        sheet_avg_outsell["Item Box"] = pd.to_numeric(
+            sheet_avg_outsell["Item Box"],
+            errors="coerce"
+        )
+
+        sheet_avg_outsell = sheet_avg_outsell.dropna(
+            subset=["Kode SKU JIM", "Item Box"]
+        )
+        
         sheet_avg_outsell = (
             sheet_avg_outsell
             .groupby(
@@ -212,14 +301,59 @@ def generate():
                 as_index=False
             )
             .agg({
-                "Qty Karton": "sum"
+                "Qty PCS": "sum",
+                "Item Box": "first"
             })
         )
+        
+        # ==========================
+        # CEK DATA YANG BERMASALAH
+        # ==========================
+        hasil = (
+            sheet_avg_outsell["Qty PCS"].astype(float)
+            / sheet_avg_outsell["Item Box"].astype(float)
+            / 3
+        )
+
+        if hasil.isna().any():
+            print(f"=== DATA BERMASALAH AGENT {agent.kode_agent} ===")
+            print(sheet_avg_outsell[hasil.isna()])
+
+        mask = hasil.notna()
+
+        sheet_avg_outsell = sheet_avg_outsell[mask].copy()
+        hasil = hasil[mask]
 
         sheet_avg_outsell["Avg Qty Outsell Karton"] = (
-            sheet_avg_outsell["Qty Karton"]
-                .apply(lambda x: math.floor(float(x) / 3 + 0.5))
+            hasil.apply(lambda x: math.floor(x + 0.5))
         )
+        
+        # ==========================
+        # DEBUG
+        # ==========================
+
+        print("=== ITEM BOX KOSONG ===")
+        print(
+            sheet_avg_outsell[
+                sheet_avg_outsell["Item Box"].isna()
+            ]
+        )
+
+        print("=== QTY PCS KOSONG ===")
+        print(
+            sheet_avg_outsell[
+                sheet_avg_outsell["Qty PCS"].isna()
+            ]
+        )
+
+        # sheet_avg_outsell["Avg Qty Outsell Karton"] = (
+        #     (
+        #         sheet_avg_outsell["Qty PCS"].astype(float)
+        #         / sheet_avg_outsell["Item Box"].astype(float)
+        #         / 3
+        #     )
+        #     .apply(lambda x: math.floor(x + 0.5))
+        # )
 
         sheet_avg_outsell = sheet_avg_outsell[
             [
