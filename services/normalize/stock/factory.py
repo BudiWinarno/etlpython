@@ -5,6 +5,8 @@ from services.normalize.lk000075 import LK000075Normalizer
 from services.normalize.stock.lk000115 import LK000115StockNormalizer
 from services.normalize.stock.lk000048 import LK000048StockNormalizer
 from services.normalize.stock.lk000065 import LK000065StockNormalizer
+from services.normalize.stock.lk000093 import LK000093StockNormalizer
+
 
 class StockNormalizeFactory:
 
@@ -31,5 +33,8 @@ class StockNormalizeFactory:
         
         elif agent_code == "LK-000065":
             return LK000065StockNormalizer()
+        
+        elif agent_code == "LK-000093":
+            return LK000093StockNormalizer()
 
         raise Exception("Template stock belum didukung")

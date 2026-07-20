@@ -121,7 +121,7 @@ def generate():
 
     # Rename sesuai standard header
     df = df.rename(columns=mapping)
-
+    
     # ==========================
     # Join Item Agent Mapping
     # ==========================
@@ -152,8 +152,31 @@ def generate():
         for item in master
     ])
     
+    df["SKU Kode Agen"] = (
+    df["SKU Kode Agen"]
+    .astype(str)
+    .str.strip()
+    )
+
+    master_df["SKU Kode Agen"] = (
+        master_df["SKU Kode Agen"]
+        .astype(str)
+        .str.strip()
+    )
+    
     # print("=== Setelah rename ===")
     # print(df.columns.tolist())
+    
+    print("=== DF ===")
+    print(df["SKU Kode Agen"].dtype)
+    print(df["SKU Kode Agen"].head())
+
+    print("=== MASTER ===")
+    print(master_df["SKU Kode Agen"].dtype)
+    print(master_df["SKU Kode Agen"].head())
+
+    print(df[["SKU Kode Agen"]].info())
+    print(master_df[["SKU Kode Agen"]].info())
 
     df = df.merge(
         master_df,

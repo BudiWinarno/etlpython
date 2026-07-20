@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash
+from flask import Blueprint, render_template, flash, jsonify
 
 from database import SessionLocal
 from models.item_agent_mapping import ItemAgentMapping
@@ -355,6 +355,72 @@ def import_excel():
         db.rollback()
 
         return str(e)
+
+    finally:
+
+        db.close()
+        
+@item_agent_mapping_bp.route("/item-agent-mapping/all-ids")
+def all_ids():
+
+    db = SessionLocal()
+
+    query = db.query(ItemAgentMapping)
+
+    agent_id = request.args.get("agent_id")
+    kode_sku_agent = request.args.get("kode_sku_agent")
+
+    if agent_id:
+        query = query.filter(
+            ItemAgentMapping.agent_id == int(agent_id)
+        )
+
+    if kode_sku_agent:
+        query = query.filter(
+            ItemAgentMapping.kode_sku_agent.ilike(f"%{kode_sku_agent}%")
+        )
+
+    ids = [
+        str(item.id)
+        for item in query.all()
+    ]
+
+    db.close()
+
+    return jsonify(ids)
+
+@item_agent_mapping_bp.route(
+    "/item-agent-mapping/delete-selected",
+    methods=["POST"]
+)
+def delete_selected():
+
+    db = SessionLocal()
+
+    try:
+
+        ids = [int(x) for x in request.json.get("ids", [])]
+
+        (
+            db.query(ItemAgentMapping)
+            .filter(ItemAgentMapping.id.in_(ids))
+            .delete(synchronize_session=False)
+        )
+
+        db.commit()
+
+        return jsonify({
+            "success": True
+        })
+
+    except Exception as e:
+
+        db.rollback()
+
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
 
     finally:
 
