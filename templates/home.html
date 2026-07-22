@@ -1,101 +1,147 @@
-<style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ETL Excel Application</title>
 
-  body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f4f4f4;
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f5f5f5;
+        padding: 40px 15px;
+      }
 
-    min-height: 100vh;
-  }
+      .container {
+        width: 100%;
+        max-width: 700px;
+        margin: auto;
 
-  .container {
-    width: 550px;
-    background: #fff;
+        background: #fff;
 
-    padding: 40px;
+        border-radius: 12px;
 
-    border-radius: 10px;
+        padding: 35px;
 
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
-  }
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+      }
 
-  h2 {
-    text-align: center;
+      h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+      }
 
-    margin-bottom: 40px;
-  }
+      h4 {
+        margin: 30px 0 15px;
+        color: #1976d2;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 8px;
+      }
 
-  .menu {
-    display: block;
+      .menu {
+        display: block;
 
-    width: 100%;
+        width: 100%;
 
-    padding: 15px;
+        padding: 15px;
 
-    margin-bottom: 20px;
+        margin-bottom: 12px;
 
-    text-align: center;
+        text-decoration: none;
 
-    text-decoration: none;
+        text-align: center;
 
-    color: #fff;
+        color: white;
 
-    background: #1976d2;
+        background: #1976d2;
 
-    border-radius: 6px;
+        border-radius: 8px;
 
-    font-size: 18px;
+        font-size: 17px;
 
-    transition: 0.3s;
-  }
+        transition: 0.2s;
+      }
 
-  .menu:hover {
-    background: #1565c0;
-  }
-</style>
+      .menu:hover {
+        background: #1565c0;
+        transform: translateY(-2px);
+      }
 
-<body>
-  <div class="container">
-    <h2>ETL Excel Application</h2>
+      @media (max-width: 768px) {
+        body {
+          padding: 20px 10px;
+        }
 
-    <!-- INVOICE -->
+        .container {
+          padding: 20px;
+        }
 
-    <a href="/upload" class="menu"> Normalisasi Invoice </a>
+        h2 {
+          font-size: 24px;
+        }
 
-    <a href="/mapping" class="menu"> Mapping Invoice </a>
+        h4 {
+          font-size: 18px;
+        }
 
-    <a href="/generate" class="menu"> Generate Invoice Excel </a>
+        .menu {
+          font-size: 16px;
+          padding: 13px;
+        }
+      }
+    </style>
+  </head>
 
-    <br /><br />
+  <body>
+    <div class="container">
+      <h2>ETL Excel Application</h2>
 
-    <!-- STOCK -->
-    <a href="/stock/upload" class="menu"> Normalisasi Stock </a>
+      <h4>Invoice</h4>
 
-    <a href="/stock-mapping" class="menu"> Mapping Stock </a>
+      <a href="/upload" class="menu">Normalisasi Invoice</a>
 
-    <a href="/generate-stock" class="menu"> Generate Stock Excel </a>
+      <a href="/mapping" class="menu">Mapping Invoice</a>
 
-    <br /><br />
+      <a href="/generate" class="menu">Generate Invoice Excel</a>
 
-    <a href="/item-agent-mapping" class="menu">Master Agent Mapping Produk </a>
-    <a href="/cmo-template" class="menu">CMO Agent Template </a>
+      <h4>Stock</h4>
 
-    <br /><br />
+      <a href="/stock/upload" class="menu">Normalisasi Stock</a>
 
-    <a href="/generate-yuri" class="menu">Generate Template Yuri </a>
-    <a href="/generate-cmo" class="menu">Generate CMO </a>
+      <a href="/stock-mapping" class="menu">Mapping Stock</a>
 
-    <br /><br />
+      <a href="/generate-stock" class="menu">Generate Stock Excel</a>
 
-    <a href="/agents" class="menu">Daftar Agent</a>
+      <h4>Master Data</h4>
 
-  </div>
-</body>
+      <a href="/item-agent-mapping" class="menu">
+        Master Agent Mapping Produk
+      </a>
+
+      <a href="/insell-reports/" class="menu">
+          Master Data Insell
+      </a>
+
+      <a href="/cmo-template" class="menu"> CMO Agent Template </a>
+
+      <a href="/agents" class="menu"> Daftar Agent </a>
+
+      <h4>Generate</h4>
+
+      <a href="/generate-yuri" class="menu"> Generate Template Yuri </a>
+
+      <a href="/generate-cmo" class="menu"> Generate CMO </a>
+
+      <h4>SQL Server</h4>
+
+      <a href="/ods-ec-detail" class="menu"> Data SAP Agent Insell </a>
+    </div>
+  </body>
+</html>
