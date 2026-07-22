@@ -12,6 +12,11 @@ from config import Config
 from models.agent_invoice_report import AgentInvoiceReport
 import math
 from models.cmo_template import CMOTemplate
+from openpyxl.styles import PatternFill, Font, Border, Side, Alignment
+from openpyxl.utils import get_column_letter
+from models.insell_report import InsellReport
+import numpy as np
+from openpyxl.styles import Alignment
 
 
 generate_cmo_bp = Blueprint(
@@ -75,6 +80,9 @@ def generate():
     else:
         stock_bulan = bulan - 1
         stock_tahun = tahun
+        
+    sales_bulan = bulan
+    sales_tahun = tahun
 
    # ==========================
     # STOCK
@@ -99,6 +107,74 @@ def generate():
         }
         for item in stock
     ])
+    
+    # ==========================
+    # Stock Agen bulan ini 
+    # ==========================
+    stock_current = (
+        db.query(AgentStockReport)
+        .filter(
+            AgentStockReport.agent_id == agent_id,
+            AgentStockReport.bulan == bulan,
+            AgentStockReport.tahun == tahun
+        )
+        .order_by(AgentStockReport.id)
+        .all()
+    )
+
+    sheet_stock_current = pd.DataFrame([
+        {
+            "Kode SKU JIM": item.kode_sku_jim,
+            "Qty Karton": item.qty_karton
+        }
+        for item in stock_current
+    ])
+    
+    # ==========================
+    # INSELL
+    # ==========================
+
+    insell = (
+        db.query(InsellReport)
+        .filter(
+            InsellReport.agent_id == agent_id,
+            InsellReport.bulan == sales_bulan,
+            InsellReport.tahun == sales_tahun
+        )
+        .all()
+    )
+
+    sheet_insell = pd.DataFrame([
+        {
+            "Kode SKU JIM": item.item_code,
+            "Nama SKU JIM": item.item_name,
+            "Qty Karton": item.so_qty_karton
+        }
+        for item in insell
+    ])
+    
+    if not sheet_insell.empty:
+
+        sheet_insell = (
+            sheet_insell
+            .groupby(
+                ["Kode SKU JIM", "Nama SKU JIM"],
+                as_index=False
+            )
+            .agg({
+                "Qty Karton": "sum"
+            })
+        )
+
+    else:
+
+        sheet_insell = pd.DataFrame(
+            columns=[
+                "Kode SKU JIM",
+                "Nama SKU JIM",
+                "Qty Karton"
+            ]
+        )
 
     # ==========================
     # OUTSELL (1 BULAN)
@@ -108,8 +184,8 @@ def generate():
         db.query(AgentInvoiceReport)
         .filter(
             AgentInvoiceReport.agent_id == agent_id,
-            AgentInvoiceReport.bulan == stock_bulan,
-            AgentInvoiceReport.tahun == stock_tahun
+            AgentInvoiceReport.bulan == sales_bulan,
+            AgentInvoiceReport.tahun == sales_tahun
         )
         .all()
     )
@@ -216,10 +292,10 @@ def generate():
 
     avg_rows = []
 
-    for i in range(1, 4):
+    for i in range(0, 3):
 
-        avg_bulan = bulan - i
-        avg_tahun = tahun
+        avg_bulan = sales_bulan  - i
+        avg_tahun = sales_tahun
 
         if avg_bulan <= 0:
             avg_bulan += 12
@@ -257,11 +333,11 @@ def generate():
         for item in avg_rows
     ])
     
-    print("KUYYYYYYYYYY")
-    print(sheet_avg_outsell.iloc[3598])
-    print("KUYYYYYYYYYYANGNGNGNGNGNG")
-    print(avg_rows[3598])
-    print(vars(avg_rows[3598]))
+    # print("KUYYYYYYYYYY")
+    # print(sheet_avg_outsell.iloc[3598])
+    # print("KUYYYYYYYYYYANGNGNGNGNGNG")
+    # print(avg_rows[3598])
+    # print(vars(avg_rows[3598]))
     
     print("Jumlah baris :", len(sheet_avg_outsell))
 
@@ -386,6 +462,7 @@ def generate():
         .all()
     )
     
+    # tempalte lama
     sheet_template = pd.DataFrame([
         {
             "Kode SKU JIM": item.item_code,
@@ -409,7 +486,7 @@ def generate():
     ])
     
     # ==========================
-    # MERGE STOCK
+    # MERGE STOCK Agen bulan lalu
     # ==========================
 
     sheet_cmo = sheet_template.merge(
@@ -426,6 +503,23 @@ def generate():
     sheet_cmo["Qty Karton"] = (
         sheet_cmo["Qty Karton"]
         .fillna(0)
+    )
+    
+    # ==========================
+    # MERGE STOCK Agen bulan ini
+    # ==========================
+    sheet_cmo = sheet_cmo.merge(
+        sheet_stock_current.rename(
+            columns={
+                "Qty Karton": "Stock Agen Akhir Bulan ini"
+            }
+        ),
+        on="Kode SKU JIM",
+        how="left"
+    )
+
+    sheet_cmo["Stock Agen Akhir Bulan ini"] = (
+        sheet_cmo["Stock Agen Akhir Bulan ini"].fillna(0)
     )
     
     # ==========================
@@ -472,6 +566,167 @@ def generate():
         .fillna(0)
     )
     
+    # ==========================
+    # MERGE INSELL
+    # ==========================
+    sheet_cmo = sheet_cmo.merge(
+        sheet_insell[
+            [
+                "Kode SKU JIM",
+                "Qty Karton"
+            ]
+        ].rename(
+            columns={
+                "Qty Karton": "Total Sales Qty Insell Carton"
+            }
+        ),
+        on="Kode SKU JIM",
+        how="left"
+    )
+
+    sheet_cmo["Total Sales Qty Insell Carton"] = (
+        sheet_cmo["Total Sales Qty Insell Carton"]
+        .fillna(0)
+    )
+    
+    sheet_cmo["Selisih Karton Order Agen (Bulan Berikutnya)"] = ""
+    sheet_cmo["CMO"] = ""
+    sheet_cmo["TOTAL CMO"] = ""
+    sheet_cmo["TOTAL BERAT (kg)"] = ""
+    sheet_cmo["TOTAL VOLUME (m3)"] = ""
+    
+    # ==========================
+    # RENAME KOLOM
+    # ==========================
+
+    sheet_cmo = sheet_cmo.rename(columns={
+        "Kode SKU JIM": "Item Code",
+        "Nama SKU JIM": "Item Name",
+        "Item Group": "Item Group Name",
+        "Berat (kg)": "BERAT (kg)",
+        "Volume (m3)": "VOLUME (m3)",
+        "Item Box": "Item / Box",
+        "Qty Karton": "Stock Agen Akhir Bulan lalu",
+        "Outsell Karton": "Total Sales Qty Outsell Carton",
+        "Min Stock": "MIN STOK",
+        "Min Stock NKA 1": "MIN STOCK (NKA) 1",
+        "Min Stock NKA 2": "MIN STOCK (NKA) 2",
+        "Order Tambahan": "ORDER TAMBAHAN / PRODUCT PROMOSI"
+    })
+    
+    # ==========================
+    # HITUNG CMO
+    # ==========================
+    
+    # sheet_cmo["Stock SAP Akhir Bulan ini"] = (
+    #     sheet_cmo["Stock Agen Akhir Bulan lalu"].fillna(0).astype(float)
+    #     + sheet_cmo["Total Sales Qty Insell Carton"].fillna(0).astype(float)
+    #     - sheet_cmo["Total Sales Qty Outsell Carton"].fillna(0).astype(float)
+    # )
+
+    # sheet_cmo["CMO"] = (
+    #     sheet_cmo["Total Sales Qty Outsell Carton"].fillna(0).astype(float)
+    #     + (
+    #         (
+    #             sheet_cmo["Buffer (Hari)"].fillna(0).astype(float)
+    #             / 30
+    #         )
+    #         * sheet_cmo["Avg Qty Outsell Karton"].fillna(0).astype(float)
+    #     )
+    #     - sheet_cmo["Stock Agen Akhir Bulan lalu"].fillna(0).astype(float)
+    # )
+    
+    sheet_cmo["Stock SAP Akhir Bulan ini"] = (
+        sheet_cmo["Stock Agen Akhir Bulan lalu"].fillna(0).astype(float)
+        + sheet_cmo["Avg Qty Outsell Karton"].fillna(0).astype(float)
+        - sheet_cmo["Total Sales Qty Insell Carton"].fillna(0).astype(float)
+    )
+    
+    sheet_cmo["CMO"] = np.where(
+
+    sheet_cmo["MIN STOK"].fillna(0).astype(float) > 0,
+
+        # Jika MIN STOK > 0
+        (
+            sheet_cmo["MIN STOK"].fillna(0).astype(float)
+            + sheet_cmo["Total Sales Qty Outsell Carton"].fillna(0).astype(float)
+            - sheet_cmo["Stock Agen Akhir Bulan ini"].fillna(0).astype(float)
+        ),
+
+        # Jika MIN STOK <= 0
+        (
+            sheet_cmo["Total Sales Qty Outsell Carton"].fillna(0).astype(float)
+            + (
+                sheet_cmo["Buffer (Hari)"].fillna(0).astype(float) / 30
+                * sheet_cmo["Avg Qty Outsell Karton"].fillna(0).astype(float)
+            )
+            - sheet_cmo["Stock Agen Akhir Bulan ini"].fillna(0).astype(float)
+        )
+
+    )
+    
+    sheet_cmo["Selisih Karton Order Agen (Bulan Berikutnya)"] = (
+        sheet_cmo["CMO"]
+        .apply(lambda x: max(0, math.floor(x + 0.5)))
+    )
+    
+    # 3. Hitung TOTAL CMO
+    sheet_cmo["TOTAL CMO"] = (
+        sheet_cmo["Selisih Karton Order Agen (Bulan Berikutnya)"].fillna(0).astype(float)
+        + sheet_cmo["ORDER TAMBAHAN / PRODUCT PROMOSI"].fillna(0).astype(float)
+    )
+    
+    # Hitung Total Berat
+    sheet_cmo["TOTAL BERAT (kg)"] = (
+        sheet_cmo["TOTAL CMO"].fillna(0).astype(float)
+        * sheet_cmo["BERAT (kg)"].fillna(0).astype(float)
+    )
+
+    # Hitung Total Volume
+    sheet_cmo["TOTAL VOLUME (m3)"] = (
+        sheet_cmo["TOTAL CMO"].fillna(0).astype(float)
+        * sheet_cmo["VOLUME (m3)"].fillna(0).astype(float)
+    )
+
+    # Jika tidak boleh negatif
+    # sheet_cmo["CMO"] = sheet_cmo["CMO"].clip(lower=0)
+
+    # ==========================
+    # URUTKAN KOLOM
+    # ==========================
+
+    sheet_cmo = sheet_cmo[
+        [
+            "Item Code",
+            "Item Name",
+            "Item Group Name",
+            "Customer Name",
+            "BERAT (kg)",
+            "VOLUME (m3)",
+            "Item / Box",
+            "Stock Agen Akhir Bulan lalu",
+            "Buffer (Hari)",
+            "Avg Qty Outsell Karton",
+            "Total Sales Qty Insell Carton",
+            "Total Sales Qty Outsell Carton",
+            "NKA 1",
+            "NKA 2",
+            "NKA 3",
+            "NKA 4",
+            "MIN STOK",
+            "Stock Agen Akhir Bulan ini",
+            "Stock SAP Akhir Bulan ini",
+            "MIN STOCK (NKA) 1",
+            "MIN STOCK (NKA) 2",
+            "Selisih Karton Order Agen (Bulan Berikutnya)",
+            "CMO",
+            "ORDER TAMBAHAN / PRODUCT PROMOSI",
+            "TOTAL CMO",
+            "TOTAL BERAT (kg)",
+            "TOTAL VOLUME (m3)"
+        ]
+    ]
+    
     # sheet_template = pd.DataFrame([
     #     {
     #         "Kode SKU JIM": t.item_code,
@@ -496,35 +751,153 @@ def generate():
 
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
 
-        sheet_stock.to_excel(
-            writer,
-            sheet_name="Stock",
-            index=False
-        )
+        # sheet_stock.to_excel(
+        #     writer,
+        #     sheet_name="Stock",
+        #     index=False
+        # )
 
-        sheet_outsell.to_excel(
-            writer,
-            sheet_name="Outsell",
-            index=False
-        )
+        # sheet_outsell.to_excel(
+        #     writer,
+        #     sheet_name="Outsell",
+        #     index=False
+        # )
 
-        sheet_avg_outsell.to_excel(
-            writer,
-            sheet_name="Avg Outsell",
-            index=False
-        )
+        # sheet_avg_outsell.to_excel(
+        #     writer,
+        #     sheet_name="Avg Outsell",
+        #     index=False
+        # )
         
-        sheet_template.to_excel(
-            writer,
-            sheet_name="CMO Template",
-            index=False
-        )
+        # sheet_template.to_excel(
+        #     writer,
+        #     sheet_name="CMO Template",
+        #     index=False
+        # )
+        
+        # sheet_cmo.to_excel(
+        #     writer,
+        #     sheet_name=agent.kode_agent,
+        #     index=False
+        # )
         
         sheet_cmo.to_excel(
             writer,
-            sheet_name="CMO + Stock",
-            index=False
+            sheet_name=agent.kode_agent,
+            index=False,
+            startrow=4
         )
+        
+        ws = writer.sheets[agent.kode_agent]
+        
+        # ==========================
+        # HEADER SUMMARY
+        # ==========================
+
+        ws["A1"] = "STOCK AGEN AKHIR BULAN INI"
+        ws["B1"] = "STOCK SAP AKHIR BULAN INI"
+        ws["C1"] = "AVG OUTSELL"
+        ws["D1"] = "OUTSELL"
+        ws["E1"] = "INSELL"
+        ws["F1"] = "TOTAL CMO"
+        ws["G1"] = "TOTAL BERAT"
+        ws["H1"] = "TOTAL VOLUME"
+        
+        # ==========================
+        # TOTAL SUMMARY
+        # ==========================
+
+        # ws["A2"] = "=SUM(R6:R1048576)"
+        # ws["B2"] = "=SUM(S6:S1048576)"
+        # ws["C2"] = "=SUM(J6:J1048576)"
+        # ws["D2"] = "=SUM(L6:L1048576)"
+        # ws["E2"] = "=SUM(K6:K1048576)"
+        # ws["F2"] = "=SUM(Y6:Y1048576)"
+        # ws["G2"] = "=SUM(Z6:Z1048576)"
+        # ws["H2"] = "=SUM(AA6:AA1048576)"
+        
+        ws["A2"] = sheet_cmo["Stock Agen Akhir Bulan ini"].sum()
+        ws["B2"] = sheet_cmo["Stock SAP Akhir Bulan ini"].sum()
+        ws["C2"] = sheet_cmo["Avg Qty Outsell Karton"].sum()
+        ws["D2"] = sheet_cmo["Total Sales Qty Outsell Carton"].sum()
+        ws["E2"] = sheet_cmo["Total Sales Qty Insell Carton"].sum()
+        ws["F2"] = sheet_cmo["TOTAL CMO"].sum()
+        ws["G2"] = sheet_cmo["TOTAL BERAT (kg)"].sum()
+        ws["H2"] = sheet_cmo["TOTAL VOLUME (m3)"].sum()
+        
+        for row in ws["A1:H2"]:
+            for cell in row:
+                cell.alignment = Alignment(
+                    horizontal="center",
+                    vertical="center",
+                    wrap_text=True
+                )
+
+        # ==========================
+        # STYLE HEADER
+        # ==========================
+
+        header_fill = PatternFill(
+            fill_type="solid",
+            fgColor="1F4E78"      # Biru tua
+        )
+
+        header_font = Font(
+            color="FFFFFF",
+            bold=True
+        )
+
+        thin = Side(style="thin", color="000000")
+
+        header_border = Border(
+            left=thin,
+            right=thin,
+            top=thin,
+            bottom=thin
+        )
+        
+        # Warna header summary (baris 1)
+        for cell in ws["A1:H1"][0]:
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.border = header_border
+            cell.alignment = Alignment(
+                horizontal="center",
+                vertical="center",
+                wrap_text=True
+            )
+
+        for cell in ws[5]:
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.border = header_border
+            cell.alignment = Alignment(
+                horizontal="center",
+                vertical="center",
+                wrap_text=True
+            )
+
+        # ==========================
+        # BORDER SEMUA CELL
+        # ==========================
+
+        for row in ws.iter_rows():
+            for cell in row:
+                cell.border = header_border
+
+        # ==========================
+        # AUTO FIT
+        # ==========================
+
+        for column_cells in ws.columns:
+            length = max(
+                len(str(cell.value)) if cell.value else 0
+                for cell in column_cells
+            )
+
+            ws.column_dimensions[
+                get_column_letter(column_cells[0].column)
+            ].width = length + 3
 
     db.close()
 
