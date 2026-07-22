@@ -271,6 +271,33 @@ def import_excel():
         agent_id = int(request.form["agent_id"])
 
         df = pd.read_excel(file)
+        
+        # Hilangkan spasi di kode SKU
+        df["kode_sku_agent"] = (
+            df["kode_sku_agent"]
+            .astype(str)
+            .str.strip()
+        )
+
+        # Cek duplicate di file Excel
+        duplicate = df[df.duplicated(
+            subset=["kode_sku_agent"],
+            keep=False
+        )]
+
+        if not duplicate.empty:
+
+            kode_list = duplicate["kode_sku_agent"].unique().tolist()
+
+            flash(
+                "Import gagal! Ditemukan Kode SKU Agent duplicate pada file Excel:<br><br>"
+                + "<br>".join(kode_list[:20]),
+                "danger"
+            )
+
+            return redirect(
+                url_for("item_agent_mapping.import_form")
+            )
 
         for _, row in df.iterrows():
 
@@ -354,7 +381,14 @@ def import_excel():
 
         db.rollback()
 
-        return str(e)
+        flash(
+            f"Import gagal! {str(e)}",
+            "danger"
+        )
+
+        return redirect(
+            url_for("item_agent_mapping.import_form")
+        )
 
     finally:
 
