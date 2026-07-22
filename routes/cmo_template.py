@@ -287,6 +287,26 @@ def import_excel():
         agent_id = int(request.form["agent_id"])
 
         df = pd.read_excel(file)
+        
+        # ==========================
+        # VALIDASI DUPLIKAT EXCEL
+        # ==========================
+        duplicate = df[df.duplicated(subset=["item_code"], keep=False)]
+
+        if not duplicate.empty:
+
+            item_codes = duplicate["item_code"].astype(str).unique().tolist()
+
+            flash(
+                "Import gagal! Item Code duplicate di file Excel:<br><b>"
+                + "<br>".join(item_codes[:20]) +
+                "</b>",
+                "danger"
+            )
+
+            return redirect(
+                url_for("cmo_template.import_form")
+            )
 
         for _, row in df.iterrows():
 
