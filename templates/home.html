@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 <html lang="en">
   <head>
@@ -145,3 +146,198 @@
     </div>
   </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f4f4f4;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    min-height:100vh;
+
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:550px;
+
+    background:#fff;
+
+    padding:40px;
+
+    border-radius:12px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.12);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:35px;
+    color:#333;
+}
+
+.menu{
+    display:block;
+
+    width:100%;
+
+    padding:15px;
+
+    margin-bottom:15px;
+
+    text-align:center;
+
+    text-decoration:none;
+
+    color:#fff;
+
+    background:#1976d2;
+
+    border-radius:8px;
+
+    font-size:18px;
+
+    transition:.25s;
+
+    font-weight:600;
+}
+
+.menu:hover{
+    background:#1565c0;
+    transform:translateY(-2px);
+}
+
+.section-space{
+    height:20px;
+}
+
+/* Tablet */
+@media (max-width:768px){
+
+    .container{
+        padding:30px 25px;
+    }
+
+    h2{
+        font-size:26px;
+    }
+
+    .menu{
+        font-size:17px;
+        padding:14px;
+    }
+
+}
+
+/* HP */
+@media (max-width:480px){
+
+    body{
+        padding:15px;
+        align-items:flex-start;
+    }
+
+    .container{
+        padding:22px 18px;
+        border-radius:10px;
+    }
+
+    h2{
+        font-size:22px;
+        margin-bottom:25px;
+    }
+
+    .menu{
+        font-size:16px;
+        padding:13px;
+        margin-bottom:12px;
+    }
+
+    .section-space{
+        height:12px;
+    }
+
+}
+
+/* HP kecil */
+@media (max-width:360px){
+
+    h2{
+        font-size:20px;
+    }
+
+    .menu{
+        font-size:15px;
+        padding:12px;
+    }
+
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>ETL Excel Application</h2>
+
+    <!-- INVOICE -->
+    <a href="/upload" class="menu">Normalisasi Invoice</a>
+
+    <a href="/mapping" class="menu">Mapping Invoice</a>
+
+    <a href="/generate" class="menu">Generate Invoice Excel</a>
+
+    <div class="section-space"></div>
+
+    <!-- STOCK -->
+    <a href="/stock/upload" class="menu">Normalisasi Stock</a>
+
+    <a href="/stock-mapping" class="menu">Mapping Stock</a>
+
+    <a href="/generate-stock" class="menu">Generate Stock Excel</a>
+
+    <div class="section-space"></div>
+
+    <a href="/item-agent-mapping" class="menu">
+        Master Agent Mapping Produk
+    </a>
+
+    <div class="section-space"></div>
+
+    <a href="/generate-yuri" class="menu">
+        Generate Template Yuri
+    </a>
+
+    <a href="/generate-cmo" class="menu">
+        Generate CMO
+    </a>
+
+    <div class="section-space"></div>
+
+    <a href="/agents" class="menu">
+        Daftar Agent
+    </a>
+
+</div>
+
+</body>
+</html>
+>>>>>>> origin/master
