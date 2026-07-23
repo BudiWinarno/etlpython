@@ -9,7 +9,11 @@ from services.normalize.lk000065 import LK000065InvoiceNormalizer
 from services.normalize.lk000093 import LK000093InvoiceNormalizer
 from services.normalize.lk000118 import LK000118InvoiceNormalizer
 from services.normalize.lk000121 import LK000121InvoiceNormalizer
-
+from services.normalize.lk000032 import LK000032InvoiceNormalizer
+from services.normalize.lk000108 import LK000108InvoiceNormalizer
+from services.normalize.lk000145 import LK000145InvoiceNormalizer
+from services.normalize.lk000146 import LK000146InvoiceNormalizer
+from services.normalize.lk000153 import LK000153InvoiceNormalizer
 
 class NormalizeFactory:
 
@@ -48,5 +52,20 @@ class NormalizeFactory:
         
         elif agent_code == "LK-000121":
             return LK000121InvoiceNormalizer()
+        
+        elif agent_code == "LK-000032":
+            return LK000032InvoiceNormalizer()
+        
+        elif agent_code == "LK-000108":
+            return LK000108InvoiceNormalizer()
+        
+        elif agent_code == "LK-000145":
+            return LK000145InvoiceNormalizer()
+        
+        elif agent_code == "LK-000146":
+            return LK000146InvoiceNormalizer()
+        
+        elif agent_code == "LK-000153":
+            return LK000153InvoiceNormalizer()
 
         raise Exception("Template belum didukung")
