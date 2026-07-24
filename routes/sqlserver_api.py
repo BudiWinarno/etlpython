@@ -27,8 +27,8 @@ def api_ods_ec_detail():
         [Customer Name],
         [Item Code],
         [Item Name],
-        [MONTH],
-        [YEAR],
+        [BULAN_INV],
+        [TAHUN_INV],
         [SO Quantity PCS],
         [SO Quantity Karton]
     FROM ODS_EC_DETAIL
@@ -42,17 +42,17 @@ def api_ods_ec_detail():
         params["customer_code"] = f"%{customer_code}%"
 
     if month:
-        sql += " AND [MONTH] = :month"
+        sql += " AND [BULAN_INV] = :month"
         params["month"] = int(month)
 
     if year:
-        sql += " AND [YEAR] = :year"
+        sql += " AND [TAHUN_INV] = :year"
         params["year"] = int(year)
 
     sql += """
     ORDER BY
-        [YEAR] DESC,
-        [MONTH] DESC,
+        [TAHUN_INV] DESC,
+        [BULAN_INV] DESC,
         [Customer Code]
     """
 
@@ -80,8 +80,8 @@ def export_ods_ec_detail():
         [Customer Name],
         [Item Code],
         [Item Name],
-        [MONTH],
-        [YEAR],
+        [BULAN_INV],
+        [TAHUN_INV],
         [SO Quantity PCS],
         [SO Quantity Karton]
     FROM ODS_EC_DETAIL
@@ -95,17 +95,17 @@ def export_ods_ec_detail():
         params["customer_code"] = f"%{customer_code}%"
 
     if month:
-        sql += " AND [MONTH] = :month"
+        sql += " AND [BULAN_INV] = :month"
         params["month"] = int(month)
 
     if year:
-        sql += " AND [YEAR] = :year"
+        sql += " AND [TAHUN_INV] = :year"
         params["year"] = int(year)
 
     sql += """
     ORDER BY
-        [YEAR] DESC,
-        [MONTH] DESC,
+        [TAHUN_INV] DESC,
+        [BULAN_INV] DESC,
         [Customer Code],
         [Item Code]
     """
@@ -122,8 +122,8 @@ def export_ods_ec_detail():
             "Customer Code": "first",
             "Customer Name": "first",
             "Item Name": "first",
-            "MONTH": "first",
-            "YEAR": "first",
+            "BULAN_INV": "first",
+            "TAHUN_INV": "first",
             "SO Quantity PCS": "sum",
             "SO Quantity Karton": "sum"
         })

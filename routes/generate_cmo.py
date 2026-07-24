@@ -74,15 +74,26 @@ def generate():
     # Bulan Sebelumnya
     # ==========================
 
-    if bulan == 1:
-        stock_bulan = 12
-        stock_tahun = tahun - 1
-    else:
-        stock_bulan = bulan - 1
-        stock_tahun = tahun
+    # if bulan == 1:
+    #     stock_bulan = 12
+    #     stock_tahun = tahun - 1
+    # else:
+    #     stock_bulan = bulan - 1
+    #     stock_tahun = tahun
+    
+    stock_bulan = bulan - 2
+    stock_tahun = tahun
+
+    if stock_bulan <= 0:
+        stock_bulan += 12
+        stock_tahun -= 1
         
-    sales_bulan = bulan
+    sales_bulan = bulan - 1
     sales_tahun = tahun
+
+    if sales_bulan <= 0:
+        sales_bulan += 12
+        sales_tahun -= 1
 
    # ==========================
     # STOCK
@@ -111,12 +122,20 @@ def generate():
     # ==========================
     # Stock Agen bulan ini 
     # ==========================
+    
+    stock_current_bulan = bulan - 1
+    stock_current_tahun = tahun
+
+    if stock_current_bulan <= 0:
+        stock_current_bulan += 12
+        stock_current_tahun -= 1
+    
     stock_current = (
         db.query(AgentStockReport)
         .filter(
             AgentStockReport.agent_id == agent_id,
-            AgentStockReport.bulan == bulan,
-            AgentStockReport.tahun == tahun
+            AgentStockReport.bulan == stock_current_bulan,
+            AgentStockReport.tahun == stock_current_tahun
         )
         .order_by(AgentStockReport.id)
         .all()
@@ -133,16 +152,43 @@ def generate():
     # ==========================
     # INSELL
     # ==========================
+    
+    # ==========================
+    # INSELL (2 BULAN SEBELUMNYA)
+    # ==========================
 
+    insell_bulan = bulan - 1
+    insell_tahun = tahun
+
+    if insell_bulan <= 0:
+        insell_bulan += 12
+        insell_tahun -= 1
+        
     insell = (
         db.query(InsellReport)
         .filter(
             InsellReport.agent_id == agent_id,
-            InsellReport.bulan == sales_bulan,
-            InsellReport.tahun == sales_tahun
+            InsellReport.bulan == insell_bulan,
+            InsellReport.tahun == insell_tahun
         )
         .all()
     )
+    
+    # print("===== DEBUG INSELL =====")
+    # print("Agent :", agent_id)
+    # print("Bulan :", insell_bulan)
+    # print("Tahun :", insell_tahun)
+    # print("Jumlah data :", len(insell))
+
+    # insell = (
+    #     db.query(InsellReport)
+    #     .filter(
+    #         InsellReport.agent_id == agent_id,
+    #         InsellReport.bulan == sales_bulan,
+    #         InsellReport.tahun == sales_tahun
+    #     )
+    #     .all()
+    # )
 
     sheet_insell = pd.DataFrame([
         {
@@ -488,6 +534,28 @@ def generate():
     # ==========================
     # MERGE STOCK Agen bulan lalu
     # ==========================
+    
+    # ==========================
+    # DEBUG
+    # ==========================
+
+    # print("sheet_stock")
+    # print(sheet_stock.columns)
+
+    # print("sheet_stock_current")
+    # print(sheet_stock_current.columns)
+
+    # print("sheet_outsell")
+    # print(sheet_outsell.columns)
+
+    # print("sheet_avg_outsell")
+    # print(sheet_avg_outsell.columns)
+
+    # print("sheet_insell")
+    # print(sheet_insell.columns)
+
+    # print("sheet_template")
+    # print(sheet_template.columns)
 
     sheet_cmo = sheet_template.merge(
         sheet_stock[
@@ -638,8 +706,8 @@ def generate():
     
     sheet_cmo["Stock SAP Akhir Bulan ini"] = (
         sheet_cmo["Stock Agen Akhir Bulan lalu"].fillna(0).astype(float)
-        + sheet_cmo["Avg Qty Outsell Karton"].fillna(0).astype(float)
-        - sheet_cmo["Total Sales Qty Insell Carton"].fillna(0).astype(float)
+        + sheet_cmo["Total Sales Qty Insell Carton"].fillna(0).astype(float)
+        - sheet_cmo["Total Sales Qty Outsell Carton"].fillna(0).astype(float)
     )
     
     sheet_cmo["CMO"] = np.where(

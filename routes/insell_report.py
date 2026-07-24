@@ -92,8 +92,8 @@ def import_store():
                 customer_name=row["Customer Name"],
                 item_code=row["Item Code"],
                 item_name=row["Item Name"],
-                bulan=int(row["MONTH"]),
-                tahun=int(row["YEAR"]),
+                bulan=int(row["BULAN_INV"]),
+                tahun=int(row["TAHUN_INV"]),
                 so_qty_pcs=float(row["SO Quantity PCS"]),
                 so_qty_karton=float(row["SO Quantity Karton"])
             )
