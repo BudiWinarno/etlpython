@@ -17,6 +17,7 @@ from routes.generate_cmo import generate_cmo_bp
 from routes.cmo_template import cmo_template_bp
 from routes.sqlserver_api import sqlserver_bp
 from routes.insell_report import insell_report_bp
+from routes.auth import auth_bp
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -37,6 +38,7 @@ app.register_blueprint(generate_cmo_bp)
 app.register_blueprint(cmo_template_bp)
 app.register_blueprint(sqlserver_bp)
 app.register_blueprint(insell_report_bp)
+app.register_blueprint(auth_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)

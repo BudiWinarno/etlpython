@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Data Portal</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-box">APP</div>
+
+          <div>
+            <h1>DATA AGENT<br />PORTAL</h1>
+            <span>MAPPING - SELL OUT - STOCK - CMO</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-menu">
+          <p class="menu-title">MAIN MENU</p>
+
+          <a href="/dashboard" class="menu-item active">
+            <span>▣</span>
+            Dashboard
+          </a>
+
+          <div class="menu-dropdown">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span>▤</span>
+              <span class="menu-text">Sell Out</span>
+              <span class="arrow">▾</span>
+            </button>
+
+            <div class="submenu">
+              <a href="/upload"> Normalisasi Invoice </a>
+
+              <a href="/mapping"> Mapping Invoice </a>
+
+              <a href="/generate"> Generate Invoice </a>
+            </div>
+          </div>
+
+          <div class="menu-dropdown">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span>▥</span>
+              <span class="menu-text">Stock</span>
+              <span class="arrow">▾</span>
+            </button>
+
+            <div class="submenu">
+              <a href="/stock/upload"> Normalisasi Stock </a>
+
+              <a href="/stock-mapping"> Mapping Stock </a>
+
+              <a href="/generate-stock"> Generate Stock </a>
+            </div>
+          </div>
+
+          <a href="/generate-yuri" class="menu-item">
+            <span>◈</span>
+            Generate Template Yuri
+          </a>
+
+          <a href="/generate-cmo" class="menu-item">
+            <span>◈</span>
+            Generate CMO
+          </a>
+
+          <p class="menu-title">Daftar Laporan Agent</p>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Raw Agent
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Template Yuri
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan CMO
+          </a>
+
+          <p class="menu-title">MASTER DATA</p>
+
+          <a href="/agents" class="menu-item">
+            <span>◆</span>
+            Daftar Agent
+          </a>
+
+          <a href="/item-agent-mapping" class="menu-item">
+            <span>▦</span>
+            Master Agent Mapping Produk
+          </a>
+
+          <a href="/cmo-template" class="menu-item">
+            <span>▦</span>
+            CMO Agent Template
+          </a>
+
+          <a href="/insell-reports" class="menu-item">
+            <span>◫</span>
+            Master Data Insell
+          </a>
+
+          <a href="/ods-ec-detail" class="menu-item">
+            <span>◫</span>
+            SQL Server SAP Data Insell
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="user-box">
+            <div class="avatar">A</div>
+
+            <div>
+              <strong>Administrator</strong>
+              <small>{{ session.get('user_email', 'User') }}</small>
+            </div>
+          </div>
+
+          <a href="/logout" class="logout"> ⇥ &nbsp; Logout </a>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <span class="breadcrumb">HOME / DASHBOARD</span>
+            <h2>Dashboard</h2>
+          </div>
+
+          <div class="top-user">
+            <span class="status-dot"></span>
+            Online
+          </div>
+        </header>
+
+        <!-- STAT CARDS -->
+        <section class="stats">
+          <div class="stat-card yellow">
+            <div class="stat-icon">▤</div>
+
+            <div>
+              <span>SELL OUT</span>
+              <strong>-</strong>
+              <small>Processed this month</small>
+            </div>
+          </div>
+
+          <div class="stat-card blue">
+            <div class="stat-icon">▥</div>
+
+            <div>
+              <span>STOCK</span>
+              <strong>-</strong>
+              <small>Stock reports</small>
+            </div>
+          </div>
+
+          <div class="stat-card purple">
+            <div class="stat-icon">◈</div>
+
+            <div>
+              <span>CMO</span>
+              <strong>-</strong>
+              <small>CMO reports</small>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUICK ACCESS -->
+        <section class="section">
+          <div class="section-heading">
+            <div>
+              <span class="section-label">WORKFLOW</span>
+              <h3>Quick Access</h3>
+            </div>
+
+            <span class="section-count">ETL TOOLS</span>
+          </div>
+
+          <div class="quick-grid">
+            <a href="#" class="quick-card yellow-card">
+              <div class="quick-number">01</div>
+              <div class="quick-icon">↻</div>
+
+              <h4>Normalisasi Invoice</h4>
+
+              <p>Bersihkan dan standarkan data invoice.</p>
+
+              <span class="open">OPEN →</span>
+            </a>
+
+            <a href="#" class="quick-card blue-card">
+              <div class="quick-number">02</div>
+              <div class="quick-icon">⌘</div>
+
+              <h4>Mapping Invoice</h4>
+
+              <p>Mapping kolom Excel ke struktur standar.</p>
+
+              <span class="open">OPEN →</span>
+            </a>
+
+            <a href="#" class="quick-card purple-card">
+              <div class="quick-number">03</div>
+              <div class="quick-icon">↓</div>
+
+              <h4>Generate Invoice</h4>
+
+              <p>Generate Excel invoice hasil proses.</p>
+
+              <span class="open">OPEN →</span>
+            </a>
+
+            <a href="#" class="quick-card mint-card">
+              <div class="quick-number">04</div>
+              <div class="quick-icon">▥</div>
+
+              <h4>Normalisasi Stock</h4>
+
+              <p>Normalisasi laporan stock agent.</p>
+
+              <span class="open">OPEN →</span>
+            </a>
+
+            <a href="#" class="quick-card pink-card">
+              <div class="quick-number">05</div>
+              <div class="quick-icon">◈</div>
+
+              <h4>CMO</h4>
+
+              <p>Kelola template dan laporan CMO.</p>
+
+              <span class="open">OPEN →</span>
+            </a>
+
+            <a href="#" class="quick-card orange-card">
+              <div class="quick-number">06</div>
+              <div class="quick-icon">◆</div>
+
+              <h4>Master Data</h4>
+
+              <p>Kelola agent dan mapping produk.</p>
+
+              <span class="open">OPEN →</span>
+            </a>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      document.querySelectorAll(".dropdown-toggle").forEach((button) => {
+        button.addEventListener("click", function () {
+          const dropdown = this.parentElement;
+
+          dropdown.classList.toggle("open");
+        });
+      });
+    </script>
+  </body>
+</html>
