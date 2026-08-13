@@ -8,7 +8,7 @@ class Config:
     DB_PASSWORD = "postgres"
     DB_HOST = "localhost"
     DB_PORT = "5432"
-    DB_NAME = "latihanpentaho"
+    DB_NAME = "agent_management_db"
 
     DATABASE_URL = (
         f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}"

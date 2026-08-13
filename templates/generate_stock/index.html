@@ -1,143 +1,587 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generate Stock</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
 
-<body class="bg-light">
+    <style>
+      /* =====================================================
+           PAGE
+           ===================================================== */
 
-<div class="container mt-5">
+      .page-container {
+        padding: 28px 32px;
+      }
 
-    <div class="row justify-content-center">
+      /* =====================================================
+           HEADER
+           ===================================================== */
 
-        <div class="col-md-6">
+      .page-header {
+        margin-bottom: 24px;
+      }
 
-            <div class="card shadow">
+      .page-label {
+        display: block;
+        margin-bottom: 5px;
 
-                <div class="card-header bg-success text-white">
-                    <h4 class="mb-0">Generate Stock</h4>
-                </div>
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
 
-                <div class="card-body">
+        color: #6b7280;
+        text-transform: uppercase;
+      }
 
-                    <form action="/generate-stock"
-                          method="POST"
-                          enctype="multipart/form-data">
+      .page-header h2 {
+        margin: 0 0 6px;
 
-                        <div class="mb-3">
-                            <label class="form-label">Template</label>
+        font-size: 27px;
+        font-weight: 700;
 
-                            <select
-                                name="template_id"
-                                class="form-select"
-                                required>
+        color: #111827;
+      }
 
-                                {% for t in templates %}
+      .page-header p {
+        margin: 0;
 
-                                <option value="{{ t.id }}">
-                                    {{ t.template_name }}
-                                </option>
+        font-size: 14px;
+        color: #6b7280;
+      }
 
-                                {% endfor %}
+      /* =====================================================
+           FORM CARD
+           ===================================================== */
 
-                            </select>
+      .content-card {
+        width: 100%;
+        max-width: 900px;
 
-                        </div>
+        padding: 28px;
 
-                        <div class="mb-3">
-                            <label class="form-label">Pilih Bulan</label>
+        background: #ffffff;
 
-                            <select
-                                name="bulan"
-                                class="form-select"
-                                required>
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
 
-                                {% for i in range(1,13) %}
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
-                                <option value="{{ i }}">
-                                    {{ i }}
-                                </option>
+        box-sizing: border-box;
+      }
 
-                                {% endfor %}
+      /* =====================================================
+           FORM
+           ===================================================== */
 
-                            </select>
-                        </div>
+      .form-group {
+        margin-bottom: 20px;
+      }
 
-                        <div class="mb-3">
-                            <label class="form-label">Tahun</label>
+      .form-group label {
+        display: block;
 
-                            <select
-                                name="tahun"
-                                class="form-select"
-                                required>
+        margin-bottom: 7px;
 
-                                {% for i in range(2024,2031) %}
+        font-size: 13px;
+        font-weight: 600;
 
-                                <option value="{{ i }}">
-                                    {{ i }}
-                                </option>
+        color: #374151;
+      }
 
-                                {% endfor %}
+      .form-control {
+        width: 100%;
+        height: 42px;
 
-                            </select>
-                        </div>
+        padding: 8px 12px;
 
-                        <div class="mb-3">
+        box-sizing: border-box;
 
-                            <label class="form-label">
-                                File Stock
-                            </label>
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
 
-                            <input
-                                type="file"
-                                name="file"
-                                class="form-control"
-                                accept=".xlsx,.xls,.xlsb"
-                                required>
+        background: #ffffff;
 
-                            <div class="form-text">
-                                Upload file stock yang akan diproses.
-                            </div>
+        color: #374151;
 
-                        </div>
+        font-size: 14px;
+      }
 
-                        <div class="d-flex justify-content-between">
+      .form-control:focus {
+        outline: none;
 
-                            <a href="/dashboard" class="btn btn-secondary">
-                                ← Kembali
-                            </a>
+        border-color: #198754;
 
-                            <button
-                                type="submit"
-                                class="btn btn-success">
+        box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.1);
+      }
 
-                                Generate Stock
+      .form-group small {
+        display: block;
 
-                            </button>
+        margin-top: 6px;
 
-                        </div>
+        font-size: 12px;
 
-                    </form>
+        color: #9ca3af;
+      }
 
-                </div>
+      /* =====================================================
+           BUTTON
+           ===================================================== */
 
-            </div>
+      .form-actions {
+        display: flex;
 
+        justify-content: space-between;
+        align-items: center;
+
+        margin-top: 28px;
+        padding-top: 20px;
+
+        border-top: 1px solid #f0f0f0;
+      }
+
+      .form-actions a,
+      .form-actions button {
+        height: 40px;
+
+        padding: 0 18px;
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 7px;
+
+        font-size: 13px;
+        font-weight: 600;
+
+        text-decoration: none;
+
+        cursor: pointer;
+
+        box-sizing: border-box;
+      }
+
+      .btn-secondary {
+        background: #f3f4f6;
+
+        color: #374151;
+
+        border: 1px solid #d1d5db;
+      }
+
+      .btn-secondary:hover {
+        background: #e5e7eb;
+      }
+
+      .btn-success {
+        background: #198754;
+
+        color: #ffffff;
+
+        border: 1px solid #198754;
+      }
+
+      .btn-success:hover {
+        background: #157347;
+      }
+
+      /* =====================================================
+           MOBILE
+           ===================================================== */
+
+      @media (max-width: 768px) {
+        .page-container {
+          padding: 20px 15px;
+        }
+
+        .page-header h2 {
+          font-size: 23px;
+        }
+
+        .content-card {
+          padding: 20px;
+        }
+
+        .form-actions {
+          gap: 10px;
+        }
+
+        .form-actions a,
+        .form-actions button {
+          flex: 1;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- =====================================================
+         MOBILE MENU BUTTON
+         ===================================================== -->
+
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+
+    <!-- =====================================================
+         SIDEBAR OVERLAY
+         ===================================================== -->
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="dashboard">
+      <!-- =================================================
+             SIDEBAR
+             ================================================= -->
+
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-box">APP</div>
+
+          <div>
+            <h1>
+              AGENT MANAGEMENT
+              <br />
+              SYSTEM
+            </h1>
+
+            <span> MAPPING - SELL OUT - STOCK - CMO </span>
+          </div>
         </div>
 
+        <!-- =================================================
+                 MENU
+                 ================================================= -->
+
+        <nav class="sidebar-menu">
+          <p class="menu-title">MAIN MENU</p>
+
+          <!-- DASHBOARD -->
+
+          <a href="/dashboard" class="menu-item">
+            <span> ▣ </span>
+
+            Dashboard
+          </a>
+
+          <!-- =================================================
+                     SELL OUT
+                     ================================================= -->
+
+          <div class="menu-dropdown">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span> ▤ </span>
+
+              <span class="menu-text"> Sell Out </span>
+
+              <span class="arrow"> ▾ </span>
+            </button>
+
+            <div class="submenu">
+              <a href="/upload"> Normalisasi Invoice </a>
+
+              <a href="/mapping"> Mapping Invoice </a>
+
+              <a href="/generate"> Generate Invoice </a>
+            </div>
+          </div>
+
+          <!-- =================================================
+                     STOCK
+                     ================================================= -->
+
+          <div class="menu-dropdown open">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span> ▥ </span>
+
+              <span class="menu-text"> Stock </span>
+
+              <span class="arrow"> ▾ </span>
+            </button>
+
+            <div class="submenu">
+              <a href="/stock/upload"> Normalisasi Stock </a>
+
+              <a href="/stock-mapping"> Mapping Stock </a>
+
+              <a href="/generate-stock" class="active"> Generate Stock </a>
+            </div>
+          </div>
+
+          <!-- GENERATE YURI -->
+
+          <a href="/generate-yuri" class="menu-item">
+            <span> ◈ </span>
+
+            Generate Template Yuri
+          </a>
+
+          <!-- GENERATE CMO -->
+
+          <a href="/generate-cmo" class="menu-item">
+            <span> ◈ </span>
+
+            Generate CMO
+          </a>
+
+          <!-- =================================================
+                     LAPORAN
+                     ================================================= -->
+
+          <p class="menu-title">Daftar Laporan Agent</p>
+
+          <a href="#" class="menu-item">
+            <span> ◈ </span>
+
+            Data Laporan Raw Agent
+          </a>
+
+          <a href="#" class="menu-item">
+            <span> ◈ </span>
+
+            Data Laporan Template Yuri
+          </a>
+
+          <a href="#" class="menu-item">
+            <span> ◈ </span>
+
+            Data Laporan CMO
+          </a>
+
+          <!-- =================================================
+                     MASTER DATA
+                     ================================================= -->
+
+          <p class="menu-title">MASTER DATA</p>
+
+          <a href="/agents" class="menu-item">
+            <span> ◆ </span>
+
+            Daftar Agent
+          </a>
+
+          <a href="/item-agent-mapping" class="menu-item">
+            <span> ▦ </span>
+
+            Master Agent Mapping Produk
+          </a>
+
+          <a href="/cmo-template" class="menu-item">
+            <span> ▦ </span>
+
+            CMO Agent Template
+          </a>
+
+          <a href="/insell-reports" class="menu-item">
+            <span> ◫ </span>
+
+            Master Data Insell
+          </a>
+
+          <a href="/ods-ec-detail" class="menu-item">
+            <span> ◫ </span>
+
+            SQL Server SAP Data Insell
+          </a>
+        </nav>
+
+        <!-- =================================================
+                 SIDEBAR BOTTOM
+                 ================================================= -->
+
+        <div class="sidebar-bottom">
+          <div class="user-box">
+            <div class="avatar">A</div>
+
+            <div>
+              <strong> Administrator </strong>
+
+              <small> {{ session.get('user_email', 'User') }} </small>
+            </div>
+          </div>
+
+          <a href="/logout" class="logout"> ⇥ &nbsp; Logout </a>
+        </div>
+      </aside>
+
+      <!-- =====================================================
+             MAIN CONTENT
+             ===================================================== -->
+
+      <main class="main-content">
+        <!-- =================================================
+                 PAGE
+                 ================================================= -->
+
+        <div class="page-container">
+          <!-- HEADER -->
+
+          <div class="page-header">
+            <span class="page-label"> STOCK / GENERATE </span>
+
+            <h2>Generate Stock</h2>
+
+            <p>Generate file Excel berdasarkan template dan periode laporan.</p>
+          </div>
+
+          <!-- =================================================
+                     FORM CARD
+                     ================================================= -->
+
+          <div class="content-card">
+            <form
+              action="/generate-stock"
+              method="POST"
+              enctype="multipart/form-data"
+            >
+              <!-- TEMPLATE -->
+
+              <div class="form-group">
+                <label for="template_id"> Template </label>
+
+                <select
+                  id="template_id"
+                  name="template_id"
+                  class="form-control"
+                  required
+                >
+                  <option value="">-- Pilih Template --</option>
+
+                  {% for t in templates %}
+
+                  <option value="{{ t.id }}">{{ t.template_name }}</option>
+
+                  {% endfor %}
+                </select>
+              </div>
+
+              <!-- BULAN -->
+
+              <div class="form-group">
+                <label for="bulan"> Pilih Bulan </label>
+
+                <select id="bulan" name="bulan" class="form-control" required>
+                  <option value="">-- Pilih Bulan --</option>
+
+                  {% for i in range(1,13) %}
+
+                  <option value="{{ i }}">{{ i }}</option>
+
+                  {% endfor %}
+                </select>
+              </div>
+
+              <!-- TAHUN -->
+
+              <div class="form-group">
+                <label for="tahun"> Tahun </label>
+
+                <select id="tahun" name="tahun" class="form-control" required>
+                  <option value="">-- Pilih Tahun --</option>
+
+                  {% for i in range(2024,2031) %}
+
+                  <option value="{{ i }}">{{ i }}</option>
+
+                  {% endfor %}
+                </select>
+              </div>
+
+              <!-- FILE -->
+
+              <div class="form-group">
+                <label for="file"> File Stock </label>
+
+                <input
+                  id="file"
+                  type="file"
+                  name="file"
+                  class="form-control"
+                  accept=".xlsx,.xls,.xlsb"
+                  required
+                />
+
+                <small> Upload file stock yang akan diproses. </small>
+              </div>
+
+              <!-- =================================================
+                             ACTION
+                             ================================================= -->
+
+              <div class="form-actions">
+                <a href="/dashboard" class="btn-secondary"> ← Kembali </a>
+
+                <button type="submit" class="btn-success">
+                  Generate Stock
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
     </div>
 
-</div>
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      /* =================================================
+           DROPDOWN SELL OUT & STOCK
+           ================================================= */
 
-</body>
+      document.querySelectorAll(".dropdown-toggle").forEach((button) => {
+        button.addEventListener("click", function () {
+          const dropdown = this.parentElement;
 
+          dropdown.classList.toggle("open");
+        });
+      });
+
+      /* =================================================
+           MOBILE SIDEBAR
+           ================================================= */
+
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+
+      const sidebar = document.querySelector(".sidebar");
+
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      /* OPEN SIDEBAR */
+
+      mobileMenuBtn.addEventListener("click", function () {
+        sidebar.classList.toggle("mobile-open");
+
+        sidebarOverlay.classList.toggle("active");
+      });
+
+      /* CLOSE SIDEBAR VIA OVERLAY */
+
+      sidebarOverlay.addEventListener("click", function () {
+        sidebar.classList.remove("mobile-open");
+
+        sidebarOverlay.classList.remove("active");
+      });
+
+      /* CLOSE SIDEBAR AFTER CLICK MENU */
+
+      document.querySelectorAll(".sidebar a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          if (window.innerWidth <= 768) {
+            sidebar.classList.remove("mobile-open");
+
+            sidebarOverlay.classList.remove("active");
+          }
+        });
+      });
+    </script>
+  </body>
 </html>

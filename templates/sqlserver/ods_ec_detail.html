@@ -1,167 +1,962 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>ODS EC Detail</title>
 
+    <!-- Bootstrap -->
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+
+    <!-- DataTables -->
     <link
       href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css"
       rel="stylesheet"
     />
+
+    <!-- Dashboard CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
+
+    <style>
+      .page-content {
+        padding: 28px;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .page-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .page-header small {
+        color: #6b7280;
+      }
+
+      .content-card {
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+      }
+
+      .card-toolbar {
+        padding: 16px 20px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .card-toolbar h5 {
+        margin: 0 0 15px 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .filter-row {
+        align-items: end;
+      }
+
+      .filter-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: 5px;
+        display: block;
+      }
+
+      .table-wrapper {
+        padding: 20px;
+        overflow-x: auto;
+      }
+
+      #odsTable {
+        width: 100% !important;
+        font-size: 13px;
+      }
+
+      #odsTable thead th {
+        background: #212529;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 11px 12px;
+        white-space: nowrap;
+      }
+
+      #odsTable tbody td {
+        padding: 10px 12px;
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+
+      .dataTables_wrapper {
+        font-size: 13px;
+      }
+
+      .dataTables_wrapper .dt-length select,
+      .dataTables_wrapper .dt-search input {
+        font-size: 13px;
+      }
+
+      .dataTables_wrapper .dt-paging {
+        margin-top: 12px;
+      }
+
+      @media (max-width: 768px) {
+        .page-content {
+          padding: 20px 15px;
+        }
+
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .table-wrapper {
+          padding: 15px;
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <div class="container py-4">
-      <div class="card shadow-sm">
-        <div class="card-header">
-          <h4 class="mb-0">ODS EC Detail</h4>
-        </div>
 
-        <div class="card-body">
-          <div class="table-responsive">
-            <div class="row mb-3">
-              <div class="col-md-2">
-                <select id="month" class="form-select">
-                  <option value="">Bulan</option>
-                  <option value="1">Januari</option>
-                  <option value="2">Februari</option>
-                  <option value="3">Maret</option>
-                  <option value="4">April</option>
-                  <option value="5">Mei</option>
-                  <option value="6">Juni</option>
-                  <option value="7">Juli</option>
-                  <option value="8">Agustus</option>
-                  <option value="9">September</option>
-                  <option value="10">Oktober</option>
-                  <option value="11">November</option>
-                  <option value="12">Desember</option>
-                </select>
-              </div>
+    <!-- MOBILE MENU -->
+    <button
+      type="button"
+      class="mobile-menu-btn"
+      id="mobileMenuBtn"
+    >
+      ☰
+    </button>
 
-              <div class="col-md-2">
-                <select id="year" class="form-select">
-                  <option value="">Tahun</option>
-                  <option>2026</option>
-                  <option>2025</option>
-                  <option>2024</option>
-                </select>
-              </div>
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+    ></div>
 
-              <div class="col-md-3">
-                <input
-                  id="customer_code"
-                  class="form-control"
-                  placeholder="Customer Code"
-                />
-              </div>
+    <div class="dashboard">
 
-              <div class="col-md-2">
-                <button class="btn btn-primary w-100" id="btnCari">Cari</button>
-              </div>
-              <div class="col-md-2">
-                <button class="btn btn-success w-100" id="btnExport">
-                  Export Excel
-                </button>
-              </div>
-              <div class="col-md-3">
-                <a href="/dashboard" class="btn btn-secondary"> ← Back Home </a>
-              </div>
-            </div>
-            <!-- <div class="row mb-3">
-              <div class="col-md-3">
-                <input
-                  type="text"
-                  id="customer_code"
-                  class="form-control"
-                  placeholder="Customer Code"
-                />
-              </div>
+      <!-- ================= SIDEBAR ================= -->
+      <aside class="sidebar">
 
-              <div class="col-md-3">
-                <button id="btnCari" class="btn btn-primary">Cari</button>
-              </div>
+        <div class="logo">
 
-              <div class="col-md-3">
-                <a href="/" class="btn btn-secondary"> ← Back Home </a>
-              </div>
-            </div> -->
-
-            <table
-              id="odsTable"
-              class="table table-striped table-bordered table-hover"
-            >
-              <thead class="table-dark">
-                <tr>
-                  <th>Customer Code</th>
-                  <th>Customer Name</th>
-                  <th>Item Code</th>
-                  <th>Item Name</th>
-                  <th>Bulan</th>
-                  <th>Tahun</th>
-                  <th>SO Qty PCS</th>
-                  <th>SO Qty Karton</th>
-                </tr>
-              </thead>
-
-              <tbody></tbody>
-            </table>
+          <div class="logo-box">
+            APP
           </div>
+
+          <div>
+            <h1>
+              AGENT MANAGEMENT
+              <br />
+              SYSTEM
+            </h1>
+
+            <span>
+              MAPPING - SELL OUT - STOCK - CMO
+            </span>
+          </div>
+
         </div>
-      </div>
+
+
+        <nav class="sidebar-menu">
+
+          <p class="menu-title">
+            MAIN MENU
+          </p>
+
+
+          <a
+            href="/dashboard"
+            class="menu-item"
+          >
+            <span>▣</span>
+            Dashboard
+          </a>
+
+
+          <!-- SELL OUT -->
+          <div class="menu-dropdown">
+
+            <button
+              class="menu-item dropdown-toggle"
+              type="button"
+            >
+
+              <span>▤</span>
+
+              <span class="menu-text">
+                Sell Out
+              </span>
+
+              <span class="arrow">
+                ▾
+              </span>
+
+            </button>
+
+
+            <div class="submenu">
+
+              <a href="/upload">
+                Normalisasi Invoice
+              </a>
+
+              <a href="/mapping">
+                Mapping Invoice
+              </a>
+
+              <a href="/generate">
+                Generate Invoice
+              </a>
+
+            </div>
+
+          </div>
+
+
+          <!-- STOCK -->
+          <div class="menu-dropdown">
+
+            <button
+              class="menu-item dropdown-toggle"
+              type="button"
+            >
+
+              <span>▥</span>
+
+              <span class="menu-text">
+                Stock
+              </span>
+
+              <span class="arrow">
+                ▾
+              </span>
+
+            </button>
+
+
+            <div class="submenu">
+
+              <a href="/stock/upload">
+                Normalisasi Stock
+              </a>
+
+              <a href="/stock-mapping">
+                Mapping Stock
+              </a>
+
+              <a href="/generate-stock">
+                Generate Stock
+              </a>
+
+            </div>
+
+          </div>
+
+
+          <a
+            href="/generate-yuri"
+            class="menu-item"
+          >
+            <span>◈</span>
+            Generate Template Yuri
+          </a>
+
+
+          <a
+            href="/generate-cmo"
+            class="menu-item"
+          >
+            <span>◈</span>
+            Generate CMO
+          </a>
+
+
+          <p class="menu-title">
+            Daftar Laporan Agent
+          </p>
+
+
+          <a
+            href="#"
+            class="menu-item"
+          >
+            <span>◈</span>
+            Data Laporan Raw Agent
+          </a>
+
+
+          <a
+            href="#"
+            class="menu-item"
+          >
+            <span>◈</span>
+            Data Laporan Template Yuri
+          </a>
+
+
+          <a
+            href="#"
+            class="menu-item"
+          >
+            <span>◈</span>
+            Data Laporan CMO
+          </a>
+
+
+          <p class="menu-title">
+            MASTER DATA
+          </p>
+
+
+          <a
+            href="/agents"
+            class="menu-item"
+          >
+            <span>◆</span>
+            Daftar Agent
+          </a>
+
+
+          <a
+            href="/item-agent-mapping"
+            class="menu-item"
+          >
+            <span>▦</span>
+            Master Agent Mapping Produk
+          </a>
+
+
+          <a
+            href="/cmo-template"
+            class="menu-item"
+          >
+            <span>▦</span>
+            CMO Agent Template
+          </a>
+
+
+          <a
+            href="/insell-reports"
+            class="menu-item"
+          >
+            <span>◫</span>
+            Master Data Insell
+          </a>
+
+
+          <!-- ACTIVE -->
+          <a
+            href="/ods-ec-detail"
+            class="menu-item active"
+          >
+            <span>◫</span>
+            SQL Server SAP Data Insell
+          </a>
+
+        </nav>
+
+
+        <!-- SIDEBAR BOTTOM -->
+        <div class="sidebar-bottom">
+
+          <div class="user-box">
+
+            <div class="avatar">
+              A
+            </div>
+
+            <div>
+
+              <strong>
+                Administrator
+              </strong>
+
+              <small>
+                {{ session.get('user_email', 'User') }}
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <a
+            href="/logout"
+            class="logout"
+          >
+            ⇥ &nbsp; Logout
+          </a>
+
+        </div>
+
+      </aside>
+
+
+      <!-- ================= MAIN CONTENT ================= -->
+      <main class="main-content">
+
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+          <div>
+
+            <span class="breadcrumb">
+              HOME / MASTER DATA / SQL SERVER SAP DATA INSELL
+            </span>
+
+            <h2>
+              ODS EC Detail
+            </h2>
+
+          </div>
+
+
+          <div class="top-user">
+
+            <span class="status-dot"></span>
+
+            Online
+
+          </div>
+
+        </header>
+
+
+        <!-- PAGE -->
+        <div class="page-content">
+
+
+          <div class="page-header">
+
+            <div>
+
+              <small>
+                MASTER DATA
+              </small>
+
+              <h2>
+                ODS EC Detail
+              </h2>
+
+            </div>
+
+          </div>
+
+
+          <!-- CARD -->
+          <div class="content-card">
+
+
+            <!-- FILTER -->
+            <div class="card-toolbar">
+
+              <h5>
+                Filter Data
+              </h5>
+
+
+              <div class="row g-3 filter-row">
+
+
+                <!-- BULAN -->
+                <div class="col-md-2">
+
+                  <label
+                    class="filter-label"
+                    for="month"
+                  >
+                    Bulan
+                  </label>
+
+                  <select
+                    id="month"
+                    class="form-select form-select-sm"
+                  >
+
+                    <option value="">
+                      Semua Bulan
+                    </option>
+
+                    <option value="1">
+                      Januari
+                    </option>
+
+                    <option value="2">
+                      Februari
+                    </option>
+
+                    <option value="3">
+                      Maret
+                    </option>
+
+                    <option value="4">
+                      April
+                    </option>
+
+                    <option value="5">
+                      Mei
+                    </option>
+
+                    <option value="6">
+                      Juni
+                    </option>
+
+                    <option value="7">
+                      Juli
+                    </option>
+
+                    <option value="8">
+                      Agustus
+                    </option>
+
+                    <option value="9">
+                      September
+                    </option>
+
+                    <option value="10">
+                      Oktober
+                    </option>
+
+                    <option value="11">
+                      November
+                    </option>
+
+                    <option value="12">
+                      Desember
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                <!-- TAHUN -->
+                <div class="col-md-2">
+
+                  <label
+                    class="filter-label"
+                    for="year"
+                  >
+                    Tahun
+                  </label>
+
+                  <select
+                    id="year"
+                    class="form-select form-select-sm"
+                  >
+
+                    <option value="">
+                      Semua Tahun
+                    </option>
+
+                    <option>
+                      2026
+                    </option>
+
+                    <option>
+                      2025
+                    </option>
+
+                    <option>
+                      2024
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                <!-- CUSTOMER -->
+                <div class="col-md-3">
+
+                  <label
+                    class="filter-label"
+                    for="customer_code"
+                  >
+                    Customer Code
+                  </label>
+
+                  <input
+                    id="customer_code"
+                    class="form-control form-control-sm"
+                    placeholder="Customer Code"
+                  />
+
+                </div>
+
+
+                <!-- CARI -->
+                <div class="col-md-2">
+
+                  <button
+                    class="btn btn-primary btn-sm w-100"
+                    id="btnCari"
+                  >
+                    Cari
+                  </button>
+
+                </div>
+
+
+                <!-- EXPORT -->
+                <div class="col-md-2">
+
+                  <button
+                    class="btn btn-success btn-sm w-100"
+                    id="btnExport"
+                  >
+                    Export Excel
+                  </button>
+
+                </div>
+
+
+                <!-- BACK -->
+                <div class="col-md-1">
+
+                  <a
+                    href="/dashboard"
+                    class="btn btn-secondary btn-sm w-100"
+                  >
+                    Back
+                  </a>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- TABLE -->
+            <div class="table-wrapper">
+
+              <div class="table-responsive">
+
+                <table
+                  id="odsTable"
+                  class="table table-striped table-bordered table-hover"
+                >
+
+                  <thead>
+
+                    <tr>
+
+                      <th>
+                        Customer Code
+                      </th>
+
+                      <th>
+                        Customer Name
+                      </th>
+
+                      <th>
+                        Item Code
+                      </th>
+
+                      <th>
+                        Item Name
+                      </th>
+
+                      <th>
+                        Bulan
+                      </th>
+
+                      <th>
+                        Tahun
+                      </th>
+
+                      <th>
+                        SO Qty PCS
+                      </th>
+
+                      <th>
+                        SO Qty Karton
+                      </th>
+
+                    </tr>
+
+                  </thead>
+
+
+                  <tbody></tbody>
+
+                </table>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+
     </div>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
 
-    <script>
-      const table = new DataTable("#odsTable", {
-        ajax: {
-          url: "/api/ods-ec-detail",
 
-          data: function (d) {
-            d.customer_code = $("#customer_code").val();
-            d.month = $("#month").val();
-            d.year = $("#year").val();
+    <script>
+
+      // ==========================
+      // DATATABLE
+      // ==========================
+
+      const table = new DataTable(
+        "#odsTable",
+        {
+
+          ajax: {
+
+            url: "/api/ods-ec-detail",
+
+            data: function (d) {
+
+              d.customer_code =
+                $("#customer_code").val();
+
+              d.month =
+                $("#month").val();
+
+              d.year =
+                $("#year").val();
+
+            },
+
+            dataSrc: "",
+
           },
 
-          dataSrc: "",
-        },
 
-        columns: [
-          { data: "Customer Code" },
-          { data: "Customer Name" },
-          { data: "Item Code" },
-          { data: "Item Name" },
-          { data: "BULAN_INV" },
-          { data: "TAHUN_INV" },
-          { data: "SO Quantity PCS" },
-          { data: "SO Quantity Karton" },
-        ],
+          columns: [
 
-        searching: false,
-        ordering: true,
-        pageLength: 10,
-        lengthMenu: [10, 25, 50, 100],
-      });
+            {
+              data: "Customer Code"
+            },
 
-      $("#btnCari").click(function () {
-        table.ajax.reload();
-      });
+            {
+              data: "Customer Name"
+            },
 
-      // Tombol Export
-      $("#btnExport").click(function () {
-        const customer = $("#customer_code").val();
-        const month = $("#month").val();
-        const year = $("#year").val();
+            {
+              data: "Item Code"
+            },
 
-        window.location = `/export-ods-ec-detail?customer_code=${customer}&month=${month}&year=${year}`;
-      });
+            {
+              data: "Item Name"
+            },
+
+            {
+              data: "BULAN_INV"
+            },
+
+            {
+              data: "TAHUN_INV"
+            },
+
+            {
+              data: "SO Quantity PCS"
+            },
+
+            {
+              data: "SO Quantity Karton"
+            },
+
+          ],
+
+
+          searching: false,
+
+          ordering: true,
+
+          pageLength: 10,
+
+          lengthMenu: [
+            10,
+            25,
+            50,
+            100
+          ],
+
+        }
+      );
+
+
+      // ==========================
+      // CARI
+      // ==========================
+
+      $("#btnCari").click(
+        function () {
+
+          table.ajax.reload();
+
+        }
+      );
+
+
+      // ==========================
+      // EXPORT EXCEL
+      // ==========================
+
+      $("#btnExport").click(
+        function () {
+
+          const customer =
+            $("#customer_code").val();
+
+          const month =
+            $("#month").val();
+
+          const year =
+            $("#year").val();
+
+
+          window.location =
+            `/export-ods-ec-detail?customer_code=${encodeURIComponent(customer)}&month=${month}&year=${year}`;
+
+        }
+      );
+
+
+      // ==========================
+      // DROPDOWN SIDEBAR
+      // ==========================
+
+      document
+        .querySelectorAll(".dropdown-toggle")
+        .forEach(
+          (button) => {
+
+            button.addEventListener(
+              "click",
+              function () {
+
+                const dropdown =
+                  this.parentElement;
+
+                dropdown.classList.toggle(
+                  "open"
+                );
+
+              }
+            );
+
+          }
+        );
+
+
+      // ==========================
+      // MOBILE SIDEBAR
+      // ==========================
+
+      const mobileMenuBtn =
+        document.getElementById(
+          "mobileMenuBtn"
+        );
+
+      const sidebar =
+        document.querySelector(
+          ".sidebar"
+        );
+
+      const sidebarOverlay =
+        document.getElementById(
+          "sidebarOverlay"
+        );
+
+
+      mobileMenuBtn.addEventListener(
+        "click",
+        function () {
+
+          sidebar.classList.toggle(
+            "mobile-open"
+          );
+
+          sidebarOverlay.classList.toggle(
+            "active"
+          );
+
+        }
+      );
+
+
+      sidebarOverlay.addEventListener(
+        "click",
+        function () {
+
+          sidebar.classList.remove(
+            "mobile-open"
+          );
+
+          sidebarOverlay.classList.remove(
+            "active"
+          );
+
+        }
+      );
+
+
+      // Close mobile sidebar
+      document
+        .querySelectorAll(".sidebar a")
+        .forEach(
+          function (link) {
+
+            link.addEventListener(
+              "click",
+              function () {
+
+                if (
+                  window.innerWidth <= 768
+                ) {
+
+                  sidebar.classList.remove(
+                    "mobile-open"
+                  );
+
+                  sidebarOverlay.classList.remove(
+                    "active"
+                  );
+
+                }
+
+              }
+            );
+
+          }
+        );
+
     </script>
+
   </body>
 </html>

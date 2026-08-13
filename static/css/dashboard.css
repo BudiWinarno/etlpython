@@ -1,5 +1,5 @@
 /* ========================================
-   DATA PORTAL - NEO BRUTALISM DASHBOARD
+   DATA PORTAL - ENTERPRISE UI
    ======================================== */
 
 * {
@@ -9,9 +9,16 @@
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f5f1e8;
-    color: #111;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    background: #f5f5f5;
+    color: #1f1f1f;
 }
 
 
@@ -30,73 +37,76 @@ body {
    ======================================== */
 
 .sidebar {
-    width: 270px;
+    width: 250px;
     min-height: 100vh;
 
-    background: #ffffff;
-
-    border-right: 4px solid #111;
-
-    padding: 25px 18px;
-
-    display: flex;
-    flex-direction: column;
+    background: #001529;
 
     position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    z-index: 100;
 }
 
 
-/* LOGO */
+/* ========================================
+   LOGO
+   ======================================== */
 
 .logo {
+    height: 72px;
+
     display: flex;
     align-items: center;
+
     gap: 12px;
 
-    padding: 5px 5px 25px;
+    padding: 0 20px;
 
-    border-bottom: 3px solid #111;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .logo-box {
-    width: 55px;
-    height: 55px;
-
-    background: #38e8b0;
-
-    border: 3px solid #111;
+    width: 40px;
+    height: 40px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 18px;
-    font-weight: 900;
+    background: #1677ff;
+    color: #fff;
 
-    box-shadow: 5px 5px 0 #111;
+    border-radius: 6px;
 
-    transform: rotate(-3deg);
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .logo h1 {
-    font-size: 21px;
-    line-height: 0.9;
+    color: #fff;
 
-    font-weight: 900;
+    font-size: 15px;
+    line-height: 1.2;
+
+    font-weight: 600;
 }
 
 .logo span {
     display: block;
 
+    margin-top: 4px;
+
+    color: rgba(255,255,255,0.45);
+
     font-size: 8px;
-    font-weight: 800;
 
-    margin-top: 7px;
-
-    letter-spacing: 1px;
+    letter-spacing: .3px;
 }
 
 
@@ -105,72 +115,183 @@ body {
    ======================================== */
 
 .sidebar-menu {
-    margin-top: 25px;
+    flex: 1;
+
+    padding: 12px 10px;
 
     overflow-y: auto;
-
-    flex: 1;
 }
 
 .menu-title {
+    margin: 18px 10px 7px;
+
+    color: rgba(255,255,255,0.45);
+
     font-size: 11px;
-    font-weight: 900;
 
-    letter-spacing: 1.5px;
+    font-weight: 600;
 
-    margin: 20px 8px 8px;
+    letter-spacing: .5px;
 
-    color: #555;
+    text-transform: uppercase;
 }
 
 .menu-item {
+    width: 100%;
+
+    min-height: 40px;
+
     display: flex;
     align-items: center;
 
     gap: 12px;
 
-    width: 100%;
+    padding: 0 12px;
 
-    padding: 11px 12px;
+    margin-bottom: 3px;
 
-    margin-bottom: 6px;
+    color: rgba(255,255,255,0.75);
 
-    color: #111;
+    background: transparent;
+
+    border: none;
+    border-radius: 6px;
 
     text-decoration: none;
 
+    font-family: inherit;
+
     font-size: 14px;
-    font-weight: 800;
 
-    border: 2px solid transparent;
+    font-weight: 400;
 
-    transition: 0.15s;
+    cursor: pointer;
+
+    transition: all .15s ease;
 }
 
-.menu-item span {
-    width: 22px;
+.menu-item span:first-child {
+    width: 20px;
 
-    font-size: 17px;
+    color: rgba(255,255,255,0.65);
+
+    font-size: 16px;
 
     text-align: center;
 }
 
 .menu-item:hover {
-    background: #ffe13b;
+    background: #1677ff;
 
-    border: 2px solid #111;
+    color: #fff;
+}
 
-    box-shadow: 3px 3px 0 #111;
-
-    transform: translate(-2px, -2px);
+.menu-item:hover span:first-child {
+    color: #fff;
 }
 
 .menu-item.active {
-    background: #ffe13b;
+    background: #1677ff;
 
-    border: 3px solid #111;
+    color: #fff;
+}
 
-    box-shadow: 4px 4px 0 #111;
+.menu-item.active {
+    background: #1677ff;
+    color: #fff;
+}
+
+.menu-item.active span:first-child {
+    color: #fff;
+}
+
+/* Dropdown yang sedang terbuka menjadi active */
+.menu-dropdown.open > .dropdown-toggle {
+    background: #1677ff;
+    color: #fff;
+}
+
+.menu-dropdown.open > .dropdown-toggle span:first-child {
+    color: #fff;
+}
+
+.menu-dropdown.open > .dropdown-toggle .arrow {
+    color: #fff;
+}
+
+.menu-item.active span:first-child {
+    color: #fff;
+}
+
+
+/* ========================================
+   DROPDOWN
+   ======================================== */
+
+.menu-dropdown {
+    width: 100%;
+}
+
+.dropdown-toggle {
+    text-align: left;
+}
+
+.dropdown-toggle .menu-text {
+    flex: 1;
+}
+
+.dropdown-toggle .arrow {
+    width: auto;
+
+    margin-left: auto;
+
+    color: rgba(255,255,255,.45);
+
+    font-size: 12px;
+
+    transition: transform .2s ease;
+}
+
+.menu-dropdown.open .arrow {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    display: none;
+
+    padding: 3px 0 5px 32px;
+}
+
+.menu-dropdown.open .submenu {
+    display: block;
+}
+
+.submenu a {
+    display: block;
+
+    padding: 8px 12px;
+
+    color: rgba(255,255,255,.55);
+
+    border-radius: 4px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    transition: all .15s ease;
+}
+
+.submenu a:hover {
+    color: #fff;
+
+    background: rgba(255,255,255,.08);
+}
+
+.submenu a.active {
+    color: #fff;
+    background: rgba(255,255,255,.12);
+    font-weight: 500;
 }
 
 
@@ -179,9 +300,9 @@ body {
    ======================================== */
 
 .sidebar-bottom {
-    border-top: 3px solid #111;
+    padding: 15px;
 
-    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,.08);
 }
 
 .user-box {
@@ -190,41 +311,47 @@ body {
 
     gap: 10px;
 
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .avatar {
-    width: 42px;
-    height: 42px;
-
-    background: #8b5cf6;
-
-    border: 3px solid #111;
+    width: 36px;
+    height: 36px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-weight: 900;
-    font-size: 18px;
+    background: #1677ff;
 
-    box-shadow: 3px 3px 0 #111;
+    color: #fff;
+
+    border-radius: 50%;
+
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .user-box strong {
     display: block;
 
+    color: #fff;
+
     font-size: 13px;
+
+    font-weight: 500;
 }
 
 .user-box small {
     display: block;
 
-    font-size: 10px;
+    max-width: 160px;
 
     margin-top: 3px;
 
-    max-width: 170px;
+    color: rgba(255,255,255,.45);
+
+    font-size: 11px;
 
     overflow: hidden;
 
@@ -238,31 +365,31 @@ body {
 
     width: 100%;
 
-    padding: 10px;
+    padding: 8px;
+
+    color: rgba(255,255,255,.65);
+
+    background: transparent;
+
+    border: 1px solid rgba(255,255,255,.12);
+
+    border-radius: 6px;
 
     text-align: center;
-
-    background: #ff6b9d;
-
-    color: #111;
-
-    border: 3px solid #111;
 
     text-decoration: none;
 
     font-size: 13px;
 
-    font-weight: 900;
-
-    box-shadow: 4px 4px 0 #111;
-
-    transition: 0.15s;
+    transition: all .15s ease;
 }
 
 .logout:hover {
-    transform: translate(3px, 3px);
+    color: #fff;
 
-    box-shadow: 1px 1px 0 #111;
+    background: rgba(255,255,255,.08);
+
+    border-color: rgba(255,255,255,.2);
 }
 
 
@@ -271,13 +398,13 @@ body {
    ======================================== */
 
 .main-content {
-    margin-left: 270px;
-
-    width: calc(100% - 270px);
+    width: calc(100% - 250px);
 
     min-height: 100vh;
 
-    padding: 35px 45px;
+    margin-left: 250px;
+
+    padding: 24px 32px;
 }
 
 
@@ -292,56 +419,51 @@ body {
 
     justify-content: space-between;
 
-    margin-bottom: 35px;
+    margin-bottom: 24px;
 }
 
 .breadcrumb {
-    font-size: 11px;
+    display: block;
 
-    font-weight: 900;
+    color: #8c8c8c;
 
-    letter-spacing: 1px;
-
-    color: #666;
+    font-size: 12px;
 }
 
 .topbar h2 {
-    font-size: 42px;
+    margin-top: 5px;
 
-    line-height: 1;
+    color: #1f1f1f;
 
-    margin-top: 7px;
+    font-size: 28px;
 
-    font-weight: 900;
+    font-weight: 600;
 }
 
 .top-user {
     display: flex;
-
     align-items: center;
 
-    gap: 8px;
+    gap: 7px;
+
+    padding: 6px 12px;
 
     background: #fff;
 
-    border: 3px solid #111;
+    border: 1px solid #d9d9d9;
 
-    padding: 10px 16px;
+    border-radius: 6px;
 
-    font-size: 13px;
+    color: #595959;
 
-    font-weight: 900;
-
-    box-shadow: 4px 4px 0 #111;
+    font-size: 12px;
 }
 
 .status-dot {
-    width: 10px;
-    height: 10px;
+    width: 7px;
+    height: 7px;
 
-    background: #38e8b0;
-
-    border: 2px solid #111;
+    background: #52c41a;
 
     border-radius: 50%;
 }
@@ -356,89 +478,92 @@ body {
 
     grid-template-columns: repeat(3, 1fr);
 
-    gap: 20px;
+    gap: 16px;
 
-    margin-bottom: 45px;
+    margin-bottom: 28px;
 }
 
 .stat-card {
-    min-height: 145px;
-
-    border: 4px solid #111;
-
-    padding: 22px;
+    min-height: 120px;
 
     display: flex;
-
     align-items: center;
 
-    gap: 20px;
+    gap: 16px;
 
-    box-shadow: 7px 7px 0 #111;
-
-    transition: 0.15s;
-}
-
-.stat-card:hover {
-    transform: translate(3px, 3px);
-
-    box-shadow: 3px 3px 0 #111;
-}
-
-.stat-card.yellow {
-    background: #ffe13b;
-}
-
-.stat-card.blue {
-    background: #4f7cff;
-}
-
-.stat-card.purple {
-    background: #9b6cff;
-}
-
-.stat-icon {
-    width: 55px;
-    height: 55px;
+    padding: 20px;
 
     background: #fff;
 
-    border: 3px solid #111;
+    border: 1px solid #f0f0f0;
+
+    border-radius: 8px;
+
+    box-shadow: 0 1px 2px rgba(0,0,0,.03);
+
+    transition: box-shadow .15s ease;
+}
+
+.stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+
+/* Hilangkan warna Neo Brutalism */
+
+.stat-card.yellow,
+.stat-card.blue,
+.stat-card.purple {
+    background: #fff;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
-    font-size: 25px;
+    background: #e6f4ff;
 
-    box-shadow: 4px 4px 0 #111;
+    color: #1677ff;
+
+    border-radius: 8px;
+
+    font-size: 20px;
 }
 
 .stat-card span {
     display: block;
 
+    color: #8c8c8c;
+
     font-size: 12px;
 
-    font-weight: 900;
+    font-weight: 500;
 
-    letter-spacing: 1px;
+    letter-spacing: .3px;
 }
 
 .stat-card strong {
     display: block;
 
-    font-size: 38px;
+    margin: 5px 0;
+
+    color: #1f1f1f;
+
+    font-size: 28px;
 
     line-height: 1;
 
-    margin: 5px 0;
+    font-weight: 600;
 }
 
 .stat-card small {
-    font-size: 11px;
+    color: #8c8c8c;
 
-    font-weight: 700;
+    font-size: 11px;
 }
 
 
@@ -447,53 +572,55 @@ body {
    ======================================== */
 
 .section {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .section-heading {
     display: flex;
 
-    align-items: flex-end;
+    align-items: center;
 
     justify-content: space-between;
 
-    border-bottom: 4px solid #111;
+    margin-bottom: 16px;
 
     padding-bottom: 12px;
 
-    margin-bottom: 22px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .section-label {
-    font-size: 10px;
+    display: block;
 
-    font-weight: 900;
+    color: #8c8c8c;
 
-    letter-spacing: 2px;
+    font-size: 11px;
 
-    color: #666;
+    letter-spacing: .5px;
 }
 
 .section-heading h3 {
-    font-size: 28px;
-
     margin-top: 3px;
 
-    font-weight: 900;
+    color: #1f1f1f;
+
+    font-size: 20px;
+
+    font-weight: 600;
 }
 
 .section-count {
-    background: #111;
+    padding: 4px 10px;
 
-    color: #fff;
+    color: #1677ff;
 
-    padding: 7px 12px;
+    background: #e6f4ff;
 
-    font-size: 10px;
+    border-radius: 4px;
 
-    font-weight: 900;
+    font-size: 11px;
 
-    letter-spacing: 1px;
+    font-weight: 500;
 }
 
 
@@ -506,126 +633,135 @@ body {
 
     grid-template-columns: repeat(3, 1fr);
 
-    gap: 20px;
+    gap: 16px;
 }
 
 .quick-card {
     position: relative;
 
-    min-height: 220px;
+    min-height: 180px;
 
-    padding: 22px;
+    padding: 20px;
 
-    border: 4px solid #111;
+    background: #fff;
 
-    color: #111;
+    border: 1px solid #f0f0f0;
+
+    border-radius: 8px;
+
+    color: #1f1f1f;
 
     text-decoration: none;
 
-    box-shadow: 7px 7px 0 #111;
+    box-shadow: 0 1px 2px rgba(0,0,0,.03);
 
-    transition: 0.15s;
-
-    overflow: hidden;
+    transition:
+        box-shadow .15s ease,
+        transform .15s ease;
 }
 
 .quick-card:hover {
-    transform: translate(4px, 4px);
+    transform: translateY(-2px);
 
-    box-shadow: 3px 3px 0 #111;
+    box-shadow: 0 6px 16px rgba(0,0,0,.08);
+}
+
+
+/* Hilangkan warna kartu lama */
+
+.yellow-card,
+.blue-card,
+.purple-card,
+.mint-card,
+.pink-card,
+.orange-card {
+    background: #fff;
 }
 
 .quick-number {
     position: absolute;
 
-    top: 10px;
-    right: 14px;
+    top: 16px;
+    right: 18px;
 
-    font-size: 12px;
+    color: #bfbfbf;
 
-    font-weight: 900;
-
-    opacity: 0.7;
+    font-size: 11px;
 }
 
 .quick-icon {
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
-    background: #fff;
+    margin-bottom: 18px;
 
-    border: 3px solid #111;
+    background: #f0f5ff;
 
-    box-shadow: 3px 3px 0 #111;
+    color: #1677ff;
 
-    font-size: 22px;
+    border-radius: 6px;
 
-    margin-bottom: 20px;
+    font-size: 19px;
 }
 
 .quick-card h4 {
-    font-size: 20px;
+    margin-bottom: 7px;
 
-    font-weight: 900;
+    color: #1f1f1f;
 
-    margin-bottom: 8px;
+    font-size: 16px;
+
+    font-weight: 600;
 }
 
 .quick-card p {
+    max-width: 280px;
+
+    color: #8c8c8c;
+
     font-size: 12px;
 
     line-height: 1.5;
 
-    font-weight: 700;
-
-    max-width: 260px;
+    font-weight: 400;
 }
 
 .quick-card .open {
     position: absolute;
 
-    bottom: 18px;
     right: 20px;
+    bottom: 18px;
+
+    color: #1677ff;
 
     font-size: 11px;
 
-    font-weight: 900;
+    font-weight: 500;
 
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 
 /* ========================================
-   CARD COLORS
+   SCROLLBAR
    ======================================== */
 
-.yellow-card {
-    background: #ffe13b;
+.sidebar-menu::-webkit-scrollbar {
+    width: 5px;
 }
 
-.blue-card {
-    background: #4f7cff;
+.sidebar-menu::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-.purple-card {
-    background: #9b6cff;
-}
+.sidebar-menu::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.15);
 
-.mint-card {
-    background: #38e8b0;
-}
-
-.pink-card {
-    background: #ff6b9d;
-}
-
-.orange-card {
-    background: #ff9f43;
+    border-radius: 10px;
 }
 
 
@@ -647,127 +783,94 @@ body {
 
 @media (max-width: 800px) {
 
-    .sidebar {
-        width: 220px;
-    }
-
-    .main-content {
-        margin-left: 220px;
-
-        width: calc(100% - 220px);
-
-        padding: 25px;
-    }
-
     .quick-grid {
         grid-template-columns: 1fr;
     }
+}
 
-    .topbar h2 {
-        font-size: 32px;
-    }
+/* =========================================
+   MOBILE SIDEBAR
+========================================= */
+
+.mobile-menu-btn {
+    display: none;
 }
 
 
-@media (max-width: 600px) {
+/* Tablet & Mobile */
+@media (max-width: 768px) {
 
     .sidebar {
-        position: relative;
+        position: fixed;
+        left: -260px;
+        top: 0;
 
-        width: 100%;
+        width: 250px;
+        height: 100vh;
 
-        min-height: auto;
+        z-index: 1000;
 
-        border-right: none;
-
-        border-bottom: 4px solid #111;
+        transition: left 0.25s ease;
     }
 
-    .dashboard {
+    .sidebar.mobile-open {
+        left: 0;
+    }
+
+
+    /* Main content full width */
+    .main-content {
+        margin-left: 0 !important;
+        width: 100%;
+        padding: 70px 20px 20px;
+    }
+
+
+    /* Hamburger */
+    .mobile-menu-btn {
+        display: flex;
+
+        position: fixed;
+
+        top: 15px;
+        left: 15px;
+
+        width: 42px;
+        height: 42px;
+
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #d9d9d9;
+        border-radius: 6px;
+
+        background: #fff;
+
+        font-size: 22px;
+
+        cursor: pointer;
+
+        z-index: 1100;
+
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+
+    /* Overlay */
+    .sidebar-overlay {
+        display: none;
+
+        position: fixed;
+
+        inset: 0;
+
+        background: rgba(0, 0, 0, 0.35);
+
+        z-index: 900;
+    }
+
+    .sidebar-overlay.active {
         display: block;
     }
 
-    .main-content {
-        margin-left: 0;
-
-        width: 100%;
-
-        padding: 25px 18px;
-    }
-
-    .topbar {
-        align-items: flex-start;
-
-        gap: 15px;
-
-        flex-direction: column;
-    }
-
-    .stats {
-        gap: 15px;
-    }
-}
-
-/* ========================================
-   DROPDOWN MENU
-   ======================================== */
-
-.menu-dropdown {
-    width: 100%;
-}
-
-.dropdown-toggle {
-    width: 100%;
-    background: transparent;
-    font-family: inherit;
-    cursor: pointer;
-    text-align: left;
-}
-
-.dropdown-toggle .menu-text {
-    flex: 1;
-}
-
-.dropdown-toggle .arrow {
-    margin-left: auto;
-    font-size: 14px;
-    transition: transform 0.2s;
-}
-
-.submenu {
-    display: none;
-    margin-left: 34px;
-    margin-bottom: 8px;
-}
-
-.submenu a {
-    display: block;
-
-    padding: 9px 10px;
-
-    color: #111;
-
-    text-decoration: none;
-
-    font-size: 12px;
-    font-weight: 700;
-
-    border-left: 3px solid #111;
-
-    margin-bottom: 3px;
-}
-
-.submenu a:hover {
-    background: #ffe13b;
-    padding-left: 14px;
-}
-
-
-/* saat dropdown dibuka */
-.menu-dropdown.open .submenu {
-    display: block;
-}
-
-.menu-dropdown.open .arrow {
-    transform: rotate(180deg);
 }
