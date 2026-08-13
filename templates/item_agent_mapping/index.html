@@ -1,451 +1,1298 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Master Item Agent</title>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap CSS -->
+    <title>Master Agent Mapping Produk</title>
+
+    <!-- Bootstrap -->
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
-  <body class="bg-light">
-    <div class="container mt-5">
+    <!-- Dashboard CSS -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/dashboard.css') }}"
+    >
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-              {% for category, message in messages %}
-                  <script>
-                      document.addEventListener("DOMContentLoaded", function () {
-                          Swal.fire({
-                              icon: "{{ category }}",
-                              title: "{{ message }}",
-                              timer: 1800,
-                              showConfirmButton: false
-                          });
-                      });
-                  </script>
-              {% endfor %}
-          {% endif %}
-      {% endwith %}
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Master Item Agent</h2>
+    <style>
+        .content-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+        }
 
-        <div>
-          <a href="/item-agent-mapping/import" class="btn btn-success">
-            Import Excel
-          </a>
+        .content-card .card-header {
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 18px 20px;
+        }
 
-          <a href="/item-agent-mapping/create" class="btn btn-primary">
-            + Tambah Master
-          </a>
+        .content-card .card-body {
+            padding: 20px;
+        }
+
+        .table {
+            font-size: 14px;
+        }
+
+        .table thead th {
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+        }
+
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .filter-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            color: #6c757d;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .top-actions {
+                margin-top: 15px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<button
+    type="button"
+    class="mobile-menu-btn"
+    id="mobileMenuBtn">
+    ☰
+</button>
+
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay">
+</div>
+
+<div class="dashboard">
+
+    <!-- ===================================================== -->
+    <!-- SIDEBAR -->
+    <!-- ===================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-box">
+                APP
+            </div>
+
+            <div>
+                <h1>
+                    AGENT MANAGEMENT
+                    <br>
+                    SYSTEM
+                </h1>
+
+                <span>
+                    MAPPING - SELL OUT - STOCK - CMO
+                </span>
+            </div>
+
         </div>
-      </div>
 
-      <div class="mb-4">
-        <a
-            href="/dashboard"
-            class="btn btn-secondary"
-            onclick="clearSelection()"
-        >
-            ← Kembali ke HomePage
-        </a>
-      </div>
+        <nav class="sidebar-menu">
 
-      <!-- Search -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
-          <form method="GET" action="/item-agent-mapping">
-            <div class="row">
-              <div class="col-md-4">
-                <label class="form-label">Agent</label>
+            <p class="menu-title">
+                MAIN MENU
+            </p>
 
-                <select name="agent_id" class="form-select">
-                  <option value="">Semua Agent</option>
+            <!-- Dashboard -->
 
-                  {% for agent in agents %}
+            <a
+                href="/dashboard"
+                class="menu-item">
 
-                  <option
-                      value="{{ agent.id }}"
-                      {% if selected_agent == agent.id|string %}
-                          selected
-                      {% endif %}
-                  >
-                      {{ agent.kode_agent }} - {{ agent.nama_agent }}
-                  </option>
+                <span>▣</span>
+                Dashboard
 
-                  {% endfor %}
-                </select>
-              </div>
+            </a>
 
-              <div class="col-md-4">
-                <label class="form-label">Kode SKU Agent</label>
 
-                <input
-                  type="text"
-                  name="kode_sku_agent"
-                  class="form-control"
-                  value="{{ selected_kode_sku_agent or '' }}"
-                  placeholder="Masukkan Kode SKU Agent"
-                />
-              </div>
+            <!-- SELL OUT -->
 
-              <div class="col-md-4 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">
-                  Search
-                </button>
-
-                <a
-                    href="/item-agent-mapping"
-                    class="btn btn-outline-secondary"
-                    onclick="clearSelection()"
-                >
-                    Reset
-                </a>
+            <div class="menu-dropdown">
 
                 <button
-                    type="button"
-                    id="btnDeleteSelected"
-                    class="btn btn-danger ms-2 d-none"
-                >
-                    Delete Selected (<span id="selectedCount">0</span>)
+                    class="menu-item dropdown-toggle"
+                    type="button">
+
+                    <span>▤</span>
+
+                    <span class="menu-text">
+                        Sell Out
+                    </span>
+
+                    <span class="arrow">
+                        ▾
+                    </span>
+
                 </button>
-              </div>
+
+                <div class="submenu">
+
+                    <a href="/upload">
+                        Normalisasi Invoice
+                    </a>
+
+                    <a href="/mapping">
+                        Mapping Invoice
+                    </a>
+
+                    <a href="/generate">
+                        Generate Invoice
+                    </a>
+
+                </div>
+
             </div>
-          </form>
-        </div>
-      </div>
 
-      <!-- Table -->
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <div class="table-responsive">
-            <table
-              class="table table-bordered table-hover table-striped align-middle"
-            >
-              <thead class="table-dark">
-                  <tr>
-                      <th width="40" class="text-center">
-                        <input
-                          type="checkbox"
-                          id="checkAll"
-                          class="form-check-input"
-                        >
-                  </th>
 
-                  <th width="80">No</th>
-                  <th>Agent</th>
-                  <th>Kode SKU Agent</th>
-                  <th>Kode SKU JIM</th>
-                  <th>Nama SKU JIM</th>
-                  <th>Item Box</th>
-                  <th>Item Group</th>
-                  <th width="170">Action</th>
-                </tr>
-              </thead>
+            <!-- STOCK -->
 
-              <tbody>
-                {% for item in mappings %}
+            <div class="menu-dropdown">
 
-                <tr>
-                  <td class="text-center">
-                      <input
-                          type="checkbox"
-                          class="form-check-input row-check"
-                          name="selected_ids"
-                          value="{{ item.id }}"
-                      >
-                  </td>
-                  <td>{{ ((page - 1) * per_page) + loop.index }}</td>
-                  <td>{{ item.agent.nama_agent }}</td>
-                  <td>{{ item.kode_sku_agent }}</td>
-                  <td>{{ item.kode_sku_jim }}</td>
-                  <td>{{ item.nama_sku_jim }}</td>
-                  <td>{{ item.item_box|int }}</td>
-                  <td>{{ item.item_group }}</td>
+                <button
+                    class="menu-item dropdown-toggle"
+                    type="button">
 
-                  <td>
-                    <a
-                      href="/item-agent-mapping/edit/{{ item.id }}"
-                      class="btn btn-warning btn-sm"
-                    >
-                      Edit
+                    <span>▥</span>
+
+                    <span class="menu-text">
+                        Stock
+                    </span>
+
+                    <span class="arrow">
+                        ▾
+                    </span>
+
+                </button>
+
+                <div class="submenu">
+
+                    <a href="/stock/upload">
+                        Normalisasi Stock
                     </a>
 
-                    <a
-                      href="/item-agent-mapping/delete/{{ item.id }}"
-                      class="btn btn-danger btn-sm"
-                      onclick="
-                        return confirm('Yakin ingin menghapus data ini?');
-                      "
-                    >
-                      Delete
+                    <a href="/stock-mapping">
+                        Mapping Stock
                     </a>
-                  </td>
-                </tr>
 
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                    <a href="/generate-stock">
+                        Generate Stock
+                    </a>
 
-        {% set total_pages = ((total - 1) // per_page) + 1 %}
+                </div>
 
-        <nav class="mt-4">
-          <ul class="pagination justify-content-center">
-            <!-- Previous -->
-            <li class="page-item {% if page == 1 %}disabled{% endif %}">
-              <a
-                class="page-link"
-                href="?page={{ page - 1 }}&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}"
-              >
-                Previous
-              </a>
-            </li>
+            </div>
 
-            <!-- Nomor Halaman -->
-            {% set start_page = page - 2 %}
-              {% if start_page < 1 %}
-                  {% set start_page = 1 %}
-              {% endif %}
 
-              {% set end_page = page + 2 %}
-              {% if end_page > total_pages %}
-                  {% set end_page = total_pages %}
-              {% endif %}
+            <a
+                href="/generate-yuri"
+                class="menu-item">
 
-              {% for i in range(start_page, end_page + 1) %}
-              <li class="page-item {% if i == page %}active{% endif %}">
-                  <a class="page-link"
-                    href="?page={{ i }}&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}">
-                      {{ i }}
-                  </a>
-              </li>
-            {% endfor %}
+                <span>◈</span>
+                Generate Template Yuri
 
-            <!-- Next -->
-            <li
-              class="page-item {% if page == total_pages %}disabled{% endif %}"
-            >
-              <a
-                class="page-link"
-                href="?page={{ page + 1 }}&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}"
-              >
-                Next
-              </a>
-            </li>
-          </ul>
+            </a>
+
+
+            <a
+                href="/generate-cmo"
+                class="menu-item">
+
+                <span>◈</span>
+                Generate CMO
+
+            </a>
+
+
+            <!-- LAPORAN -->
+
+            <p class="menu-title">
+                Daftar Laporan Agent
+            </p>
+
+            <a
+                href="#"
+                class="menu-item">
+
+                <span>◈</span>
+                Data Laporan Raw Agent
+
+            </a>
+
+            <a
+                href="#"
+                class="menu-item">
+
+                <span>◈</span>
+                Data Laporan Template Yuri
+
+            </a>
+
+            <a
+                href="#"
+                class="menu-item">
+
+                <span>◈</span>
+                Data Laporan CMO
+
+            </a>
+
+
+            <!-- MASTER DATA -->
+
+            <p class="menu-title">
+                MASTER DATA
+            </p>
+
+
+            <a
+                href="/agents"
+                class="menu-item">
+
+                <span>◆</span>
+                Daftar Agent
+
+            </a>
+
+
+            <!-- ACTIVE MENU -->
+
+            <a
+                href="/item-agent-mapping"
+                class="menu-item active">
+
+                <span>▦</span>
+                Master Agent Mapping Produk
+
+            </a>
+
+
+            <a
+                href="/cmo-template"
+                class="menu-item">
+
+                <span>▦</span>
+                CMO Agent Template
+
+            </a>
+
+
+            <a
+                href="/insell-reports"
+                class="menu-item">
+
+                <span>◫</span>
+                Master Data Insell
+
+            </a>
+
+
+            <a
+                href="/ods-ec-detail"
+                class="menu-item">
+
+                <span>◫</span>
+                SQL Server SAP Data Insell
+
+            </a>
+
         </nav>
-      </div>
-    </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
 
-      const STORAGE_KEY = "selected_item_mapping";
+        <!-- SIDEBAR BOTTOM -->
 
-      // Hilangkan checklist jika halaman di-refresh (F5)
-      if (
-          performance.getEntriesByType("navigation")[0]?.type === "reload"
-      ) {
-          sessionStorage.removeItem(STORAGE_KEY);
-      }
+        <div class="sidebar-bottom">
 
-      const checkAll = document.getElementById("checkAll");
-      const rowChecks = document.querySelectorAll(".row-check");
+            <div class="user-box">
 
-      // Ambil data yang pernah dicentang
-      let selected = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "[]");
+                <div class="avatar">
+                    A
+                </div>
 
-      // Restore checklist
-      rowChecks.forEach(cb => {
+                <div>
 
-          if(selected.includes(cb.value)){
-              cb.checked = true;
-          }
+                    <strong>
+                        Administrator
+                    </strong>
 
-      });
+                    <small>
+                        {{ session.get('user_email', 'User') }}
+                    </small>
 
-      // Check apakah semua dicentang
-      checkAll.checked =
-          rowChecks.length > 0 &&
-          [...rowChecks].every(cb => cb.checked);
+                </div>
 
+            </div>
 
-      // Simpan ke sessionStorage
-      function saveSelection(){
 
-          rowChecks.forEach(cb => {
+            <a
+                href="/logout"
+                class="logout">
 
-              if(cb.checked){
+                ⇥ &nbsp; Logout
 
-                  if(!selected.includes(cb.value)){
-                      selected.push(cb.value);
-                  }
+            </a>
 
-              }else{
+        </div>
 
-                  selected = selected.filter(id => id !== cb.value);
+    </aside>
 
-              }
 
-          });
+    <!-- ===================================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ===================================================== -->
 
-          sessionStorage.setItem(
-              STORAGE_KEY,
-              JSON.stringify(selected)
-          );
+    <main class="main-content">
 
-          updateDeleteButton();
 
-      }
+        <!-- TOPBAR -->
 
-      function updateDeleteButton(){
+        <header class="topbar">
 
-          const btn = document.getElementById("btnDeleteSelected");
-          const count = document.getElementById("selectedCount");
+            <div>
 
-          count.innerText = selected.length;
+                <span class="breadcrumb">
+                    HOME / MASTER DATA / AGENT MAPPING
+                </span>
 
-          if(selected.length > 0){
+                <h2>
+                    Master Agent Mapping Produk
+                </h2>
 
-              btn.classList.remove("d-none");
+            </div>
 
-          }else{
 
-              btn.classList.add("d-none");
+            <div class="top-user">
 
-          }
+                <span class="status-dot"></span>
 
-      }
+                Online
 
+            </div>
 
-      // Check All
-      checkAll.addEventListener("change", async function(){
+        </header>
 
-          if(checkAll.checked){
 
-              const params = new URLSearchParams(window.location.search);
+        <!-- CONTENT -->
 
-              const response = await fetch(
-                  "/item-agent-mapping/all-ids?" + params.toString()
-              );
+        <div class="container-fluid px-0">
 
-              selected = await response.json();
 
-              sessionStorage.setItem(
-                  STORAGE_KEY,
-                  JSON.stringify(selected)
-              );
+            <!-- FLASH MESSAGE -->
 
-              updateDeleteButton();
+            {% with messages = get_flashed_messages(with_categories=true) %}
 
-          }else{
+                {% if messages %}
 
-              selected = [];
+                    {% for category, message in messages %}
 
-              sessionStorage.removeItem(STORAGE_KEY);
+                    <script>
 
-              updateDeleteButton();
+                        document.addEventListener(
+                            "DOMContentLoaded",
+                            function () {
 
-          }
+                                Swal.fire({
 
-          rowChecks.forEach(cb => {
+                                    icon:
+                                        "{{ 'success' if category == 'success' else 'error' }}",
 
-              cb.checked = checkAll.checked;
+                                    title:
+                                        "{{ message }}",
 
-          });
+                                    timer: 2000,
 
-      });
+                                    showConfirmButton: false
 
+                                });
 
-      // Checkbox per baris
-      rowChecks.forEach(cb => {
+                            }
+                        );
 
-          cb.addEventListener("change", function(){
+                    </script>
 
-              saveSelection();
+                    {% endfor %}
 
-              checkAll.checked =
-                  [...rowChecks].every(item => item.checked);
+                {% endif %}
 
-          });
+            {% endwith %}
 
-      });
 
-      updateDeleteButton();
+            <!-- PAGE HEADER -->
 
-      // =============================
-      // DELETE SELECTED
-      // =============================
+            <div
+                class="page-header d-flex justify-content-between align-items-center mb-4">
 
-      document.getElementById("btnDeleteSelected")
-      .addEventListener("click", async function(){
+                <!-- <div>
 
-          if(selected.length === 0){
-              return;
-          }
+                    <h3 class="page-title">
+                        Master Agent Mapping Produk
+                    </h3>
 
-          const result = await Swal.fire({
-              title: "Hapus data?",
-              text: "Data yang dipilih akan dihapus.",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonText: "Ya, Hapus"
-          });
+                    <div class="page-subtitle">
+                        Kelola mapping SKU agent dengan SKU JIM
+                    </div>
 
-          if(!result.isConfirmed){
-              return;
-          }
+                </div> -->
 
-          const response = await fetch(
-              "/item-agent-mapping/delete-selected",
-              {
-                  method: "POST",
-                  headers:{
-                      "Content-Type":"application/json"
-                  },
-                  body: JSON.stringify({
-                      ids: selected
-                  })
-              }
-          );
 
-          const data = await response.json();
+                <div class="top-actions">
 
-          if(data.success){
+                    <a
+                        href="/item-agent-mapping/create"
+                        class="btn btn-primary">
 
-              sessionStorage.removeItem(STORAGE_KEY);
+                        + Tambah Mapping
 
-              Swal.fire(
-                  "Berhasil",
-                  "Data berhasil dihapus",
-                  "success"
-              ).then(()=>{
-                  location.reload();
-              });
+                    </a>
 
-          }
 
-      });
+                    <a
+                        href="/item-agent-mapping/import"
+                        class="btn btn-success">
 
-      function clearSelection(){
+                        Import Excel
 
-          selected = [];
+                    </a>
 
-          sessionStorage.removeItem(STORAGE_KEY);
+                </div>
 
-          updateDeleteButton();
+            </div>
 
-      }
 
-      </script>
-  </body>
+            <!-- CARD -->
+
+            <div class="content-card">
+
+
+                <!-- CARD HEADER -->
+
+                <div
+                    class="card-header d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <strong>
+                            Data Mapping Produk
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span class="text-muted small">
+
+                            Total:
+                            {{ total if total is defined else '' }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CARD BODY -->
+
+                <div class="card-body">
+
+
+                    <!-- FILTER -->
+
+                    <div class="filter-box">
+
+                        <form
+                            method="GET"
+                            action="/item-agent-mapping">
+
+                            <div class="row g-2 align-items-end">
+
+
+                                <div class="col-md-3">
+
+                                    <label class="form-label">
+                                        Agent
+                                    </label>
+
+                                    <select
+                                        name="agent_id"
+                                        class="form-select">
+
+                                        <option value="">
+                                            Semua Agent
+                                        </option>
+
+                                        {% for agent in agents %}
+
+                                        <option
+                                            value="{{ agent.id }}"
+                                            {% if selected_agent is defined and selected_agent|string == agent.id|string %}
+                                            selected
+                                            {% endif %}>
+
+                                            {{ agent.kode_agent }}
+                                            -
+                                            {{ agent.nama_agent }}
+
+                                        </option>
+
+                                        {% endfor %}
+
+                                    </select>
+
+                                </div>
+
+
+                                <div class="col-md-3">
+
+                                    <label class="form-label">
+                                        Kode SKU Agent
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="kode_sku_agent"
+                                        class="form-control"
+                                        placeholder="Cari SKU Agent"
+                                        value="{{ selected_kode_sku_agent if selected_kode_sku_agent is defined else '' }}">
+
+                                </div>
+
+
+                                <div class="col-md-3">
+
+                                    <label class="form-label">
+                                        Kode SKU JIM
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="kode_sku_jim"
+                                        class="form-control"
+                                        placeholder="Cari SKU JIM"
+                                        value="{{ selected_kode_sku_jim if selected_kode_sku_jim is defined else '' }}">
+
+                                </div>
+
+
+                                <div class="col-md-2">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary w-100">
+
+                                        Cari
+
+                                    </button>
+
+                                </div>
+
+
+                                <div class="col-md-1">
+
+                                    <a
+                                        href="/item-agent-mapping"
+                                        class="btn btn-secondary w-100">
+
+                                        Reset
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+
+                    <!-- BULK DELETE -->
+
+                    <div class="mb-3">
+
+                        <button
+                            type="button"
+                            id="deleteSelected"
+                            class="btn btn-danger btn-sm">
+
+                            Hapus Terpilih
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- TABLE -->
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="table table-bordered table-hover table-striped align-middle mb-0">
+
+                            <thead class="table-dark">
+
+                                <tr>
+
+                                    <th width="45">
+                                        <input
+                                            type="checkbox"
+                                            id="checkAll">
+                                    </th>
+
+                                    <th width="70">
+                                        No
+                                    </th>
+
+                                    <th>
+                                        Agent
+                                    </th>
+
+                                    <th>
+                                        Kode SKU Agent
+                                    </th>
+
+                                    <th>
+                                        Kode SKU JIM
+                                    </th>
+
+                                    <th>
+                                        Nama SKU JIM
+                                    </th>
+
+                                    <th>
+                                        Item Box
+                                    </th>
+
+                                    <th>
+                                        Item Group
+                                    </th>
+
+                                    <th width="150">
+                                        Aksi
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for item in mappings %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <input
+                                            type="checkbox"
+                                            class="item-check"
+                                            value="{{ item.id }}">
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if page is defined and per_page is defined %}
+
+                                            {{ ((page - 1) * per_page) + loop.index }}
+
+                                        {% else %}
+
+                                            {{ loop.index }}
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if item.agent %}
+
+                                            {{ item.agent.kode_agent }}
+                                            -
+                                            {{ item.agent.nama_agent }}
+
+                                        {% else %}
+
+                                            -
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td>
+                                        {{ item.kode_sku_agent }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ item.kode_sku_jim }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ item.nama_sku_jim }}
+                                    </td>
+
+
+                                    <td class="text-end">
+                                        {{ item.item_box }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ item.item_group }}
+                                    </td>
+
+
+                                    <td>
+
+                                        <a
+                                            href="/item-agent-mapping/edit/{{ item.id }}"
+                                            class="btn btn-warning btn-sm">
+
+                                            Edit
+
+                                        </a>
+
+
+                                        <a
+                                            href="/item-agent-mapping/delete/{{ item.id }}"
+                                            class="btn btn-danger btn-sm btn-delete">
+
+                                            Delete
+
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                {% else %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="9"
+                                        class="text-center text-muted py-4">
+
+                                        Belum ada data mapping.
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- PAGINATION -->
+
+                   {% set total_page = ((total + per_page - 1) // per_page) %}
+
+{% set start_page = page - 2 %}
+{% if start_page < 1 %}
+    {% set start_page = 1 %}
+{% endif %}
+
+{% set end_page = page + 2 %}
+{% if end_page > total_page %}
+    {% set end_page = total_page %}
+{% endif %}
+
+<nav class="mt-3">
+    <ul class="pagination justify-content-center flex-wrap">
+
+        <!-- Previous -->
+        {% if page > 1 %}
+        <li class="page-item">
+            <a class="page-link"
+               href="?page={{ page - 1 }}&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}&kode_sku_jim={{ selected_kode_sku_jim or '' }}">
+                Previous
+            </a>
+        </li>
+        {% endif %}
+
+
+        <!-- Halaman pertama -->
+        {% if start_page > 1 %}
+
+        <li class="page-item">
+            <a class="page-link"
+               href="?page=1&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}&kode_sku_jim={{ selected_kode_sku_jim or '' }}">
+                1
+            </a>
+        </li>
+
+        {% if start_page > 2 %}
+        <li class="page-item disabled">
+            <span class="page-link">...</span>
+        </li>
+        {% endif %}
+
+        {% endif %}
+
+
+        <!-- Halaman sekitar halaman aktif -->
+        {% for p in range(start_page, end_page + 1) %}
+
+        <li class="page-item {% if p == page %}active{% endif %}">
+
+            <a class="page-link"
+               href="?page={{ p }}&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}&kode_sku_jim={{ selected_kode_sku_jim or '' }}">
+
+                {{ p }}
+
+            </a>
+
+        </li>
+
+        {% endfor %}
+
+
+        <!-- Halaman terakhir -->
+        {% if end_page < total_page %}
+
+        {% if end_page < total_page - 1 %}
+        <li class="page-item disabled">
+            <span class="page-link">...</span>
+        </li>
+        {% endif %}
+
+        <li class="page-item">
+
+            <a class="page-link"
+               href="?page={{ total_page }}&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}&kode_sku_jim={{ selected_kode_sku_jim or '' }}">
+
+                {{ total_page }}
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+
+        <!-- Next -->
+        {% if page < total_page %}
+
+        <li class="page-item">
+
+            <a class="page-link"
+               href="?page={{ page + 1 }}&agent_id={{ selected_agent or '' }}&kode_sku_agent={{ selected_kode_sku_agent or '' }}&kode_sku_jim={{ selected_kode_sku_jim or '' }}">
+
+                Next
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+    </ul>
+</nav>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ===================================================== -->
+
+<script>
+
+    /* ==============================
+       DROPDOWN SIDEBAR
+    ============================== */
+
+    document
+        .querySelectorAll(".dropdown-toggle")
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const dropdown =
+                        this.parentElement;
+
+                    dropdown.classList.toggle("open");
+
+                }
+            );
+
+        });
+
+
+    /* ==============================
+       MOBILE SIDEBAR
+    ============================== */
+
+    const mobileMenuBtn =
+        document.getElementById("mobileMenuBtn");
+
+    const sidebar =
+        document.querySelector(".sidebar");
+
+    const sidebarOverlay =
+        document.getElementById("sidebarOverlay");
+
+
+    mobileMenuBtn.addEventListener(
+        "click",
+        function () {
+
+            sidebar.classList.toggle(
+                "mobile-open"
+            );
+
+            sidebarOverlay.classList.toggle(
+                "active"
+            );
+
+        }
+    );
+
+
+    sidebarOverlay.addEventListener(
+        "click",
+        function () {
+
+            sidebar.classList.remove(
+                "mobile-open"
+            );
+
+            sidebarOverlay.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+
+    /* ==============================
+       DELETE CONFIRM
+    ============================== */
+
+    document
+        .querySelectorAll(".btn-delete")
+        .forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function (e) {
+
+                    e.preventDefault();
+
+                    const url =
+                        this.getAttribute("href");
+
+                    Swal.fire({
+
+                        title:
+                            "Yakin ingin menghapus?",
+
+                        text:
+                            "Data yang dihapus tidak dapat dikembalikan.",
+
+                        icon:
+                            "warning",
+
+                        showCancelButton:
+                            true,
+
+                        confirmButtonColor:
+                            "#dc3545",
+
+                        cancelButtonColor:
+                            "#6c757d",
+
+                        confirmButtonText:
+                            "Ya, Hapus",
+
+                        cancelButtonText:
+                            "Batal"
+
+                    }).then(function (result) {
+
+                        if (result.isConfirmed) {
+
+                            window.location.href =
+                                url;
+
+                        }
+
+                    });
+
+                }
+
+            );
+
+        });
+
+
+    /* ==============================
+       CHECK ALL
+    ============================== */
+
+    const checkAll =
+        document.getElementById("checkAll");
+
+
+    if (checkAll) {
+
+        checkAll.addEventListener(
+            "change",
+            function () {
+
+                document
+                    .querySelectorAll(".item-check")
+                    .forEach(function (checkbox) {
+
+                        checkbox.checked =
+                            checkAll.checked;
+
+                    });
+
+            }
+        );
+
+    }
+
+
+    /* ==============================
+       DELETE SELECTED
+    ============================== */
+
+    const deleteSelected =
+        document.getElementById(
+            "deleteSelected"
+        );
+
+
+    if (deleteSelected) {
+
+        deleteSelected.addEventListener(
+            "click",
+            function () {
+
+                const selected = [];
+
+                document
+                    .querySelectorAll(".item-check:checked")
+                    .forEach(function (checkbox) {
+
+                        selected.push(
+                            checkbox.value
+                        );
+
+                    });
+
+
+                if (selected.length === 0) {
+
+                    Swal.fire({
+
+                        icon:
+                            "warning",
+
+                        title:
+                            "Belum ada data dipilih",
+
+                        text:
+                            "Silakan pilih data terlebih dahulu."
+
+                    });
+
+                    return;
+
+                }
+
+
+                Swal.fire({
+
+                    title:
+                        "Hapus data terpilih?",
+
+                    text:
+                        selected.length +
+                        " data akan dihapus.",
+
+                    icon:
+                        "warning",
+
+                    showCancelButton:
+                        true,
+
+                    confirmButtonColor:
+                        "#dc3545",
+
+                    cancelButtonColor:
+                        "#6c757d",
+
+                    confirmButtonText:
+                        "Ya, Hapus",
+
+                    cancelButtonText:
+                        "Batal"
+
+                }).then(function (result) {
+
+                    if (
+                        result.isConfirmed
+                    ) {
+
+                        /*
+                         * Sesuaikan endpoint ini
+                         * dengan route bulk delete
+                         * yang kamu punya.
+                         */
+
+                        fetch(
+                            "/item-agent-mapping/delete-selected",
+                            {
+
+                                method:
+                                    "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json"
+
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        ids: selected
+                                    })
+
+                            }
+                        )
+                        .then(function (response) {
+
+                            if (
+                                response.ok
+                            ) {
+
+                                window.location.reload();
+
+                            } else {
+
+                                Swal.fire({
+
+                                    icon:
+                                        "error",
+
+                                    title:
+                                        "Gagal",
+
+                                    text:
+                                        "Gagal menghapus data."
+
+                                });
+
+                            }
+
+                        })
+                        .catch(function () {
+
+                            Swal.fire({
+
+                                icon:
+                                    "error",
+
+                                title:
+                                    "Gagal",
+
+                                text:
+                                    "Terjadi kesalahan saat menghapus data."
+
+                            });
+
+                        });
+
+                    }
+
+                });
+
+            }
+        );
+
+    }
+
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
 </html>

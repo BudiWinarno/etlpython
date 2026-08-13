@@ -1,173 +1,869 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Daftar Mapping</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-<body class="bg-light">
+    <!-- Dashboard CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
 
-<div class="container mt-5">
+    <style>
+      /* ================================
+         MAPPING CONTENT
+         ================================ */
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        Swal.fire({
-                            icon: "{{ category }}",
-                            title: "{{ message }}",
-                            timer: 1800,
-                            showConfirmButton: false
-                        });
-                    });
-                </script>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+      .page-content {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
 
-        <h2>Daftar Mapping</h2>
+      .breadcrumb-text {
+        color: #8c8c8c;
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
 
-        <a href="/mapping/create" class="btn btn-primary">
-            + Tambah Mapping
-        </a>
+      .page-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: #1f1f1f;
+      }
 
-    </div>
+      .page-description {
+        margin-top: 5px;
+        color: #8c8c8c;
+        font-size: 13px;
+      }
 
-    <div class="mb-4">
-        <a href="/dashboard" class="btn btn-secondary">
-            ← Kembali ke HomePage
-        </a>
-    </div>
+      /* ================================
+         CARD
+         ================================ */
 
-    <div class="card shadow-sm">
+      .mapping-card {
+        background: #fff;
+        border: 1px solid #f0f0f0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+      }
 
-        <div class="card-body">
+      /* ================================
+         CARD HEADER
+         ================================ */
 
-            <div class="table-responsive">
+      .mapping-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #f0f0f0;
+      }
 
-                <table class="table table-bordered table-hover table-striped align-middle">
+      .mapping-card-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1f1f1f;
+      }
 
-                    <thead class="table-dark">
+      .mapping-card-count {
+        color: #8c8c8c;
+        font-size: 12px;
+      }
 
-                        <tr>
-                            <th width="80">No</th>
-                            <th>Template</th>
-                            <th>Agent</th>
-                            <th width="120">Status</th>
-                            <th width="180">Aksi</th>
-                        </tr>
+      /* ================================
+         TABLE
+         ================================ */
 
-                    </thead>
+      .mapping-table {
+        margin: 0;
+        font-size: 13px;
+      }
 
-                    <tbody>
+      .mapping-table thead th {
+        background: #fafafa;
+        color: #595959;
+        border-bottom: 1px solid #d9d9d9;
+        padding: 12px 16px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
 
-                        {% for template, agent in templates %}
+      .mapping-table tbody td {
+        padding: 12px 16px;
+        color: #434343;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+      }
 
-                        <tr>
+      .mapping-table tbody tr:hover {
+        background: #fafafa;
+      }
 
-                            <td>{{ loop.index }}</td>
+      .mapping-table tbody tr:last-child td {
+        border-bottom: none;
+      }
 
-                            <td>{{ template.template_name }}</td>
+      /* ================================
+         STATUS
+         ================================ */
 
-                            <td>{{ agent.nama_agent }}</td>
+      .status-active {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        color: #389e0d;
+        background: #f6ffed;
+        border: 1px solid #b7eb8f;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+      }
 
-                            <td>
+      .status-inactive {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        color: #cf1322;
+        background: #fff1f0;
+        border: 1px solid #ffa39e;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+      }
 
-                                {% if template.is_active %}
+      /* ================================
+         BUTTON
+         ================================ */
 
-                                    <span class="badge bg-success">
-                                        Aktif
-                                    </span>
+      .btn-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        color: #fff;
+        background: #1677ff;
+        border: 1px solid #1677ff;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+      }
 
-                                {% else %}
+      .btn-add:hover {
+        color: #fff;
+        background: #4096ff;
+        border-color: #4096ff;
+      }
 
-                                    <span class="badge bg-danger">
-                                        Non Aktif
-                                    </span>
+      .btn-edit {
+        padding: 5px 10px;
+        color: #1677ff;
+        background: #e6f4ff;
+        border: 1px solid #91caff;
+        border-radius: 5px;
+        font-size: 12px;
+        text-decoration: none;
+      }
 
-                                {% endif %}
+      .btn-edit:hover {
+        color: #0958d9;
+        background: #bae0ff;
+      }
 
-                            </td>
+      .btn-delete {
+        padding: 5px 10px;
+        color: #cf1322;
+        background: #fff1f0;
+        border: 1px solid #ffa39e;
+        border-radius: 5px;
+        font-size: 12px;
+      }
 
-                            <td>
+      .btn-delete:hover {
+        color: #a8071a;
+        background: #ffccc7;
+      }
 
-                                <a href="/mapping/edit/{{ template.id }}"
-                                   class="btn btn-warning btn-sm">
-                                    Edit
-                                </a>
+      /* ================================
+         BACK BUTTON
+         ================================ */
 
-                                <form action="/mapping/delete/{{ template.id }}"
-                                    method="POST"
-                                    class="delete-form d-inline">
+      .back-button {
+        display: inline-block;
+        margin-top: 16px;
+        color: #595959;
+        font-size: 13px;
+        text-decoration: none;
+      }
 
-                                    <button
-                                        type="submit"
-                                        class="btn btn-danger btn-sm">
+      .back-button:hover {
+        color: #1677ff;
+      }
 
-                                        Delete
+      /* ================================
+         EMPTY DATA
+         ================================ */
 
-                                    </button>
+      .empty-data {
+        padding: 50px 20px;
+        text-align: center;
+        color: #8c8c8c;
+        font-size: 13px;
+      }
 
-                                </form>
+      /* ================================
+         PAGINATION
+         ================================ */
 
-                            </td>
+      .pagination-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 24px 20px;
+        margin-top: 0;
+        border-top: 1px solid #f0f0f0;
+        background: #fff;
+      }
 
-                        </tr>
+      #pagination-info {
+        color: #8c8c8c;
+        font-size: 13px;
+        line-height: 34px;
+      }
 
-                        {% endfor %}
+      .pagination-nav {
+        margin: 0;
+        padding: 0;
+      }
 
-                    </tbody>
+      #pagination {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
 
-                </table>
+      #pagination .page-item {
+        margin: 0;
+        padding: 0;
+      }
 
-            </div>
+      #pagination .page-link {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        color: #595959;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+        border-radius: 6px;
+        font-size: 13px;
+        text-decoration: none;
+        transition: all 0.15s ease;
+      }
 
+      #pagination .page-link:hover {
+        color: #1677ff;
+        border-color: #1677ff;
+        background: #f0f7ff;
+      }
+
+      #pagination .page-item.active .page-link {
+        color: #fff;
+        background: #1677ff;
+        border-color: #1677ff;
+      }
+
+      #pagination .page-item.disabled .page-link {
+        color: #bfbfbf;
+        background: #f5f5f5;
+        border-color: #d9d9d9;
+        cursor: not-allowed;
+      }
+
+      /* ================================
+         RESPONSIVE
+         ================================ */
+
+      @media (max-width: 800px) {
+        .page-header {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .mapping-table {
+          min-width: 700px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .pagination-wrapper {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 14px;
+          padding: 16px 18px 18px;
+        }
+
+        #pagination-info {
+          line-height: normal;
+        }
+
+        .pagination-nav {
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- ==========================================
+           SIDEBAR
+           ========================================== -->
+
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-box">APP</div>
+
+          <div>
+            <h1>
+              DATA AGENT<br />
+              PORTAL
+            </h1>
+
+            <span> MAPPING - SELL OUT - STOCK - CMO </span>
+          </div>
         </div>
 
+        <nav class="sidebar-menu">
+          <p class="menu-title">MAIN MENU</p>
+
+          <!-- DASHBOARD -->
+
+          <a href="/dashboard" class="menu-item">
+            <span>▣</span>
+            Dashboard
+          </a>
+
+          <!-- ==========================================
+               SELL OUT
+               ========================================== -->
+
+          <div
+            class="menu-dropdown {% if request.path in ['/upload', '/mapping', '/generate'] %} open {% endif %}"
+          >
+            <button
+              class="menu-item dropdown-toggle {% if request.path in ['/upload', '/mapping', '/generate'] %} active {% endif %}"
+              type="button"
+            >
+              <span>▤</span>
+
+              <span class="menu-text"> Sell Out </span>
+
+              <span class="arrow"> ▾ </span>
+            </button>
+
+            <div class="submenu">
+              <a
+                href="/upload"
+                class="{% if request.path == '/upload' %}active{% endif %}"
+              >
+                Normalisasi Invoice
+              </a>
+
+              <a
+                href="/mapping"
+                class="{% if request.path == '/mapping' %}active{% endif %}"
+              >
+                Mapping Invoice
+              </a>
+
+              <a
+                href="/generate"
+                class="{% if request.path == '/generate' %}active{% endif %}"
+              >
+                Generate Invoice
+              </a>
+            </div>
+          </div>
+
+          <!-- ==========================================
+               STOCK
+               ========================================== -->
+
+          <div
+            class="menu-dropdown {% if request.path in ['/stock/upload', '/stock-mapping', '/generate-stock'] %} open {% endif %}"
+          >
+            <button
+              class="menu-item dropdown-toggle {% if request.path in ['/stock/upload', '/stock-mapping', '/generate-stock'] %} active {% endif %}"
+              type="button"
+            >
+              <span>▥</span>
+
+              <span class="menu-text"> Stock </span>
+
+              <span class="arrow"> ▾ </span>
+            </button>
+
+            <div class="submenu">
+              <a
+                href="/stock/upload"
+                class="{% if request.path == '/stock/upload' %}active{% endif %}"
+              >
+                Normalisasi Stock
+              </a>
+
+              <a
+                href="/stock-mapping"
+                class="{% if request.path == '/stock-mapping' %}active{% endif %}"
+              >
+                Mapping Stock
+              </a>
+
+              <a
+                href="/generate-stock"
+                class="{% if request.path == '/generate-stock' %}active{% endif %}"
+              >
+                Generate Stock
+              </a>
+            </div>
+          </div>
+
+          <!-- GENERATE YURI -->
+
+          <a
+            href="/generate-yuri"
+            class="menu-item {% if request.path == '/generate-yuri' %}active{% endif %}"
+          >
+            <span>◈</span>
+            Generate Template Yuri
+          </a>
+
+          <!-- GENERATE CMO -->
+
+          <a
+            href="/generate-cmo"
+            class="menu-item {% if request.path == '/generate-cmo' %}active{% endif %}"
+          >
+            <span>◈</span>
+            Generate CMO
+          </a>
+
+          <!-- LAPORAN -->
+
+          <p class="menu-title">DAFTAR LAPORAN AGENT</p>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Raw Agent
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Template Yuri
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan CMO
+          </a>
+
+          <!-- MASTER DATA -->
+
+          <p class="menu-title">MASTER DATA</p>
+
+          <a
+            href="/agents"
+            class="menu-item {% if request.path == '/agents' %}active{% endif %}"
+          >
+            <span>◆</span>
+            Daftar Agent
+          </a>
+
+          <a
+            href="/item-agent-mapping"
+            class="menu-item {% if request.path == '/item-agent-mapping' %}active{% endif %}"
+          >
+            <span>▦</span>
+            Master Agent Mapping Produk
+          </a>
+
+          <a
+            href="/cmo-template"
+            class="menu-item {% if request.path == '/cmo-template' %}active{% endif %}"
+          >
+            <span>▦</span>
+            CMO Agent Template
+          </a>
+
+          <a
+            href="/insell-reports"
+            class="menu-item {% if request.path == '/insell-reports' %}active{% endif %}"
+          >
+            <span>◫</span>
+            Master Data Insell
+          </a>
+
+          <a
+            href="/ods-ec-detail"
+            class="menu-item {% if request.path == '/ods-ec-detail' %}active{% endif %}"
+          >
+            <span>◫</span>
+            SQL Server SAP Data Insell
+          </a>
+        </nav>
+
+        <!-- USER -->
+
+        <div class="sidebar-bottom">
+          <div class="user-box">
+            <div class="avatar">A</div>
+
+            <div>
+              <strong> Administrator </strong>
+
+              <small> {{ session.get('user_email', 'User') }} </small>
+            </div>
+          </div>
+
+          <a href="/logout" class="logout"> ⇥ &nbsp; Logout </a>
+        </div>
+      </aside>
+
+      <!-- ==========================================
+           MAIN CONTENT
+           ========================================== -->
+
+      <main class="main-content">
+        <div class="page-content">
+          <!-- FLASH MESSAGE -->
+
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              Swal.fire({
+                icon: "{{ category }}",
+                title: "{{ message }}",
+                timer: 1800,
+                showConfirmButton: false,
+              });
+            });
+          </script>
+
+          {% endfor %} {% endif %} {% endwith %}
+
+          <!-- PAGE HEADER -->
+
+          <div class="page-header">
+            <div>
+              <div class="breadcrumb-text">MASTER DATA / MAPPING</div>
+
+              <h2>Daftar Mapping</h2>
+
+              <div class="page-description">
+                Kelola template mapping invoice berdasarkan agent.
+              </div>
+            </div>
+
+            <a href="/mapping/create" class="btn-add">
+              <span>＋</span>
+              Tambah Mapping
+            </a>
+          </div>
+
+          <!-- TABLE -->
+
+          <div class="mapping-card">
+            <div class="table-responsive">
+              <table class="table mapping-table" id="mappingTable">
+                <thead>
+                  <tr>
+                    <th width="70">No</th>
+                    <th>Template</th>
+                    <th>Agent</th>
+                    <th width="130">Status</th>
+                    <th width="180">Aksi</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for template, agent in templates %}
+
+                  <tr>
+                    <td>{{ loop.index }}</td>
+
+                    <td>
+                      <strong> {{ template.template_name }} </strong>
+                    </td>
+
+                    <td>{{ agent.nama_agent }}</td>
+
+                    <td>
+                      {% if template.is_active %}
+
+                      <span class="status-active"> ● Aktif </span>
+
+                      {% else %}
+
+                      <span class="status-inactive"> ● Non Aktif </span>
+
+                      {% endif %}
+                    </td>
+
+                    <td>
+                      <a
+                        href="/mapping/edit/{{ template.id }}"
+                        class="btn-edit"
+                      >
+                        Edit
+                      </a>
+
+                      <form
+                        action="/mapping/delete/{{ template.id }}"
+                        method="POST"
+                        class="delete-form d-inline"
+                      >
+                        <button type="submit" class="btn-delete">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+
+                  {% else %}
+
+                  <tr>
+                    <td colspan="5" class="empty-data">
+                      Belum ada template mapping.
+                    </td>
+                  </tr>
+
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- PAGINATION -->
+
+            <div class="pagination-wrapper">
+              <div id="pagination-info"></div>
+
+              <nav class="pagination-nav">
+                <ul id="pagination"></ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
-</div>
+    <!-- Bootstrap JS -->
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    document.querySelectorAll(".delete-form").forEach(function(form){
+    <!-- SweetAlert -->
 
-        form.addEventListener("submit", function(e){
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            e.preventDefault();
+    <!-- ==========================================
+         DROPDOWN
+         ========================================== -->
 
-            Swal.fire({
-                title: "Yakin ingin menghapus?",
-                text: "Template yang dihapus tidak dapat dikembalikan.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#dc3545",
-                cancelButtonColor: "#6c757d",
-                confirmButtonText: "Ya, Hapus",
-                cancelButtonText: "Batal"
+    <script>
+      document.querySelectorAll(".dropdown-toggle").forEach((button) => {
+        button.addEventListener("click", function () {
+          const dropdown = this.parentElement;
 
-            }).then((result) => {
+          dropdown.classList.toggle("open");
+        });
+      });
+    </script>
 
-                if(result.isConfirmed){
-                    form.submit();
-                }
+    <!-- ==========================================
+         DELETE CONFIRMATION
+         ========================================== -->
 
-            });
+    <script>
+      document.querySelectorAll(".delete-form").forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
 
+          Swal.fire({
+            title: "Yakin ingin menghapus?",
+
+            text: "Template yang dihapus tidak dapat dikembalikan.",
+
+            icon: "warning",
+
+            showCancelButton: true,
+
+            confirmButtonColor: "#ff4d4f",
+
+            cancelButtonColor: "#8c8c8c",
+
+            confirmButtonText: "Ya, Hapus",
+
+            cancelButtonText: "Batal",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              form.submit();
+            }
+          });
+        });
+      });
+    </script>
+
+    <!-- ==========================================
+         PAGINATION
+         ========================================== -->
+
+    <script>
+      const rowsPerPage = 10;
+
+      const table = document.getElementById("mappingTable");
+
+      const tbody = table.querySelector("tbody");
+
+      const rows = Array.from(tbody.querySelectorAll("tr"));
+
+      const pagination = document.getElementById("pagination");
+
+      const paginationInfo = document.getElementById("pagination-info");
+
+      let currentPage = 1;
+
+      const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+      function showPage(page) {
+        currentPage = page;
+
+        const start = (page - 1) * rowsPerPage;
+
+        const end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+          row.style.display = index >= start && index < end ? "" : "none";
         });
 
-    });
-</script>
+        renderPagination();
 
-</body>
+        const total = rows.length;
+
+        const from = total === 0 ? 0 : start + 1;
+
+        const to = Math.min(end, total);
+
+        paginationInfo.innerText = `Menampilkan ${from}–${to} dari ${total} data`;
+      }
+
+      function renderPagination() {
+        pagination.innerHTML = "";
+
+        if (totalPages <= 1) {
+          return;
+        }
+
+        /* PREVIOUS */
+
+        const prev = document.createElement("li");
+
+        prev.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
+
+        prev.innerHTML = `
+          <a class="page-link" href="#">
+            ‹
+          </a>
+        `;
+
+        prev.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          if (currentPage > 1) {
+            showPage(currentPage - 1);
+          }
+        });
+
+        pagination.appendChild(prev);
+
+        /* NUMBER */
+
+        for (let i = 1; i <= totalPages; i++) {
+          const li = document.createElement("li");
+
+          li.className = `page-item ${i === currentPage ? "active" : ""}`;
+
+          li.innerHTML = `
+            <a class="page-link" href="#">
+              ${i}
+            </a>
+          `;
+
+          li.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            showPage(i);
+          });
+
+          pagination.appendChild(li);
+        }
+
+        /* NEXT */
+
+        const next = document.createElement("li");
+
+        next.className = `page-item ${
+          currentPage === totalPages ? "disabled" : ""
+        }`;
+
+        next.innerHTML = `
+          <a class="page-link" href="#">
+            ›
+          </a>
+        `;
+
+        next.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          if (currentPage < totalPages) {
+            showPage(currentPage + 1);
+          }
+        });
+
+        pagination.appendChild(next);
+      }
+
+      /* Jalankan pertama kali */
+
+      showPage(1);
+    </script>
+  </body>
 </html>

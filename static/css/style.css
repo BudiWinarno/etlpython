@@ -5,95 +5,184 @@
 body {
     margin: 0;
     min-height: 100vh;
-    font-family: Arial, sans-serif;
-    background: #4f7cff;
-    color: #111;
-}
 
-/* Area utama */
-body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    background: #f0f2f5;
+    color: #1f1f1f;
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     padding: 30px;
 }
 
-/* Card login */
-form {
-    width: 100%;
-    padding: 40px;
-    background: white;
-    border: 4px solid #111;
-    box-shadow: 10px 10px 0 #111;
-}
 
-/* Judul */
-h1 {
-    margin-top: 0;
-    margin-bottom: 30px;
-    font-size: 48px;
-    font-weight: 900;
-}
-
-/* Label */
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 16px;
-    font-weight: 800;
-}
-
-/* Input */
-input {
-    width: 100%;
-    height: 55px;
-    margin-bottom: 22px;
-    padding: 12px 15px;
-
-    border: 3px solid #111;
-    background: #fff;
-
-    font-size: 16px;
-    outline: none;
-}
-
-/* Saat input dipilih */
-input:focus {
-    background: #fff4a8;
-    box-shadow: 4px 4px 0 #111;
-}
-
-/* Button */
-button {
-    width: 100%;
-    height: 58px;
-
-    border: 3px solid #111;
-    background: #ffd21f;
-    box-shadow: 5px 5px 0 #111;
-
-    font-size: 18px;
-    font-weight: 900;
-
-    cursor: pointer;
-}
-
-/* Efek tombol */
-button:hover {
-    transform: translate(3px, 3px);
-    box-shadow: 2px 2px 0 #111;
-}
-
-button:active {
-    transform: translate(5px, 5px);
-    box-shadow: none;
-}
+/* Container Login */
 
 .login-container {
     width: 420px;
 }
 
+
+/* Judul */
+
 .login-container h1 {
-    margin-bottom: 30px;
+    margin: 0 0 24px;
+
     text-align: center;
+
+    font-size: 30px;
+    font-weight: 600;
+
+    color: #1f1f1f;
+}
+
+
+/* Card */
+
+form {
+    width: 100%;
+
+    padding: 32px;
+
+    background: #ffffff;
+
+    border: 1px solid #d9d9d9;
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Label */
+
+label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    color: #1f1f1f;
+}
+
+
+/* Input */
+
+input {
+    width: 100%;
+
+    height: 40px;
+
+    margin-bottom: 20px;
+
+    padding: 8px 12px;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    color: #1f1f1f;
+
+    background: #ffffff;
+
+    border: 1px solid #d9d9d9;
+
+    border-radius: 6px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+
+/* Input focus */
+
+input:hover {
+    border-color: #4096ff;
+}
+
+input:focus {
+    border-color: #1677ff;
+
+    box-shadow:
+        0 0 0 2px rgba(22, 119, 255, 0.15);
+}
+
+
+/* Button */
+
+button {
+    width: 100%;
+
+    height: 40px;
+
+    border: 1px solid #1677ff;
+
+    border-radius: 6px;
+
+    background: #1677ff;
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s,
+        border-color 0.2s;
+}
+
+
+/* Button hover */
+
+button:hover {
+    background: #4096ff;
+
+    border-color: #4096ff;
+}
+
+
+/* Button active */
+
+button:active {
+    background: #0958d9;
+
+    border-color: #0958d9;
+}
+
+
+/* Mobile */
+
+@media (max-width: 500px) {
+
+    body {
+        padding: 20px;
+    }
+
+    .login-container {
+        width: 100%;
+    }
+
+    form {
+        padding: 24px;
+    }
 }

@@ -1,195 +1,522 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Normalisasi Template Invoice</title>
 
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
+
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-<body class="bg-light">
+    <style>
+      /* =========================
+         MAIN CONTENT
+      ========================= */
 
-<div class="container mt-5">
+      .main-content {
+        min-height: 100vh;
+        margin-left: 225px;
+        padding: 40px 50px;
 
-    <div class="row justify-content-center">
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
 
-        <div class="col-md-6">
+        background: #f5f7fa;
+      }
 
-            <div class="card shadow">
+      /* =========================
+         FORM CONTAINER
+      ========================= */
 
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Normalisasi Template Invoice</h4>
-                </div>
+      .upload-container {
+        width: 100%;
+        max-width: 800px;
+        margin-top: 45px;
+      }
 
-                <div class="card-body">
+      /* =========================
+         CARD
+      ========================= */
 
-                    <form action="/upload" method="POST" enctype="multipart/form-data">
+      .upload-card {
+        width: 100%;
 
-                        <div class="mb-3">
-                            <label class="form-label">Template</label>
+        background: #ffffff;
 
-                            <select name="kode_agent" class="form-select" required>
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
 
-                                <option value="">-- Pilih Template --</option>
+        box-shadow:
+          0 2px 6px rgba(0, 0, 0, 0.04),
+          0 8px 24px rgba(0, 0, 0, 0.06);
 
-                                <option value="LK-000019">
-                                    LK-000019
-                                </option>
+        overflow: hidden;
+      }
 
-                                <option value="LK-000105">
-                                    LK-000105
-                                </option>
+      /* =========================
+         HEADER
+      ========================= */
 
-                                <option value="LK-000148">
-                                    LK-000148
-                                </option>
+      .upload-header {
+        padding: 22px 28px;
 
-                                <option value="LK-000115">
-                                    LK-000115
-                                </option>
+        border-bottom: 1px solid #f0f0f0;
 
-                                <option value="LK-000048">
-                                    LK-000048
-                                </option>
+        background: #ffffff;
+      }
 
-                                <option value="LK-000065">
-                                    LK-000065
-                                </option>
+      .upload-header h4 {
+        margin: 0;
 
-                                <option value="LK-000093">
-                                    LK-000093
-                                </option>
+        color: #1f1f1f;
 
-                                <option value="LK-000118">
-                                    LK-000118
-                                </option>
+        font-size: 21px;
+        font-weight: 600;
+      }
 
-                                <option value="LK-000121">
-                                    LK-000121
-                                </option>
+      /* =========================
+         BODY
+      ========================= */
 
-                                <option value="LK-000032">
-                                    LK-000032
-                                </option>
+      .upload-body {
+        padding: 30px 32px 32px;
+      }
 
-                                <option value="LK-000108">
-                                    LK-000108
-                                </option>
+      /* =========================
+         FORM
+      ========================= */
 
-                                <option value="LK-000145">
-                                    LK-000145
-                                </option>
+      .form-label {
+        margin-bottom: 8px;
 
-                                <option value="LK-000146">
-                                    LK-000146
-                                </option>
+        color: #262626;
 
-                                <option value="LK-000153">
-                                    LK-000153
-                                </option>
+        font-size: 14px;
+        font-weight: 500;
+      }
 
-                                 <option value="LK-000136">
-                                    LK-000136
-                                </option>
+      .form-select,
+      .form-control {
+        min-height: 44px;
 
-                                <option value="LK-000117">
-                                    LK-000117
-                                </option>
+        border: 1px solid #d9d9d9;
+        border-radius: 6px;
 
-                                <option value="LK-000139">
-                                    LK-000139
-                                </option>
+        font-size: 14px;
 
-                                <option value="LK-000021">
-                                    LK-000021
-                                </option>
+        transition: all 0.2s ease;
+      }
 
-                                <option value="LK-000124">
-                                    LK-000124
-                                </option>
+      .form-select:hover,
+      .form-control:hover {
+        border-color: #4096ff;
+      }
 
-                                <option value="LK-000126">
-                                    LK-000126
-                                </option>
+      .form-select:focus,
+      .form-control:focus {
+        border-color: #1677ff;
 
-                                <option value="LK-000131">
-                                    LK-000131
-                                </option>
+        box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.12);
+      }
 
-                                <option value="LK-000132">
-                                    LK-000132
-                                </option>
+      /* =========================
+         FILE INPUT
+      ========================= */
 
-                                <option value="LK-000170">
-                                    LK-000170
-                                </option>
+      input[type="file"] {
+        padding: 8px 12px;
+      }
 
-                                <option value="LK-000059">
-                                    LK-000059
-                                </option>
+      .form-text {
+        margin-top: 7px;
 
-                                <option value="LK-000127">
-                                    LK-000127
-                                </option>
+        color: #8c8c8c;
 
-                                <option value="LK-000040">
-                                    LK-000040
-                                </option>
+        font-size: 13px;
+      }
 
-                                <option value="LK-000020">
-                                    LK-000020
-                                </option>
+      /* =========================
+         BUTTON
+      ========================= */
 
-                            </select>
-                        </div>
+      .btn {
+        min-height: 42px;
 
-                        <div class="mb-3">
-                            <label class="form-label">
-                                File Excel
-                            </label>
+        padding: 8px 20px;
 
-                            <input
-                                type="file"
-                                name="file"
-                                class="form-control"
-                                accept=".xlsx,.xls,.xlsb"
-                                required>
+        border-radius: 6px;
 
-                            <div class="form-text">
-                                Upload file Excel yang akan dinormalisasi.
-                            </div>
-                        </div>
+        font-size: 14px;
+        font-weight: 500;
+      }
 
-                        <div class="d-flex justify-content-between">
+      .btn-primary {
+        background: #1677ff;
+        border-color: #1677ff;
+      }
 
-                            <a href="/dashboard" class="btn btn-secondary">
-                                ← Kembali
-                            </a>
+      .btn-primary:hover {
+        background: #4096ff;
+        border-color: #4096ff;
+      }
 
-                            <button type="submit" class="btn btn-primary">
-                                Generate
-                            </button>
+      .btn-secondary {
+        background: #6c757d;
+        border-color: #6c757d;
+      }
 
-                        </div>
+      /* =========================
+         FORM SPACING
+      ========================= */
 
-                    </form>
+      .upload-body .mb-3 {
+        margin-bottom: 24px !important;
+      }
 
-                </div>
+      .upload-body .mb-4 {
+        margin-bottom: 30px !important;
+      }
 
-            </div>
+      /* =========================
+         RESPONSIVE
+      ========================= */
 
+      @media (max-width: 1000px) {
+        .main-content {
+          margin-left: 225px;
+          padding: 30px;
+        }
+
+        .upload-container {
+          max-width: 700px;
+          margin-top: 30px;
+        }
+      }
+
+      @media (max-width: 800px) {
+        .main-content {
+          margin-left: 0;
+          padding: 20px;
+        }
+
+        .upload-container {
+          max-width: 100%;
+          margin-top: 20px;
+        }
+
+        .upload-header {
+          padding: 20px;
+        }
+
+        .upload-body {
+          padding: 24px 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- =========================
+           SIDEBAR
+      ========================= -->
+
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-box">APP</div>
+
+          <div>
+            <h1>
+              DATA AGENT<br />
+              PORTAL
+            </h1>
+
+            <span> MAPPING - SELL OUT - STOCK - CMO </span>
+          </div>
         </div>
 
+        <nav class="sidebar-menu">
+          <p class="menu-title">MAIN MENU</p>
+
+          <!-- DASHBOARD -->
+
+          <a href="/dashboard" class="menu-item">
+            <span>▣</span>
+
+            Dashboard
+          </a>
+
+          <!-- SELL OUT -->
+
+          <div class="menu-dropdown open">
+            <button class="menu-item dropdown-toggle active" type="button">
+              <span>▤</span>
+
+              <span class="menu-text"> Sell Out </span>
+
+              <span class="arrow"> ▾ </span>
+            </button>
+
+            <div class="submenu">
+              <a href="/upload" class="active"> Normalisasi Invoice </a>
+
+              <a href="/mapping"> Mapping Invoice </a>
+
+              <a href="/generate"> Generate Invoice </a>
+            </div>
+          </div>
+
+          <!-- STOCK -->
+
+          <div class="menu-dropdown">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span>▥</span>
+
+              <span class="menu-text"> Stock </span>
+
+              <span class="arrow"> ▾ </span>
+            </button>
+
+            <div class="submenu">
+              <a href="/stock/upload"> Normalisasi Stock </a>
+
+              <a href="/stock-mapping"> Mapping Stock </a>
+
+              <a href="/generate-stock"> Generate Stock </a>
+            </div>
+          </div>
+
+          <!-- GENERATE YURI -->
+
+          <a href="/generate-yuri" class="menu-item">
+            <span>◈</span>
+
+            Generate Template Yuri
+          </a>
+
+          <!-- GENERATE CMO -->
+
+          <a href="/generate-cmo" class="menu-item">
+            <span>◈</span>
+
+            Generate CMO
+          </a>
+
+          <!-- LAPORAN -->
+
+          <p class="menu-title">DAFTAR LAPORAN AGENT</p>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+
+            Data Laporan Raw Agent
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+
+            Data Laporan Template Yuri
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+
+            Data Laporan CMO
+          </a>
+
+          <!-- MASTER DATA -->
+
+          <p class="menu-title">MASTER DATA</p>
+
+          <a href="/agents" class="menu-item">
+            <span>◆</span>
+
+            Daftar Agent
+          </a>
+
+          <a href="/item-agent-mapping" class="menu-item">
+            <span>▦</span>
+
+            Master Agent Mapping Produk
+          </a>
+
+          <a href="/cmo-template" class="menu-item">
+            <span>▦</span>
+
+            CMO Agent Template
+          </a>
+
+          <a href="/insell-reports" class="menu-item">
+            <span>◫</span>
+
+            Master Data Insell
+          </a>
+
+          <a href="/ods-ec-detail" class="menu-item">
+            <span>◫</span>
+
+            SQL Server SAP Data Insell
+          </a>
+        </nav>
+
+        <!-- SIDEBAR BOTTOM -->
+
+        <div class="sidebar-bottom">
+          <div class="user-box">
+            <div class="avatar">A</div>
+
+            <div>
+              <strong> Administrator </strong>
+
+              <small> {{ session.get('user_email', 'User') }} </small>
+            </div>
+          </div>
+
+          <a href="/logout" class="logout"> ⇥ &nbsp; Logout </a>
+        </div>
+      </aside>
+
+      <!-- =========================
+           CONTENT
+      ========================= -->
+
+      <main class="main-content">
+        <div class="upload-container">
+          <div class="upload-card">
+            <!-- HEADER -->
+
+            <div class="upload-header">
+              <h4>Normalisasi Template Invoice</h4>
+            </div>
+
+            <!-- BODY -->
+
+            <div class="upload-body">
+              <form
+                action="/upload"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                <!-- TEMPLATE -->
+
+                <div class="mb-3">
+                  <label class="form-label"> Template </label>
+
+                  <select name="kode_agent" class="form-select" required>
+                    <option value="">-- Pilih Template --</option>
+
+                    <option value="LK-000019">LK-000019</option>
+
+                    <option value="LK-000105">LK-000105</option>
+
+                    <option value="LK-000148">LK-000148</option>
+
+                    <option value="LK-000115">LK-000115</option>
+
+                    <option value="LK-000048">LK-000048</option>
+
+                    <option value="LK-000065">LK-000065</option>
+
+                    <option value="LK-000093">LK-000093</option>
+
+                    <option value="LK-000118">LK-000118</option>
+
+                    <option value="LK-000121">LK-000121</option>
+
+                    <option value="LK-000032">LK-000032</option>
+
+                    <option value="LK-000108">LK-000108</option>
+
+                    <option value="LK-000145">LK-000145</option>
+
+                    <option value="LK-000146">LK-000146</option>
+
+                    <option value="LK-000153">LK-000153</option>
+
+                    <option value="LK-000136">LK-000136</option>
+
+                    <option value="LK-000117">LK-000117</option>
+
+                    <option value="LK-000139">LK-000139</option>
+
+                    <option value="LK-000021">LK-000021</option>
+
+                    <option value="LK-000124">LK-000124</option>
+
+                    <option value="LK-000126">LK-000126</option>
+
+                    <option value="LK-000131">LK-000131</option>
+
+                    <option value="LK-000132">LK-000132</option>
+
+                    <option value="LK-000170">LK-000170</option>
+
+                    <option value="LK-000059">LK-000059</option>
+
+                    <option value="LK-000127">LK-000127</option>
+
+                    <option value="LK-000040">LK-000040</option>
+
+                    <option value="LK-000020">LK-000020</option>
+                  </select>
+                </div>
+
+                <!-- FILE -->
+
+                <div class="mb-4">
+                  <label class="form-label"> File Excel </label>
+
+                  <input
+                    type="file"
+                    name="file"
+                    class="form-control"
+                    accept=".xlsx,.xls,.xlsb"
+                    required
+                  />
+
+                  <div class="form-text">
+                    Upload file Excel yang akan dinormalisasi.
+                  </div>
+                </div>
+
+                <!-- BUTTON -->
+
+                <div class="d-flex justify-content-between">
+                  <a href="/dashboard" class="btn btn-secondary"> ← Kembali </a>
+
+                  <button type="submit" class="btn btn-primary">
+                    Generate
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
-</div>
+    <!-- =========================
+         DROPDOWN SCRIPT
+    ========================= -->
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.querySelectorAll(".dropdown-toggle").forEach((button) => {
+        button.addEventListener("click", function () {
+          const dropdown = this.parentElement;
 
-</body>
-
+          dropdown.classList.toggle("open");
+        });
+      });
+    </script>
+  </body>
 </html>

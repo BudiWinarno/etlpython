@@ -73,6 +73,8 @@ def index():
     per_page = 10
 
     total = query.count()
+    
+    total_pages = (total + per_page - 1) // per_page
 
     mappings = (
         query.order_by(ItemAgentMapping.id.desc())
@@ -91,7 +93,8 @@ def index():
         selected_kode_sku_agent=kode_sku_agent,
         page=page,
         per_page=per_page,
-        total=total
+        total=total,
+        total_pages=total_pages
     )
 
 @item_agent_mapping_bp.route("/item-agent-mapping/create")

@@ -1,176 +1,736 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Stock Mapping</title>
+    <title>Stock Mapping</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
 
-<body class="bg-light">
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-<div class="container mt-5">
+    <style>
+      .page-content {
+        width: 100%;
+      }
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
+      .page-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+      }
 
-            {% for category, message in messages %}
+      .page-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
 
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      .page-card-header h3 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: #1f1f1f;
+      }
+
+      .page-card-header p {
+        margin: 5px 0 0;
+        font-size: 13px;
+        color: #888;
+      }
+
+      .page-card-body {
+        padding: 24px;
+      }
+
+      .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .mapping-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+      }
+
+      .mapping-table thead th {
+        background: #fafafa;
+        color: #555;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 13px 14px;
+        border-bottom: 1px solid #e5e5e5;
+        white-space: nowrap;
+      }
+
+      .mapping-table tbody td {
+        padding: 13px 14px;
+        font-size: 14px;
+        color: #444;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+      }
+
+      .mapping-table tbody tr:hover {
+        background: #fafafa;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .status-active {
+        background: #f0fdf4;
+        color: #16a34a;
+      }
+
+      .status-inactive {
+        background: #fef2f2;
+        color: #dc2626;
+      }
+
+      .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+
+      .btn-add {
+        background: #1677ff;
+        border-color: #1677ff;
+        color: white;
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-size: 13px;
+      }
+
+      .btn-add:hover {
+        background: #4096ff;
+        border-color: #4096ff;
+        color: white;
+      }
+
+      .btn-edit {
+        background: #fff7e6;
+        border: 1px solid #ffd591;
+        color: #d48806;
+        padding: 6px 11px;
+        border-radius: 5px;
+        font-size: 12px;
+      }
+
+      .btn-edit:hover {
+        background: #fff1d6;
+        color: #ad6800;
+      }
+
+      .btn-delete {
+        background: #fff1f0;
+        border: 1px solid #ffccc7;
+        color: #cf1322;
+        padding: 6px 11px;
+        border-radius: 5px;
+        font-size: 12px;
+      }
+
+      .btn-delete:hover {
+        background: #ffe4e1;
+        color: #a8071a;
+      }
+
+      .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: #666;
+        text-decoration: none;
+        font-size: 13px;
+        margin-bottom: 18px;
+      }
+
+      .back-button:hover {
+        color: #1677ff;
+      }
+
+      .empty-row {
+        text-align: center;
+        padding: 35px !important;
+        color: #999 !important;
+      }
+
+      /* ==============================
+   PAGINATION
+============================== */
+
+      .pagination-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 22px;
+        padding-top: 18px;
+        border-top: 1px solid #f0f0f0;
+        gap: 16px;
+      }
+
+      .pagination-info {
+        font-size: 13px;
+        color: #888;
+      }
+
+      .pagination {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .pagination button {
+        min-width: 34px;
+        height: 34px;
+        padding: 0 10px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        color: #555;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .pagination button:hover:not(:disabled) {
+        border-color: #1677ff;
+        color: #1677ff;
+        background: #f5f9ff;
+      }
+
+      .pagination button.active {
+        background: #1677ff;
+        border-color: #1677ff;
+        color: #fff;
+      }
+
+      .pagination button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      @media (max-width: 768px) {
+        .pagination-wrapper {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .pagination {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .page-card-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .btn-add {
+          width: 100%;
+          text-align: center;
+        }
+
+        .page-card-body {
+          padding: 16px;
+        }
+
+        .mapping-table {
+          min-width: 650px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- MOBILE BUTTON -->
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="dashboard">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-box">APP</div>
+
+          <div>
+            <h1>AGENT MANAGEMENT <br />SYSTEM</h1>
+            <span>MAPPING - SELL OUT - STOCK - CMO</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-menu">
+          <p class="menu-title">MAIN MENU</p>
+
+          <a href="/dashboard" class="menu-item">
+            <span>▣</span>
+            Dashboard
+          </a>
+
+          <!-- SELL OUT -->
+          <div class="menu-dropdown">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span>▤</span>
+              <span class="menu-text">Sell Out</span>
+              <span class="arrow">▾</span>
+            </button>
+
+            <div class="submenu">
+              <a href="/upload"> Normalisasi Invoice </a>
+
+              <a href="/mapping"> Mapping Invoice </a>
+
+              <a href="/generate"> Generate Invoice </a>
+            </div>
+          </div>
+
+          <!-- STOCK -->
+          <div class="menu-dropdown open">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span>▥</span>
+              <span class="menu-text">Stock</span>
+              <span class="arrow">▾</span>
+            </button>
+
+            <div class="submenu">
+              <a href="/stock/upload"> Normalisasi Stock </a>
+
+              <a href="/stock-mapping" class="active"> Mapping Stock </a>
+
+              <a href="/generate-stock"> Generate Stock </a>
+            </div>
+          </div>
+
+          <a href="/generate-yuri" class="menu-item">
+            <span>◈</span>
+            Generate Template Yuri
+          </a>
+
+          <a href="/generate-cmo" class="menu-item">
+            <span>◈</span>
+            Generate CMO
+          </a>
+
+          <p class="menu-title">Daftar Laporan Agent</p>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Raw Agent
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Template Yuri
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan CMO
+          </a>
+
+          <p class="menu-title">MASTER DATA</p>
+
+          <a href="/agents" class="menu-item">
+            <span>◆</span>
+            Daftar Agent
+          </a>
+
+          <a href="/item-agent-mapping" class="menu-item">
+            <span>▦</span>
+            Master Agent Mapping Produk
+          </a>
+
+          <a href="/cmo-template" class="menu-item">
+            <span>▦</span>
+            CMO Agent Template
+          </a>
+
+          <a href="/insell-reports" class="menu-item">
+            <span>◫</span>
+            Master Data Insell
+          </a>
+
+          <a href="/ods-ec-detail" class="menu-item">
+            <span>◫</span>
+            SQL Server SAP Data Insell
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="user-box">
+            <div class="avatar">A</div>
+
+            <div>
+              <strong>Administrator</strong>
+              <small> {{ session.get('user_email', 'User') }} </small>
+            </div>
+          </div>
+
+          <a href="/logout" class="logout"> ⇥ &nbsp; Logout </a>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <span class="breadcrumb"> STOCK / MAPPING </span>
+
+            <h2>Stock Mapping</h2>
+          </div>
+
+          <div class="top-user">
+            <span class="status-dot"></span>
+            Online
+          </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="page-content">
+          <div class="page-card">
+            <!-- HEADER -->
+            <div class="page-card-header">
+              <div>
+                <h3>Daftar Stock Mapping</h3>
+
+                <p>Kelola template mapping stock agent.</p>
+              </div>
+
+              <a href="/stock-mapping/create" class="btn btn-add">
+                + Tambah Mapping
+              </a>
+            </div>
+
+            <!-- BODY -->
+            <div class="page-card-body">
+              {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %} {% for category, message in messages %}
+
+              <div
+                class="alert alert-{{ category }} alert-dismissible fade show"
+                role="alert"
+              >
                 {{ message }}
 
                 <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-                </button>
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="alert"
+                ></button>
+              </div>
 
-            </div>
+              {% endfor %} {% endif %} {% endwith %}
 
-            {% endfor %}
+              <div class="table-wrapper">
+                <table class="mapping-table">
+                  <thead>
+                    <tr>
+                      <th width="70">No</th>
+                      <th>Template</th>
+                      <th>Agent</th>
+                      <th width="120">Status</th>
+                      <th width="160">Aksi</th>
+                    </tr>
+                  </thead>
 
-        {% endif %}
-    {% endwith %}
+                  <tbody id="mappingTableBody">
+                    {% for template, agent in templates %}
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+                    <tr class="mapping-row">
+                      <td>{{ loop.index }}</td>
 
-        <h2>Daftar Stock Mapping</h2>
+                      <td>{{ template.template_name }}</td>
 
-        <a href="/stock-mapping/create" class="btn btn-primary">
-            + Tambah Mapping
-        </a>
+                      <td>{{ agent.nama_agent }}</td>
 
-    </div>
+                      <td>
+                        {% if template.is_active %}
 
-    <div class="mb-4">
-        <a href="/dashboard" class="btn btn-secondary">
-            ← Kembali ke HomePage
-        </a>
-    </div>
+                        <span class="status-badge status-active"> Aktif </span>
 
-    <div class="card shadow-sm">
+                        {% else %}
 
-        <div class="card-body">
+                        <span class="status-badge status-inactive">
+                          Non Aktif
+                        </span>
 
-            <div class="table-responsive">
+                        {% endif %}
+                      </td>
 
-                <table class="table table-bordered table-hover table-striped align-middle">
+                      <td>
+                        <div class="action-buttons">
+                          <a
+                            href="/stock-mapping/edit/{{ template.id }}"
+                            class="btn btn-edit"
+                          >
+                            Edit
+                          </a>
 
-                    <thead class="table-dark">
+                          <form
+                            action="/stock-mapping/delete/{{ template.id }}"
+                            method="POST"
+                            style="margin: 0"
+                          >
+                            <button
+                              type="submit"
+                              class="btn btn-delete"
+                              onclick="
+                                return confirm(
+                                  'Yakin ingin menghapus template ini?',
+                                );
+                              "
+                            >
+                              Delete
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
 
-                        <tr>
-                            <th width="80">No</th>
-                            <th>Template</th>
-                            <th>Agent</th>
-                            <th width="120">Status</th>
-                            <th width="180">Aksi</th>
-                        </tr>
+                    {% else %}
 
-                    </thead>
+                    <tr>
+                      <td colspan="5" class="empty-row">
+                        Belum ada data stock mapping.
+                      </td>
+                    </tr>
 
-                    <tbody>
-
-                        {% for template, agent in templates %}
-
-                        <tr>
-
-                            <td>{{ loop.index }}</td>
-
-                            <td>{{ template.template_name }}</td>
-
-                            <td>{{ agent.nama_agent }}</td>
-
-                            <td>
-
-                                {% if template.is_active %}
-
-                                    <span class="badge bg-success">
-                                        Aktif
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="badge bg-danger">
-                                        Non Aktif
-                                    </span>
-
-                                {% endif %}
-
-                            </td>
-
-                            <td>
-
-                                <a href="/stock-mapping/edit/{{ template.id }}"
-                                   class="btn btn-warning btn-sm">
-                                    Edit
-                                </a>
-
-                                <form action="/stock-mapping/delete/{{ template.id }}"
-                                      method="POST"
-                                      style="display:inline;">
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Yakin ingin menghapus template ini?')">
-
-                                        Delete
-
-                                    </button>
-
-                                </form>
-
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
+                    {% endfor %}
+                  </tbody>
                 </table>
 
+                <div class="pagination-wrapper">
+                  <div class="pagination-info" id="paginationInfo">
+                    Menampilkan 0 data
+                  </div>
+
+                  <div class="pagination" id="pagination">
+                    <!-- diisi JavaScript -->
+                  </div>
+                </div>
+              </div>
             </div>
-
+          </div>
         </div>
-
+      </main>
     </div>
 
-</div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
+    <script>
+      // ==========================================
+      // DROPDOWN SIDEBAR
+      // ==========================================
 
-        {% for category, message in messages %}
+      document.querySelectorAll(".dropdown-toggle").forEach((button) => {
+        button.addEventListener("click", function () {
+          const dropdown = this.parentElement;
 
-        <script>
+          dropdown.classList.toggle("open");
+        });
+      });
 
-            Swal.fire({
+      // ==========================================
+      // MOBILE SIDEBAR
+      // ==========================================
 
-                icon: "{{ category }}",
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
 
-                title: "{{ message }}",
+      const sidebar = document.querySelector(".sidebar");
 
-                timer: 2000,
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
 
-                showConfirmButton: false
+      mobileMenuBtn.addEventListener("click", function () {
+        sidebar.classList.toggle("mobile-open");
 
-            });
+        sidebarOverlay.classList.toggle("active");
+      });
 
-        </script>
+      sidebarOverlay.addEventListener("click", function () {
+        sidebar.classList.remove("mobile-open");
 
-        {% endfor %}
+        sidebarOverlay.classList.remove("active");
+      });
 
-    {% endif %}
-{% endwith %}
+      document.querySelectorAll(".sidebar a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          if (window.innerWidth <= 768) {
+            sidebar.classList.remove("mobile-open");
 
-</body>
+            sidebarOverlay.classList.remove("active");
+          }
+        });
+      });
+    </script>
 
+    <script>
+      // ==========================================
+      // PAGINATION
+      // ==========================================
+
+      const rowsPerPage = 10;
+
+      const rows = Array.from(
+        document.querySelectorAll("#mappingTableBody .mapping-row"),
+      );
+
+      const pagination = document.getElementById("pagination");
+      const paginationInfo = document.getElementById("paginationInfo");
+
+      let currentPage = 1;
+
+      function renderPagination() {
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        pagination.innerHTML = "";
+
+        if (totalPages <= 1) {
+          paginationInfo.textContent = `Menampilkan ${rows.length} data`;
+
+          return;
+        }
+
+        // Tombol sebelumnya
+        const prevButton = document.createElement("button");
+
+        prevButton.innerHTML = "‹";
+        prevButton.disabled = currentPage === 1;
+
+        prevButton.addEventListener("click", function () {
+          if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+          }
+        });
+
+        pagination.appendChild(prevButton);
+
+        // Nomor halaman
+        for (let i = 1; i <= totalPages; i++) {
+          const pageButton = document.createElement("button");
+
+          pageButton.textContent = i;
+
+          if (i === currentPage) {
+            pageButton.classList.add("active");
+          }
+
+          pageButton.addEventListener("click", function () {
+            currentPage = i;
+
+            renderTable();
+          });
+
+          pagination.appendChild(pageButton);
+        }
+
+        // Tombol berikutnya
+        const nextButton = document.createElement("button");
+
+        nextButton.innerHTML = "›";
+        nextButton.disabled = currentPage === totalPages;
+
+        nextButton.addEventListener("click", function () {
+          if (currentPage < totalPages) {
+            currentPage++;
+
+            renderTable();
+          }
+        });
+
+        pagination.appendChild(nextButton);
+      }
+
+      function renderTable() {
+        const totalData = rows.length;
+
+        const totalPages = Math.ceil(totalData / rowsPerPage);
+
+        // Pastikan current page valid
+        if (currentPage > totalPages && totalPages > 0) {
+          currentPage = totalPages;
+        }
+
+        const start = (currentPage - 1) * rowsPerPage;
+
+        const end = start + rowsPerPage;
+
+        // Hide semua row
+        rows.forEach((row) => {
+          row.style.display = "none";
+        });
+
+        // Tampilkan row sesuai halaman
+        rows.slice(start, end).forEach((row) => {
+          row.style.display = "";
+        });
+
+        // Info data
+        if (totalData === 0) {
+          paginationInfo.textContent = "Belum ada data";
+        } else {
+          const firstData = start + 1;
+
+          const lastData = Math.min(end, totalData);
+
+          paginationInfo.textContent = `Menampilkan ${firstData}–${lastData} dari ${totalData} data`;
+        }
+
+        renderPagination();
+      }
+
+      renderTable();
+    </script>
+
+    <!-- SWEET ALERT -->
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+
+    <script>
+      Swal.fire({
+        icon: "{{ category }}",
+
+        title: "{{ message }}",
+
+        timer: 2000,
+
+        showConfirmButton: false,
+      });
+    </script>
+
+    {% endfor %} {% endif %} {% endwith %}
+  </body>
 </html>

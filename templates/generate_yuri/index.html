@@ -1,115 +1,421 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generate Template Yuri</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
 
-<body class="bg-light">
+    <style>
+      .form-page {
+        padding: 30px;
+      }
 
-<div class="container mt-5">
+      .form-card {
+        max-width: 760px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+      }
 
-    <div class="row justify-content-center">
+      .form-card-header {
+        padding: 22px 28px;
+        background: #0dcaf0;
+        color: #fff;
+      }
 
-        <div class="col-md-6">
+      .form-card-header h3 {
+        margin: 0;
+        font-size: 21px;
+        font-weight: 700;
+      }
 
-            <div class="card shadow">
+      .form-card-header p {
+        margin: 5px 0 0;
+        font-size: 13px;
+        opacity: 0.9;
+      }
 
-                <div class="card-header bg-info text-white">
-                    <h4 class="mb-0">Generate Template Yuri</h4>
-                </div>
+      .form-card-body {
+        padding: 28px;
+      }
 
-                <div class="card-body">
+      .form-group {
+        margin-bottom: 20px;
+      }
 
-                    <form action="/generate-yuri" method="POST">
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #344054;
+      }
 
-                        <div class="mb-3">
-                            <label class="form-label">Agent</label>
+      .form-control-custom,
+      .form-select-custom {
+        width: 100%;
+        height: 44px;
+        padding: 8px 13px;
+        border: 1px solid #d0d5dd;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 14px;
+        color: #344054;
+        outline: none;
+        box-sizing: border-box;
+      }
 
-                            <select
-                                name="agent_id"
-                                class="form-select"
-                                required>
+      .form-control-custom:focus,
+      .form-select-custom:focus {
+        border-color: #0dcaf0;
+        box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.12);
+      }
 
-                                {% for agent in agents %}
+      .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 1px solid #eaecf0;
+      }
 
-                                <option value="{{ agent.id }}">
-                                    {{ agent.nama_agent }}
-                                </option>
+      .btn-custom {
+        height: 42px;
+        padding: 0 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
 
-                                {% endfor %}
+      .btn-back {
+        background: #667085;
+        color: #fff;
+      }
 
-                            </select>
-                        </div>
+      .btn-back:hover {
+        background: #475467;
+        color: #fff;
+      }
 
-                        <div class="mb-3">
-                            <label class="form-label">Bulan</label>
+      .btn-generate {
+        background: #0dcaf0;
+        color: #fff;
+      }
 
-                            <select
-                                name="bulan"
-                                class="form-select"
-                                required>
+      .btn-generate:hover {
+        background: #0aa8c7;
+        color: #fff;
+      }
 
-                                {% for i in range(1,13) %}
+      @media (max-width: 768px) {
+        .form-page {
+          padding: 20px 15px;
+        }
 
-                                <option value="{{ i }}">
-                                    {{ i }}
-                                </option>
+        .form-card-body {
+          padding: 22px;
+        }
 
-                                {% endfor %}
+        .form-card-header {
+          padding: 18px 22px;
+        }
 
-                            </select>
-                        </div>
+        .form-actions {
+          flex-direction: column-reverse;
+          align-items: stretch;
+        }
 
-                        <div class="mb-3">
-                            <label class="form-label">Tahun</label>
+        .btn-custom {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
 
-                            <input
-                                type="number"
-                                name="tahun"
-                                class="form-control"
-                                value="2026"
-                                min="2024"
-                                max="2035"
-                                required>
-                        </div>
+  <body>
+    <!-- MOBILE MENU -->
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 
-                        <div class="d-flex justify-content-between">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-                            <a href="/dashboard" class="btn btn-secondary">
-                                ← Kembali
-                            </a>
+    <div class="dashboard">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-box">APP</div>
 
-                            <button
-                                type="submit"
-                                class="btn btn-info text-white">
+          <div>
+            <h1>
+              AGENT MANAGEMENT <br />
+              SYSTEM
+            </h1>
 
-                                Generate
-
-                            </button>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-            </div>
-
+            <span> MAPPING - SELL OUT - STOCK - CMO </span>
+          </div>
         </div>
 
+        <nav class="sidebar-menu">
+          <p class="menu-title">MAIN MENU</p>
+
+          <a href="/dashboard" class="menu-item">
+            <span>▣</span>
+            Dashboard
+          </a>
+
+          <!-- SELL OUT -->
+          <div class="menu-dropdown">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span>▤</span>
+              <span class="menu-text">Sell Out</span>
+              <span class="arrow">▾</span>
+            </button>
+
+            <div class="submenu">
+              <a href="/upload"> Normalisasi Invoice </a>
+
+              <a href="/mapping"> Mapping Invoice </a>
+
+              <a href="/generate"> Generate Invoice </a>
+            </div>
+          </div>
+
+          <!-- STOCK -->
+          <div class="menu-dropdown">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span>▥</span>
+              <span class="menu-text">Stock</span>
+              <span class="arrow">▾</span>
+            </button>
+
+            <div class="submenu">
+              <a href="/stock/upload"> Normalisasi Stock </a>
+
+              <a href="/stock-mapping"> Mapping Stock </a>
+
+              <a href="/generate-stock"> Generate Stock </a>
+            </div>
+          </div>
+
+          <a href="/generate-yuri" class="menu-item active">
+            <span>◈</span>
+            Generate Template Yuri
+          </a>
+
+          <a href="/generate-cmo" class="menu-item">
+            <span>◈</span>
+            Generate CMO
+          </a>
+
+          <p class="menu-title">Daftar Laporan Agent</p>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Raw Agent
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Template Yuri
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan CMO
+          </a>
+
+          <p class="menu-title">MASTER DATA</p>
+
+          <a href="/agents" class="menu-item">
+            <span>◆</span>
+            Daftar Agent
+          </a>
+
+          <a href="/item-agent-mapping" class="menu-item">
+            <span>▦</span>
+            Master Agent Mapping Produk
+          </a>
+
+          <a href="/cmo-template" class="menu-item">
+            <span>▦</span>
+            CMO Agent Template
+          </a>
+
+          <a href="/insell-reports" class="menu-item">
+            <span>◫</span>
+            Master Data Insell
+          </a>
+
+          <a href="/ods-ec-detail" class="menu-item">
+            <span>◫</span>
+            SQL Server SAP Data Insell
+          </a>
+        </nav>
+
+        <!-- SIDEBAR BOTTOM -->
+        <div class="sidebar-bottom">
+          <div class="user-box">
+            <div class="avatar">A</div>
+
+            <div>
+              <strong> Administrator </strong>
+
+              <small> {{ session.get('user_email', 'User') }} </small>
+            </div>
+          </div>
+
+          <a href="/logout" class="logout"> ⇥ &nbsp; Logout </a>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <span class="breadcrumb"> HOME / GENERATE TEMPLATE YURI </span>
+
+            <h2>Generate Template Yuri</h2>
+          </div>
+
+          <div class="top-user">
+            <span class="status-dot"></span>
+
+            Online
+          </div>
+        </header>
+
+        <!-- FORM -->
+        <section class="form-page">
+          <div class="form-card">
+            <div class="form-card-header">
+              <h3>Generate Template Yuri</h3>
+
+              <p>
+                Generate file Template Yuri berdasarkan agent dan periode
+                laporan.
+              </p>
+            </div>
+
+            <div class="form-card-body">
+              <form action="/generate-yuri" method="POST">
+                <!-- AGENT -->
+                <div class="form-group">
+                  <label class="form-label"> Agent </label>
+
+                  <select name="agent_id" class="form-select-custom" required>
+                    <option value="">-- Pilih Agent --</option>
+
+                    {% for agent in agents %}
+
+                    <option value="{{ agent.id }}">
+                      {{ agent.nama_agent }}
+                    </option>
+
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- BULAN -->
+                <div class="form-group">
+                  <label class="form-label"> Bulan </label>
+
+                  <select name="bulan" class="form-select-custom" required>
+                    {% for i in range(1,13) %}
+
+                    <option value="{{ i }}">{{ i }}</option>
+
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- TAHUN -->
+                <div class="form-group">
+                  <label class="form-label"> Tahun </label>
+
+                  <input
+                    type="number"
+                    name="tahun"
+                    class="form-control-custom"
+                    value="2026"
+                    min="2024"
+                    max="2035"
+                    required
+                  />
+                </div>
+
+                <!-- ACTION -->
+                <div class="form-actions">
+                  <a href="/dashboard" class="btn-custom btn-back">
+                    ← Kembali
+                  </a>
+
+                  <button type="submit" class="btn-custom btn-generate">
+                    Generate
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
 
-</div>
+    <script>
+      // Dropdown Sell Out & Stock
+      document.querySelectorAll(".dropdown-toggle").forEach((button) => {
+        button.addEventListener("click", function () {
+          const dropdown = this.parentElement;
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+          dropdown.classList.toggle("open");
+        });
+      });
 
-</body>
+      // Mobile Sidebar
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
 
+      const sidebar = document.querySelector(".sidebar");
+
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      // Buka sidebar
+      mobileMenuBtn.addEventListener("click", function () {
+        sidebar.classList.toggle("mobile-open");
+
+        sidebarOverlay.classList.toggle("active");
+      });
+
+      // Klik overlay -> tutup sidebar
+      sidebarOverlay.addEventListener("click", function () {
+        sidebar.classList.remove("mobile-open");
+
+        sidebarOverlay.classList.remove("active");
+      });
+
+      // Klik menu -> tutup sidebar di mobile
+      document.querySelectorAll(".sidebar a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          if (window.innerWidth <= 768) {
+            sidebar.classList.remove("mobile-open");
+
+            sidebarOverlay.classList.remove("active");
+          }
+        });
+      });
+    </script>
+  </body>
 </html>

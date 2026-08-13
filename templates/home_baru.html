@@ -13,6 +13,10 @@
   </head>
 
   <body>
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <div class="dashboard">
       <!-- SIDEBAR -->
       <aside class="sidebar">
@@ -20,7 +24,7 @@
           <div class="logo-box">APP</div>
 
           <div>
-            <h1>DATA AGENT<br />PORTAL</h1>
+            <h1>AGENT MANAGEMENT <br />SYSTEM</h1>
             <span>MAPPING - SELL OUT - STOCK - CMO</span>
           </div>
         </div>
@@ -264,11 +268,64 @@
     </div>
 
     <script>
+      // ================================
+      // DROPDOWN SELL OUT & STOCK
+      // ================================
       document.querySelectorAll(".dropdown-toggle").forEach((button) => {
         button.addEventListener("click", function () {
           const dropdown = this.parentElement;
 
           dropdown.classList.toggle("open");
+        });
+      });
+
+      // ================================
+      // ACTIVE MENU BERDASARKAN URL
+      // ================================
+      const currentPath = window.location.pathname;
+
+      document.querySelectorAll(".submenu a").forEach((link) => {
+        const linkPath = new URL(link.href).pathname;
+
+        if (linkPath === currentPath) {
+          // Aktifkan submenu
+          link.classList.add("active");
+
+          // Buka dropdown parent
+          const dropdown = link.closest(".menu-dropdown");
+
+          if (dropdown) {
+            dropdown.classList.add("open");
+          }
+        }
+      });
+
+      // ================================
+      // MOBILE SIDEBAR
+      // ================================
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+      const sidebar = document.querySelector(".sidebar");
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      // Buka / tutup sidebar
+      mobileMenuBtn.addEventListener("click", function () {
+        sidebar.classList.toggle("mobile-open");
+        sidebarOverlay.classList.toggle("active");
+      });
+
+      // Klik overlay -> tutup sidebar
+      sidebarOverlay.addEventListener("click", function () {
+        sidebar.classList.remove("mobile-open");
+        sidebarOverlay.classList.remove("active");
+      });
+
+      // Klik menu di mobile -> tutup sidebar
+      document.querySelectorAll(".sidebar a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          if (window.innerWidth <= 768) {
+            sidebar.classList.remove("mobile-open");
+            sidebarOverlay.classList.remove("active");
+          }
         });
       });
     </script>

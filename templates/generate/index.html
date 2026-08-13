@@ -1,144 +1,502 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generate Excel</title>
 
+    <!-- Dashboard CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
+
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-<body class="bg-light">
+    <style>
+      /* ================================
+         MAIN CONTENT
+      ================================= */
 
-<div class="container mt-5">
+      .main-content {
+        min-height: 100vh;
+        margin-left: 225px;
+        padding: 32px 50px;
+      }
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                Swal.fire({
-                    icon: "{{ 'error' if category == 'error' else category }}",
-                    title: "{{ message }}",
-                    confirmButtonText: "OK"
-                });
-            });
-            </script>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+      /* ================================
+         PAGE HEADER
+      ================================= */
 
-    <div class="row justify-content-center">
+      .page-header {
+        max-width: 1100px;
+        margin: 0 auto 28px auto;
+      }
 
-        <div class="col-md-6">
+      .page-header .breadcrumb {
+        font-size: 12px;
+        color: #8c8c8c;
+        margin-bottom: 6px;
+      }
 
-            <div class="card shadow">
+      .page-header h2 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 600;
+        color: #1f1f1f;
+      }
 
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Generate Excel</h4>
-                </div>
+      .page-header p {
+        margin: 6px 0 0;
+        color: #8c8c8c;
+        font-size: 14px;
+      }
 
-                <div class="card-body">
+      /* ================================
+         GENERATE AREA
+      ================================= */
 
-                    <form action="/generate" method="POST" enctype="multipart/form-data">
+      .generate-container {
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
 
-                        <div class="mb-3">
-                            <label class="form-label">Template</label>
+      /* ================================
+         CARD
+      ================================= */
 
-                            <select name="template_id" class="form-select" required>
+      .generate-card {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
 
-                                {% for t in templates %}
+        background: #ffffff;
+        border: 1px solid #f0f0f0;
+        border-radius: 8px;
 
-                                <option value="{{ t.id }}">
-                                    {{ t.template_name }}
-                                </option>
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      }
 
-                                {% endfor %}
+      /* ================================
+         CARD HEADER
+      ================================= */
 
-                            </select>
-                        </div>
+      .generate-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f0f0f0;
+      }
 
-                        <div class="mb-3">
-                            <label class="form-label">Bulan</label>
+      .generate-header h4 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 600;
+        color: #1f1f1f;
+      }
 
-                            <select name="bulan" class="form-select" required>
+      .generate-header p {
+        margin: 4px 0 0;
+        font-size: 12px;
+        color: #8c8c8c;
+      }
 
-                                {% for i in range(1,13) %}
+      /* ================================
+         CARD BODY
+      ================================= */
 
-                                <option value="{{ i }}">
-                                    {{ i }}
-                                </option>
+      .generate-body {
+        padding: 28px 24px;
+      }
 
-                                {% endfor %}
+      /* ================================
+         FORM
+      ================================= */
 
-                            </select>
-                        </div>
+      .form-label {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 7px;
+      }
 
-                        <div class="mb-3">
-                            <label class="form-label">Tahun</label>
+      .form-select,
+      .form-control {
+        height: 38px;
+        border-color: #d9d9d9;
+        border-radius: 6px;
+        font-size: 13px;
+      }
 
-                            <select name="tahun" class="form-select" required>
+      .form-select:focus,
+      .form-control:focus {
+        border-color: #1677ff;
+        box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.15);
+      }
 
-                                {% for y in range(2024,2031) %}
+      .form-text {
+        font-size: 12px;
+        color: #8c8c8c;
+      }
 
-                                <option value="{{ y }}">
-                                    {{ y }}
-                                </option>
+      /* ================================
+         BUTTON
+      ================================= */
 
-                                {% endfor %}
+      .btn {
+        font-size: 13px;
+        border-radius: 6px;
+        padding: 8px 16px;
+      }
 
-                            </select>
-                        </div>
+      .btn-primary {
+        background: #1677ff;
+        border-color: #1677ff;
+      }
 
-                        <div class="mb-3">
+      .btn-primary:hover {
+        background: #4096ff;
+        border-color: #4096ff;
+      }
 
-                            <label class="form-label">
-                                File Excel
-                            </label>
+      /* ================================
+         RESPONSIVE
+      ================================= */
 
-                            <input
-                                type="file"
-                                name="file"
-                                class="form-control"
-                                accept=".xlsx,.xls,.xlsb"
-                                required>
+      @media (max-width: 900px) {
+        .main-content {
+          margin-left: 0;
+          padding: 24px 20px;
+        }
 
-                            <div class="form-text">
-                                Upload file yang akan digenerate.
-                            </div>
+        .generate-card {
+          max-width: 100%;
+        }
 
-                        </div>
+        .page-header {
+          margin-bottom: 20px;
+        }
+      }
+    </style>
+  </head>
 
-                        <div class="d-flex justify-content-between">
+  <body>
+    <!-- MOBILE MENU -->
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 
-                            <a href="/dashboard" class="btn btn-secondary">
-                                ← Kembali
-                            </a>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-                            <button type="submit" class="btn btn-primary">
-                                Generate
-                            </button>
+    <div class="dashboard">
+      <!-- ================================
+           SIDEBAR
+      ================================= -->
 
-                        </div>
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-box">APP</div>
 
-                    </form>
+          <div>
+            <h1>
+              AGENT MANAGEMENT<br />
+              SYSTEM
+            </h1>
 
-                </div>
-
-            </div>
-
+            <span> MAPPING - SELL OUT - STOCK - CMO </span>
+          </div>
         </div>
 
+        <nav class="sidebar-menu">
+          <p class="menu-title">MAIN MENU</p>
+
+          <!-- Dashboard -->
+
+          <a href="/dashboard" class="menu-item">
+            <span>▣</span>
+            Dashboard
+          </a>
+
+          <!-- SELL OUT -->
+
+          <div class="menu-dropdown open">
+            <button class="menu-item dropdown-toggle active" type="button">
+              <span>▤</span>
+
+              <span class="menu-text"> Sell Out </span>
+
+              <span class="arrow"> ▾ </span>
+            </button>
+
+            <div class="submenu">
+              <a href="/upload"> Normalisasi Invoice </a>
+
+              <a href="/mapping"> Mapping Invoice </a>
+
+              <a href="/generate" class="active"> Generate Invoice </a>
+            </div>
+          </div>
+
+          <!-- STOCK -->
+
+          <div class="menu-dropdown">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span>▥</span>
+
+              <span class="menu-text"> Stock </span>
+
+              <span class="arrow"> ▾ </span>
+            </button>
+
+            <div class="submenu">
+              <a href="/stock/upload"> Normalisasi Stock </a>
+
+              <a href="/stock-mapping"> Mapping Stock </a>
+
+              <a href="/generate-stock"> Generate Stock </a>
+            </div>
+          </div>
+
+          <!-- OTHER MENU -->
+
+          <a href="/generate-yuri" class="menu-item">
+            <span>◈</span>
+            Generate Template Yuri
+          </a>
+
+          <a href="/generate-cmo" class="menu-item">
+            <span>◈</span>
+            Generate CMO
+          </a>
+
+          <!-- REPORT -->
+
+          <p class="menu-title">DAFTAR LAPORAN AGENT</p>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Raw Agent
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Template Yuri
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan CMO
+          </a>
+
+          <!-- MASTER DATA -->
+
+          <p class="menu-title">MASTER DATA</p>
+
+          <a href="/agents" class="menu-item">
+            <span>◆</span>
+            Daftar Agent
+          </a>
+
+          <a href="/item-agent-mapping" class="menu-item">
+            <span>▦</span>
+            Master Agent Mapping Produk
+          </a>
+
+          <a href="/cmo-template" class="menu-item">
+            <span>▦</span>
+            CMO Agent Template
+          </a>
+
+          <a href="/insell-reports" class="menu-item">
+            <span>◫</span>
+            Master Data Insell
+          </a>
+
+          <a href="/ods-ec-detail" class="menu-item">
+            <span>◫</span>
+            SQL Server SAP Data Insell
+          </a>
+        </nav>
+
+        <!-- SIDEBAR BOTTOM -->
+
+        <div class="sidebar-bottom">
+          <div class="user-box">
+            <div class="avatar">A</div>
+
+            <div>
+              <strong> Administrator </strong>
+
+              <small> {{ session.get('user_email', 'User') }} </small>
+            </div>
+          </div>
+
+          <a href="/logout" class="logout"> ⇥ &nbsp; Logout </a>
+        </div>
+      </aside>
+
+      <!-- ================================
+           MAIN CONTENT
+      ================================= -->
+
+      <main class="main-content">
+        <!-- PAGE HEADER -->
+
+        <div class="page-header">
+          <div class="breadcrumb">SELL OUT / GENERATE</div>
+
+          <h2>Generate Excel</h2>
+
+          <p>Generate file Excel berdasarkan template dan periode laporan.</p>
+        </div>
+
+        <!-- GENERATE CARD -->
+
+        <div class="generate-container">
+          <div class="generate-card">
+            <!-- CARD HEADER -->
+
+            <div class="generate-header">
+              <h4>Generate Invoice Excel</h4>
+
+              <p>Pilih template, periode, dan file Excel yang akan diproses.</p>
+            </div>
+
+            <!-- CARD BODY -->
+
+            <div class="generate-body">
+              <form
+                action="/generate"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                <!-- TEMPLATE -->
+
+                <div class="mb-3">
+                  <label class="form-label"> Template </label>
+
+                  <select name="template_id" class="form-select" required>
+                    {% for t in templates %}
+
+                    <option value="{{ t.id }}">{{ t.template_name }}</option>
+
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- BULAN -->
+
+                <div class="mb-3">
+                  <label class="form-label"> Bulan </label>
+
+                  <select name="bulan" class="form-select" required>
+                    {% for i in range(1,13) %}
+
+                    <option value="{{ i }}">{{ i }}</option>
+
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- TAHUN -->
+
+                <div class="mb-3">
+                  <label class="form-label"> Tahun </label>
+
+                  <select name="tahun" class="form-select" required>
+                    {% for y in range(2024,2031) %}
+
+                    <option value="{{ y }}">{{ y }}</option>
+
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- FILE -->
+
+                <div class="mb-4">
+                  <label class="form-label"> File Excel </label>
+
+                  <input
+                    type="file"
+                    name="file"
+                    class="form-control"
+                    accept=".xlsx,.xls,.xlsb"
+                    required
+                  />
+
+                  <div class="form-text">Upload file yang akan digenerate.</div>
+                </div>
+
+                <!-- BUTTON -->
+
+                <div class="d-flex justify-content-between">
+                  <a href="/dashboard" class="btn btn-outline-secondary">
+                    ← Kembali
+                  </a>
+
+                  <button type="submit" class="btn btn-primary">
+                    Generate
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
-</div>
+    <!-- ================================
+         DROPDOWN + MOBILE SIDEBAR
+    ================================= -->
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      /* Dropdown */
 
-</body>
+      document.querySelectorAll(".dropdown-toggle").forEach((button) => {
+        button.addEventListener("click", function () {
+          const dropdown = this.parentElement;
 
+          dropdown.classList.toggle("open");
+        });
+      });
+
+      /* Mobile Sidebar */
+
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+
+      const sidebar = document.querySelector(".sidebar");
+
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      mobileMenuBtn.addEventListener("click", function () {
+        sidebar.classList.toggle("mobile-open");
+
+        sidebarOverlay.classList.toggle("active");
+      });
+
+      sidebarOverlay.addEventListener("click", function () {
+        sidebar.classList.remove("mobile-open");
+
+        sidebarOverlay.classList.remove("active");
+      });
+
+      document.querySelectorAll(".sidebar a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          if (window.innerWidth <= 768) {
+            sidebar.classList.remove("mobile-open");
+
+            sidebarOverlay.classList.remove("active");
+          }
+        });
+      });
+    </script>
+
+    <!-- Bootstrap JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
 </html>

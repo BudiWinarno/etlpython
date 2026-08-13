@@ -10,8 +10,8 @@ def login():
         email = request.form.get("email")
         password = request.form.get("password")
 
-        print("EMAIL:", email)
-        print("PASSWORD:", password)
+        # print("EMAIL:", email)
+        # print("PASSWORD:", password)
 
         if email == "developeryuri2@gmail.com" and password == "qwertyuiop1":
             print("LOGIN BERHASIL")

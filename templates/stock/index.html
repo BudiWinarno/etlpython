@@ -1,185 +1,538 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Normalisasi Stock</title>
+    <title>Normalisasi Stock - Data Portal</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
 
-<body class="bg-light">
+    <style>
+      /* ================================
+         PAGE FORM
+         ================================ */
 
-<div class="container mt-5">
+      .page-header {
+        margin-bottom: 24px;
+      }
 
-    <div class="row justify-content-center">
+      .page-header .breadcrumb {
+        display: block;
+        margin-bottom: 5px;
+      }
 
-        <div class="col-md-6">
+      .page-header h2 {
+        margin: 0;
+        color: #1f1f1f;
+        font-size: 28px;
+        font-weight: 600;
+      }
 
-            <div class="card shadow">
+      .page-header p {
+        margin: 6px 0 0;
+        color: #8c8c8c;
+        font-size: 13px;
+      }
 
-                <div class="card-header bg-success text-white">
-                    <h4 class="mb-0">Normalisasi Template Stock</h4>
-                </div>
+      .form-wrapper {
+        width: 100%;
+        max-width: 760px;
+        margin: 0 auto;
+      }
 
-                <div class="card-body">
+      .form-card {
+        background: #fff;
+        border: 1px solid #f0f0f0;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        overflow: hidden;
+      }
 
-                    <form action="/stock/upload" method="POST" enctype="multipart/form-data">
+      .form-card-header {
+        padding: 22px 24px;
+        border-bottom: 1px solid #f0f0f0;
+      }
 
-                        <div class="mb-3">
-                            <label class="form-label">Template</label>
+      .form-card-header h3 {
+        margin: 0;
+        color: #1f1f1f;
+        font-size: 18px;
+        font-weight: 600;
+      }
 
-                            <select name="kode_agent" class="form-select" required>
+      .form-card-header p {
+        margin: 5px 0 0;
+        color: #8c8c8c;
+        font-size: 12px;
+      }
 
-                                <option value="">-- Pilih Template --</option>
+      .form-card-body {
+        padding: 24px;
+      }
 
-                                <option value="LK-000019">
-                                    LK-000019
-                                </option>
+      .form-group {
+        margin-bottom: 20px;
+      }
 
-                                <option value="LK-000105">
-                                    LK-000105
-                                </option>
+      .form-label-custom {
+        display: block;
+        margin-bottom: 7px;
+        color: #262626;
+        font-size: 13px;
+        font-weight: 500;
+      }
 
-                                <option value="LK-000148">
-                                    LK-000148
-                                </option>
+      .form-control-custom,
+      .form-select-custom {
+        width: 100%;
+        height: 40px;
+        padding: 0 12px;
 
-                                <option value="LK-000115">
-                                    LK-000115
-                                </option>
+        color: #262626;
+        background: #fff;
 
-                                <option value="LK-000048">
-                                    LK-000048
-                                </option>
+        border: 1px solid #d9d9d9;
+        border-radius: 6px;
 
-                                <option value="LK-000065">
-                                    LK-000065
-                                </option>
+        font-family: inherit;
+        font-size: 13px;
 
-                                <option value="LK-000093">
-                                    LK-000093
-                                </option>
+        outline: none;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
 
-                                <option value="LK-000118">
-                                    LK-000118
-                                </option>
+      .form-control-custom:focus,
+      .form-select-custom:focus {
+        border-color: #1677ff;
+        box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+      }
 
-                                <option value="LK-000121">
-                                    LK-000121
-                                </option>
+      input[type="file"].form-control-custom {
+        height: 40px;
+        padding: 8px 12px;
+      }
 
-                                <option value="LK-000032">
-                                    LK-000032
-                                </option>
+      .form-help {
+        margin-top: 6px;
+        color: #8c8c8c;
+        font-size: 11px;
+      }
 
-                                <option value="LK-000108">
-                                    LK-000108
-                                </option>
+      .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
-                                <option value="LK-000145">
-                                    LK-000145
-                                </option>
+        margin-top: 28px;
+        padding-top: 20px;
 
-                                <option value="LK-000146">
-                                    LK-000146
-                                </option>
+        border-top: 1px solid #f0f0f0;
+      }
 
-                                <option value="LK-000153">
-                                    LK-000153
-                                </option>
+      .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
 
-                                <option value="LK-000136">
-                                    LK-000136
-                                </option>
+        min-height: 38px;
+        padding: 0 16px;
 
-                                <option value="LK-000117">
-                                    LK-000117
-                                </option>
+        border-radius: 6px;
 
-                                <option value="LK-000139">
-                                    LK-000139
-                                </option>
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 500;
 
-                                <option value="LK-000021">
-                                    LK-000021
-                                </option>
+        text-decoration: none;
+        cursor: pointer;
 
-                                <option value="LK-000124">
-                                    LK-000124
-                                </option>
+        transition: all 0.15s ease;
+      }
 
-                                <option value="LK-000131">
-                                    LK-000131
-                                </option>
+      .btn-back {
+        color: #595959;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+      }
 
-                                <option value="LK-000132">
-                                    LK-000132
-                                </option>
+      .btn-back:hover {
+        color: #262626;
+        background: #f5f5f5;
+        border-color: #bfbfbf;
+      }
 
-                                <option value="LK-000170">
-                                    LK-000170
-                                </option>
+      .btn-submit {
+        color: #fff;
+        background: #1677ff;
+        border: 1px solid #1677ff;
+      }
 
-                                <option value="LK-000059">
-                                    LK-000059
-                                </option>
+      .btn-submit:hover {
+        background: #0958d9;
+        border-color: #0958d9;
+      }
 
-                                <option value="LK-000127">
-                                    LK-000127
-                                </option>
+      /* ================================
+         MOBILE
+         ================================ */
 
-                            </select>
-                        </div>
+      @media (max-width: 768px) {
+        .form-wrapper {
+          max-width: none;
+        }
 
-                        <div class="mb-3">
+        .page-header h2 {
+          font-size: 24px;
+        }
 
-                            <label class="form-label">
-                                File Stock
-                            </label>
+        .form-card-header {
+          padding: 20px;
+        }
 
-                            <input
-                                type="file"
-                                name="file"
-                                class="form-control"
-                                accept=".xlsx,.xls,.xlsb"
-                                required>
+        .form-card-body {
+          padding: 20px;
+        }
 
-                            <div class="form-text">
-                                Upload file stock yang akan dinormalisasi.
-                            </div>
+        .form-actions {
+          gap: 12px;
+        }
 
-                        </div>
+        .btn-custom {
+          flex: 1;
+        }
+      }
+    </style>
+  </head>
 
-                        <div class="d-flex justify-content-between">
+  <body>
+    <!-- MOBILE MENU -->
+    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 
-                            <a href="/dashboard" class="btn btn-secondary">
-                                ← Kembali
-                            </a>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-                            <button type="submit" class="btn btn-success">
-                                Generate Stock
-                            </button>
+    <div class="dashboard">
+      <!-- =================================
+           SIDEBAR
+           ================================= -->
+      <aside class="sidebar">
+        <div class="logo">
+          <div class="logo-box">APP</div>
 
-                        </div>
+          <div>
+            <h1>
+              AGENT MANAGEMENT
+              <br />
+              SYSTEM
+            </h1>
 
-                    </form>
-
-                </div>
-
-            </div>
-
+            <span> MAPPING - SELL OUT - STOCK - CMO </span>
+          </div>
         </div>
 
+        <nav class="sidebar-menu">
+          <p class="menu-title">MAIN MENU</p>
+
+          <a href="/dashboard" class="menu-item">
+            <span>▣</span>
+            Dashboard
+          </a>
+
+          <!-- SELL OUT -->
+          <div class="menu-dropdown">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span>▤</span>
+
+              <span class="menu-text"> Sell Out </span>
+
+              <span class="arrow"> ▾ </span>
+            </button>
+
+            <div class="submenu">
+              <a href="/upload"> Normalisasi Invoice </a>
+
+              <a href="/mapping"> Mapping Invoice </a>
+
+              <a href="/generate"> Generate Invoice </a>
+            </div>
+          </div>
+
+          <!-- STOCK -->
+          <div class="menu-dropdown open">
+            <button class="menu-item dropdown-toggle" type="button">
+              <span>▥</span>
+
+              <span class="menu-text"> Stock </span>
+
+              <span class="arrow"> ▾ </span>
+            </button>
+
+            <div class="submenu">
+              <a href="/stock/upload" class="active"> Normalisasi Stock </a>
+
+              <a href="/stock-mapping"> Mapping Stock </a>
+
+              <a href="/generate-stock"> Generate Stock </a>
+            </div>
+          </div>
+
+          <a href="/generate-yuri" class="menu-item">
+            <span>◈</span>
+            Generate Template Yuri
+          </a>
+
+          <a href="/generate-cmo" class="menu-item">
+            <span>◈</span>
+            Generate CMO
+          </a>
+
+          <p class="menu-title">DAFTAR LAPORAN AGENT</p>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Raw Agent
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan Template Yuri
+          </a>
+
+          <a href="#" class="menu-item">
+            <span>◈</span>
+            Data Laporan CMO
+          </a>
+
+          <p class="menu-title">MASTER DATA</p>
+
+          <a href="/agents" class="menu-item">
+            <span>◆</span>
+            Daftar Agent
+          </a>
+
+          <a href="/item-agent-mapping" class="menu-item">
+            <span>▦</span>
+            Master Agent Mapping Produk
+          </a>
+
+          <a href="/cmo-template" class="menu-item">
+            <span>▦</span>
+            CMO Agent Template
+          </a>
+
+          <a href="/insell-reports" class="menu-item">
+            <span>◫</span>
+            Master Data Insell
+          </a>
+
+          <a href="/ods-ec-detail" class="menu-item">
+            <span>◫</span>
+            SQL Server SAP Data Insell
+          </a>
+        </nav>
+
+        <!-- USER -->
+        <div class="sidebar-bottom">
+          <div class="user-box">
+            <div class="avatar">A</div>
+
+            <div>
+              <strong> Administrator </strong>
+
+              <small> {{ session.get('user_email', 'User') }} </small>
+            </div>
+          </div>
+
+          <a href="/logout" class="logout"> ⇥ &nbsp; Logout </a>
+        </div>
+      </aside>
+
+      <!-- =================================
+           MAIN CONTENT
+           ================================= -->
+      <main class="main-content">
+        <!-- HEADER -->
+        <header class="page-header">
+          <span class="breadcrumb"> STOCK / NORMALISASI </span>
+
+          <h2>Normalisasi Stock</h2>
+
+          <p>Upload file stock agent untuk dinormalisasi ke format standar.</p>
+        </header>
+
+        <!-- FORM -->
+        <div class="form-wrapper">
+          <div class="form-card">
+            <!-- CARD HEADER -->
+            <div class="form-card-header">
+              <h3>Normalisasi Template Stock</h3>
+
+              <p>Pilih template agent dan upload file stock.</p>
+            </div>
+
+            <!-- CARD BODY -->
+            <div class="form-card-body">
+              <form
+                action="/stock/upload"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                <!-- TEMPLATE -->
+                <div class="form-group">
+                  <label class="form-label-custom" for="kode_agent">
+                    Template
+                  </label>
+
+                  <select
+                    id="kode_agent"
+                    name="kode_agent"
+                    class="form-select-custom"
+                    required
+                  >
+                    <option value="">-- Pilih Template --</option>
+
+                    <option value="LK-000019">LK-000019</option>
+
+                    <option value="LK-000105">LK-000105</option>
+
+                    <option value="LK-000148">LK-000148</option>
+
+                    <option value="LK-000115">LK-000115</option>
+
+                    <option value="LK-000048">LK-000048</option>
+
+                    <option value="LK-000065">LK-000065</option>
+
+                    <option value="LK-000093">LK-000093</option>
+
+                    <option value="LK-000118">LK-000118</option>
+
+                    <option value="LK-000121">LK-000121</option>
+
+                    <option value="LK-000032">LK-000032</option>
+
+                    <option value="LK-000108">LK-000108</option>
+
+                    <option value="LK-000145">LK-000145</option>
+
+                    <option value="LK-000146">LK-000146</option>
+
+                    <option value="LK-000153">LK-000153</option>
+
+                    <option value="LK-000136">LK-000136</option>
+
+                    <option value="LK-000117">LK-000117</option>
+
+                    <option value="LK-000139">LK-000139</option>
+
+                    <option value="LK-000021">LK-000021</option>
+
+                    <option value="LK-000124">LK-000124</option>
+
+                    <option value="LK-000131">LK-000131</option>
+
+                    <option value="LK-000132">LK-000132</option>
+
+                    <option value="LK-000170">LK-000170</option>
+
+                    <option value="LK-000059">LK-000059</option>
+
+                    <option value="LK-000127">LK-000127</option>
+                  </select>
+                </div>
+
+                <!-- FILE -->
+                <div class="form-group">
+                  <label class="form-label-custom" for="file">
+                    File Stock
+                  </label>
+
+                  <input
+                    id="file"
+                    type="file"
+                    name="file"
+                    class="form-control-custom"
+                    accept=".xlsx,.xls,.xlsb"
+                    required
+                  />
+
+                  <div class="form-help">
+                    Format yang didukung: XLSX, XLS, XLSB.
+                  </div>
+                </div>
+
+                <!-- ACTION -->
+                <div class="form-actions">
+                  <a href="/dashboard" class="btn-custom btn-back">
+                    ← Kembali
+                  </a>
+
+                  <button type="submit" class="btn-custom btn-submit">
+                    Generate Stock
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
-</div>
+    <!-- =================================
+         JAVASCRIPT
+         ================================= -->
+    <script>
+      // ================================
+      // DROPDOWN
+      // ================================
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      document.querySelectorAll(".dropdown-toggle").forEach((button) => {
+        button.addEventListener("click", function () {
+          const dropdown = this.parentElement;
 
-</body>
+          dropdown.classList.toggle("open");
+        });
+      });
 
+      // ================================
+      // MOBILE SIDEBAR
+      // ================================
+
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+
+      const sidebar = document.querySelector(".sidebar");
+
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      // Buka / tutup sidebar
+      mobileMenuBtn.addEventListener("click", function () {
+        sidebar.classList.toggle("mobile-open");
+
+        sidebarOverlay.classList.toggle("active");
+      });
+
+      // Klik overlay
+      sidebarOverlay.addEventListener("click", function () {
+        sidebar.classList.remove("mobile-open");
+
+        sidebarOverlay.classList.remove("active");
+      });
+
+      // Klik menu mobile
+      document.querySelectorAll(".sidebar a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          if (window.innerWidth <= 768) {
+            sidebar.classList.remove("mobile-open");
+
+            sidebarOverlay.classList.remove("active");
+          }
+        });
+      });
+    </script>
+  </body>
 </html>
