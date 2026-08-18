@@ -218,28 +218,120 @@ def update(id):
 @item_agent_mapping_bp.route("/item-agent-mapping/delete/<int:id>")
 def delete(id):
 
+    print("\n================ DELETE DEBUG ================")
+    print("ID yang diterima:", id)
+
     db = SessionLocal()
 
-    mapping = (
-        db.query(ItemAgentMapping)
-        .filter(ItemAgentMapping.id == id)
-        .first()
-    )
+    try:
+        # 1. Cari data
+        mapping = (
+            db.query(ItemAgentMapping)
+            .filter(ItemAgentMapping.id == id)
+            .first()
+        )
 
-    mapping.is_active = False
+        print("DATA DITEMUKAN:", mapping)
 
-    db.commit()
-    
-    flash(
-        "Master Item Agent berhasil dihapus.",
-        "success"
-    )
+        if mapping is None:
+            print("!!! DATA TIDAK DITEMUKAN !!!")
 
-    db.close()
+            flash(
+                f"Data ID {id} tidak ditemukan.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("item_agent_mapping.index")
+            )
+
+        # 2. Tampilkan data sebelum delete
+        print("ID:", mapping.id)
+        print("Kode SKU Agent:", mapping.kode_sku_agent)
+        print("is_active sebelum:", mapping.is_active)
+
+        # 3. DELETE
+        print("Menjalankan db.delete()...")
+
+        db.delete(mapping)
+
+        print("db.delete() sudah dipanggil")
+
+        # 4. Commit
+        print("Menjalankan commit...")
+
+        db.commit()
+
+        print("COMMIT BERHASIL")
+
+        # 5. Cek lagi setelah commit
+        check = (
+            db.query(ItemAgentMapping)
+            .filter(ItemAgentMapping.id == id)
+            .first()
+        )
+
+        print("Data setelah delete:", check)
+
+        if check is None:
+            print(">>> DELETE BENAR-BENAR BERHASIL <<<")
+        else:
+            print(">>> DATA MASIH ADA SETELAH DELETE <<<")
+
+        flash(
+            f"Master Item Agent ID {id} berhasil dihapus.",
+            "success"
+        )
+
+    except Exception as e:
+
+        print("\n!!! DELETE ERROR !!!")
+        print(type(e).__name__)
+        print(str(e))
+
+        db.rollback()
+
+        flash(
+            f"Gagal menghapus ID {id}: {str(e)}",
+            "danger"
+        )
+
+    finally:
+
+        db.close()
+
+        print("Database session ditutup")
+        print("=============================================\n")
 
     return redirect(
         url_for("item_agent_mapping.index")
     )
+
+# @item_agent_mapping_bp.route("/item-agent-mapping/delete/<int:id>")
+# def delete(id):
+
+#     db = SessionLocal()
+
+#     mapping = (
+#         db.query(ItemAgentMapping)
+#         .filter(ItemAgentMapping.id == id)
+#         .first()
+#     )
+
+#     mapping.is_active = False
+
+#     db.commit()
+    
+#     flash(
+#         "Master Item Agent berhasil dihapus.",
+#         "success"
+#     )
+
+#     db.close()
+
+#     return redirect(
+#         url_for("item_agent_mapping.index")
+#     )
     
 @item_agent_mapping_bp.route("/item-agent-mapping/import")
 def import_form():

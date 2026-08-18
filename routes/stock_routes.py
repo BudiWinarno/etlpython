@@ -3,6 +3,8 @@ import os
 
 from config import Config
 from services.normalize.stock.factory import StockNormalizeFactory
+from database import SessionLocal
+from models.agent import Agent
 
 stock_bp = Blueprint("stock", __name__)
 
@@ -30,8 +32,39 @@ def upload():
     kode_agent = request.form["kode_agent"]
 
     normalizer = StockNormalizeFactory.get(kode_agent)
+    
+    # LK-000010 membutuhkan agent_id
+    if kode_agent == "LK-000010":
 
-    df = normalizer.normalize(filepath)
+        db = SessionLocal()
+
+        try:
+            agent = (
+                db.query(Agent)
+                .filter(
+                    Agent.kode_agent == kode_agent
+                )
+                .first()
+            )
+
+            if not agent:
+                raise Exception(
+                    f"Agent {kode_agent} tidak ditemukan."
+                )
+
+            agent_id = agent.id
+
+        finally:
+            db.close()
+
+        df = normalizer.normalize(
+            filepath,
+            agent_id
+        )
+
+    else:
+
+        df = normalizer.normalize(filepath)
 
     output = os.path.join(
         Config.OUTPUT_FOLDER,

@@ -16,7 +16,7 @@ def index():
     db = SessionLocal()
 
     agents = db.execute(
-        select(Agent)
+        select(Agent).order_by(Agent.id.desc())
     ).scalars().all()
 
     db.close()

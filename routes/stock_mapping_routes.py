@@ -23,6 +23,7 @@ def index():
     templates = (
         db.query(StockTemplate, Agent)
         .join(Agent, StockTemplate.agent_id == Agent.id)
+        .order_by(StockTemplate.id.desc())
         .all()
     )
 

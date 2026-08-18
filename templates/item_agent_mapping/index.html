@@ -811,7 +811,6 @@
 
                                         </a>
 
-
                                         <a
                                             href="/item-agent-mapping/delete/{{ item.id }}"
                                             class="btn btn-danger btn-sm btn-delete">
@@ -1052,48 +1051,26 @@
 
                     e.preventDefault();
 
-                    const url =
-                        this.getAttribute("href");
+                    const url = this.getAttribute("href");
 
                     Swal.fire({
-
-                        title:
-                            "Yakin ingin menghapus?",
-
-                        text:
-                            "Data yang dihapus tidak dapat dikembalikan.",
-
-                        icon:
-                            "warning",
-
-                        showCancelButton:
-                            true,
-
-                        confirmButtonColor:
-                            "#dc3545",
-
-                        cancelButtonColor:
-                            "#6c757d",
-
-                        confirmButtonText:
-                            "Ya, Hapus",
-
-                        cancelButtonText:
-                            "Batal"
-
+                        title: "Yakin ingin menghapus?",
+                        text: "Data yang dihapus tidak dapat dikembalikan.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#dc3545",
+                        cancelButtonColor: "#6c757d",
+                        confirmButtonText: "Ya, Hapus",
+                        cancelButtonText: "Batal"
                     }).then(function (result) {
 
                         if (result.isConfirmed) {
-
-                            window.location.href =
-                                url;
-
+                            window.location.href = url;
                         }
 
                     });
 
                 }
-
             );
 
         });
