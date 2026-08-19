@@ -108,8 +108,24 @@ def generate():
     normalizer = StockNormalizeFactory.get(
         agent.kode_agent
     )
+    
+    if agent.kode_agent == "LK-000035":
+        df = pd.read_excel(
+            filepath,
+            header=0
+        )
+        
+    elif agent.kode_agent == "LK-000064":
 
-    df = normalizer.normalize(filepath)
+        df = pd.read_excel(
+            filepath,
+            header=0
+        )
+    
+    else:
+        df = normalizer.normalize(filepath)
+
+    # df = normalizer.normalize(filepath)
 
     # ==========================
     # Ambil Mapping

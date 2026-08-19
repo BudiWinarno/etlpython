@@ -25,11 +25,7 @@ def index():
         "agents/index.html",
         agents=agents
     )
-
-
-# ==========================
-# Form Tambah
-# ==========================
+    
 @agent_bp.route("/agents/create")
 def create():
 
@@ -37,26 +33,80 @@ def create():
 
 
 # ==========================
-# Simpan Agent
+# Form Tambah
 # ==========================
 @agent_bp.route("/agents/create", methods=["POST"])
 def store():
 
     db = SessionLocal()
 
+    kode_agent = request.form["kode_agent"].strip()
+    nama_agent = request.form["nama_agent"].strip()
+
+    # ==========================
+    # CEK KODE AGENT
+    # ==========================
+
+    existing_agent = (
+        db.query(Agent)
+        .filter(Agent.kode_agent == kode_agent)
+        .first()
+    )
+
+    if existing_agent:
+
+        flash(
+            f"Kode Agent {kode_agent} sudah terdaftar.",
+            "danger"
+        )
+
+        db.close()
+
+        return redirect("/agents/create")
+
+    # ==========================
+    # SIMPAN AGENT
+    # ==========================
+
     agent = Agent(
-        kode_agent=request.form["kode_agent"],
-        nama_agent=request.form["nama_agent"]
+        kode_agent=kode_agent,
+        nama_agent=nama_agent
     )
 
     db.add(agent)
     db.commit()
-    
-    flash("Data agent berhasil ditambahkan.", "success")
+
+    flash(
+        "Data agent berhasil ditambahkan.",
+        "success"
+    )
 
     db.close()
 
     return redirect("/agents")
+
+# kalo udah stabil hapus aja
+# # ==========================
+# # Simpan Agent
+# # ==========================
+# @agent_bp.route("/agents/create", methods=["POST"])
+# def store():
+
+#     db = SessionLocal()
+
+#     agent = Agent(
+#         kode_agent=request.form["kode_agent"],
+#         nama_agent=request.form["nama_agent"]
+#     )
+
+#     db.add(agent)
+#     db.commit()
+    
+#     flash("Data agent berhasil ditambahkan.", "success")
+
+#     db.close()
+
+#     return redirect("/agents")
 
 
 # ==========================
