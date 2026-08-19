@@ -62,9 +62,14 @@ def upload():
 
     normalizer = StockNormalizeFactory.get(kode_agent)
 
-    df = normalizer.normalize(filepath)
-
-    headers = list(df.columns)
+    # df = normalizer.normalize(filepath)
+    # headers = list(df.columns)
+    
+    if hasattr(normalizer, "get_mapping_headers"):
+        headers = normalizer.get_mapping_headers(filepath)
+    else:
+        df = normalizer.normalize(filepath)
+        headers = list(df.columns)
 
     db = SessionLocal()
 
