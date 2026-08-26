@@ -96,7 +96,19 @@ def generate():
     agent = db.query(Agent).filter_by(id=template.agent_id).first()
 
     # File sudah dinormalisasi
-    df = pd.read_excel(filepath)
+    if agent.kode_agent == "LK-000020":
+        df = pd.read_excel(
+            filepath,
+            dtype={"Kode Barang": str}
+        )
+        
+    elif agent.kode_agent == "LK-000109":
+        df = pd.read_excel(
+            filepath,
+            dtype={"Kode Barang": str}
+        )
+    else:
+        df = pd.read_excel(filepath)
 
     # Ambil mapping
     mapping = get_mapping(template_id)
