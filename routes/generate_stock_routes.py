@@ -122,6 +122,22 @@ def generate():
             header=0
         )
     
+    elif agent.kode_agent == "LK-000020":
+
+        df = pd.read_excel(
+            filepath,
+            header=0,
+            dtype={"Kode": str}
+        )
+        
+    elif agent.kode_agent == "LK-000109":
+        
+        df = pd.read_excel(
+            filepath,
+            header=0,
+            dtype={"Kode": str}
+        )
+    
     else:
         df = normalizer.normalize(filepath)
 
@@ -176,6 +192,32 @@ def generate():
         }
         for item in master
     ])
+    
+    # ==========================
+    # DEBUG MERGE
+    # ==========================
+
+    print("=== DEBUG MERGE ===")
+
+    print(
+        "df Kode SKU Agen:",
+        df["Kode SKU Agen"].dtype
+    )
+
+    print(
+        df["Kode SKU Agen"].head(10).tolist()
+    )
+
+    print(
+        "master Kode SKU Agen:",
+        master_df["Kode SKU Agen"].dtype
+    )
+
+    print(
+        master_df["Kode SKU Agen"].head(10).tolist()
+    )
+
+    print("===================")
     
     # print(master_df.head())
     
