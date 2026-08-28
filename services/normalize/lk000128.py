@@ -6,7 +6,7 @@ from openpyxl import load_workbook
 from services.normalize.base import BaseNormalizer
 
 
-class LK000126InvoiceNormalizer(BaseNormalizer):
+class LK000128InvoiceNormalizer(BaseNormalizer):
 
     def normalize(self, filepath):
 
@@ -201,6 +201,9 @@ class LK000126InvoiceNormalizer(BaseNormalizer):
                 "Alamat Customer":
                     "Alamat Customer",
 
+                "Nomor Telepon/HP Customer":
+                    "Nomor Telepon/HP Customer",
+
                 "Invoice Nomor Agen":
                     "Invoice Nomor Agen",
 
@@ -228,17 +231,17 @@ class LK000126InvoiceNormalizer(BaseNormalizer):
                 "% Diskon 1 Reguler":
                     "% Diskon 1 Reguler",
 
-                "% Diskon 1 Cash":
-                    "% Diskon 1 Cash",
+                "% Diskon 2 Cash":
+                    "% Diskon 2 Cash",
 
-                "% Diskon 1 DC Fee":
-                    "% Diskon 1 DC Fee",
+                "% Diskon 3 DC Fee":
+                    "% Diskon 3 DC Fee",
 
-                "% Diskon 1 Promo 1":
-                    "% Diskon 1 Promo 1",
+                "% Diskon 4 Promo 1":
+                    "% Diskon 4 Promo 1",
 
-                "% Diskon 1 Promo 2":
-                    "% Diskon 1 Promo 2",
+                "% Diskon 5 Promo 2":
+                    "% Diskon 5 Promo 2",
 
                 "Diskon 6 Rp":
                     "Diskon 6 Rp",
@@ -252,11 +255,8 @@ class LK000126InvoiceNormalizer(BaseNormalizer):
                 "Total Invoice Value":
                     "Total Invoice Value",
 
-                "NAMA SALES":
-                    "NAMA SALES",
-
-                "ISI Perkarton":
-                    "ISI Perkarton",
+                "Nama Salesman":
+                    "Nama Salesman",
             }
 
             col = replacements.get(
@@ -286,6 +286,34 @@ class LK000126InvoiceNormalizer(BaseNormalizer):
             )
             .str.strip()
         )
+        
+        # ==============================
+        # Perbaiki Tanggal Invoice
+        # ==============================
+
+        if "Tanggal Invoice" in df.columns:
+
+            wb_date = load_workbook(
+                filepath,
+                data_only=True
+            )
+
+            ws_date = wb_date.active
+
+            tanggal = []
+
+            for row in range(5, ws_date.max_row + 1):
+
+                value = ws_date.cell(
+                    row,
+                    7
+                ).value
+
+                tanggal.append(
+                    value
+                )
+
+            df["Tanggal Invoice"] = tanggal[:len(df)]
 
         # ==============================
         # Hapus baris kosong
@@ -392,6 +420,7 @@ class LK000126InvoiceNormalizer(BaseNormalizer):
 
         # File sudah merupakan hasil normalisasi
         # Jadi header ada di baris pertama
+
         df = pd.read_excel(
             filepath,
             header=0
@@ -412,7 +441,10 @@ class LK000126InvoiceNormalizer(BaseNormalizer):
         print("HASIL MAPPING HEADERS:")
         print(headers)
 
-        print("JUMLAH HEADER:", len(headers))
+        print(
+            "JUMLAH HEADER:",
+            len(headers)
+        )
 
         print("=" * 100)
 
