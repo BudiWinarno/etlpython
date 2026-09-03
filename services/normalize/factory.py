@@ -46,6 +46,9 @@ from services.normalize.lk000109 import LK000109InvoiceNormalizer
 from services.normalize.lk000128 import LK000128InvoiceNormalizer
 from services.normalize.lk000014 import LK000014InvoiceNormalizer
 from services.normalize.lk000004 import LK000004InvoiceNormalizer
+from services.normalize.lk000012 import LK000012InvoiceNormalizer
+from services.normalize.lk000046 import LK000046InvoiceNormalizer
+from services.normalize.lk000168 import LK000168InvoiceNormalizer
 
 class NormalizeFactory:
 
@@ -195,5 +198,14 @@ class NormalizeFactory:
         
         elif agent_code == "LK-000004":
             return LK000004InvoiceNormalizer()
+        
+        elif agent_code == "LK-000012":
+            return LK000012InvoiceNormalizer()
+        
+        elif agent_code == "LK-000046":
+            return LK000046InvoiceNormalizer()
+        
+        elif agent_code == "LK-000168":
+            return LK000168InvoiceNormalizer()
 
         raise Exception("Template belum didukung")
