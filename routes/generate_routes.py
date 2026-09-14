@@ -107,6 +107,17 @@ def generate():
             filepath,
             dtype={"Kode Barang": str}
         )
+        
+        
+    elif agent.kode_agent == "LK-000046":
+        df = pd.read_excel(
+            filepath,
+            dtype={
+                "itemid": str,
+                "itemid2": str,
+                "itemotherid": str
+            }
+        )
     else:
         df = pd.read_excel(filepath)
 
