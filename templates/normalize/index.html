@@ -409,7 +409,34 @@
               >
                 <!-- TEMPLATE -->
 
-                <div class="mb-3">
+              <div class="mb-3 position-relative">
+                  <label class="form-label">Template</label>
+
+                  <input
+                      type="text"
+                      id="kode_agent"
+                      name="kode_agent"
+                      class="form-control"
+                      placeholder="Ketik kode template..."
+                      autocomplete="off"
+                      required
+                  >
+
+                  <div
+                      id="template-dropdown"
+                      class="list-group position-absolute w-100 shadow-sm"
+                      style="
+                          display: none;
+                          z-index: 1000;
+                          max-height: 250px;
+                          overflow-y: auto;
+                      "
+                  ></div>
+
+              </div>
+
+
+                <!-- <div class="mb-3">
                   <label class="form-label"> Template </label>
 
                   <select name="kode_agent" class="form-select" required>
@@ -493,7 +520,7 @@
                     <option value="LK-000168">LK-000168</option>
                     <option value="LK-000149">LK-000149</option>
                   </select>
-                </div>
+                </div> -->
 
                 <!-- FILE -->
 
@@ -541,6 +568,122 @@
           dropdown.classList.toggle("open");
         });
       });
+    </script>
+
+    <script>
+        const templates = [
+            "LK-000019",
+            "LK-000105",
+            "LK-000148",
+            "LK-000115",
+            "LK-000048",
+            "LK-000065",
+            "LK-000093",
+            "LK-000118",
+            "LK-000121",
+            "LK-000032",
+            "LK-000108",
+            "LK-000145",
+            "LK-000146",
+            "LK-000153",
+            "LK-000136",
+            "LK-000117",
+            "LK-000139",
+            "LK-000021",
+            "LK-000124",
+            "LK-000126",
+            "LK-000131",
+            "LK-000132",
+            "LK-000170",
+            "LK-000059",
+            "LK-000127",
+            "LK-000040",
+            "LK-000020",
+            "LK-000010",
+            "LK-000035",
+            "LK-000037",
+            "LK-000042",
+            "LK-000064",
+            "LK-000106",
+            "LK-000107",
+            "LK-000138",
+            "LK-000143",
+            "LK-000150",
+            "LK-000151",
+            "LK-000155",
+            "LK-000167",
+            "LK-000003",
+            "LK-000031",
+            "LK-000045",
+            "LK-000109",
+            "LK-000128",
+            "LK-000014",
+            "LK-000004",
+            "LK-000012",
+            "LK-000046",
+            "LK-000168",
+            "LK-000149"
+        ];
+    </script>
+
+    <script>
+        const input = document.getElementById("kode_agent");
+        const dropdown = document.getElementById("template-dropdown");
+
+        function showTemplates(keyword = "") {
+
+            dropdown.innerHTML = "";
+
+            const search = keyword.toLowerCase();
+
+            const filtered = templates.filter(function (template) {
+                return template.toLowerCase().includes(search);
+            });
+
+            filtered.forEach(function (template) {
+
+                const item = document.createElement("button");
+
+                item.type = "button";
+                item.className = "list-group-item list-group-item-action";
+                item.textContent = template;
+
+                item.addEventListener("click", function () {
+                    input.value = template;
+                    dropdown.style.display = "none";
+                });
+
+                dropdown.appendChild(item);
+            });
+
+            if (filtered.length > 0) {
+                dropdown.style.display = "block";
+            } else {
+                dropdown.style.display = "none";
+            }
+        }
+
+        // Saat klik input
+        input.addEventListener("focus", function () {
+            showTemplates(this.value);
+        });
+
+        // Saat mengetik
+        input.addEventListener("input", function () {
+            showTemplates(this.value);
+        });
+
+        // Klik di luar input dan dropdown
+        document.addEventListener("click", function (event) {
+
+            if (
+                !input.contains(event.target) &&
+                !dropdown.contains(event.target)
+            ) {
+                dropdown.style.display = "none";
+            }
+
+        });
     </script>
   </body>
 </html>

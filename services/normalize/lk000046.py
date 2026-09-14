@@ -166,6 +166,17 @@ class LK000046InvoiceNormalizer(BaseNormalizer):
                     .str.strip()
                     .str.replace(r"\.0$", "", regex=True)
                 )
+                
+        # =========================================================
+        # ITEMID2 -> TAMBAH 0 JIKA DIAWALI 807
+        # =========================================================
+
+        if "itemid2" in df.columns:
+            df["itemid2"] = df["itemid2"].apply(
+                lambda x: "0" + x
+                if x.startswith("807")
+                else x
+            )
 
         # -----------------------------------------------------
         # REMOVE EMPTY COLUMNS

@@ -104,13 +104,19 @@ class LK000046StockNormalizer(BaseNormalizer):
         # -----------------------------------------------------
 
         if "item_id" in df.columns:
-
             df["item_id"] = (
                 df["item_id"]
                 .fillna("")
                 .astype(str)
                 .str.strip()
                 .str.replace(r"\.0$", "", regex=True)
+            )
+
+            # Tambahkan 0 jika item_id diawali 807
+            df["item_id"] = df["item_id"].apply(
+                lambda x: "0" + x
+                if x.startswith("807")
+                else x
             )
 
         # -----------------------------------------------------

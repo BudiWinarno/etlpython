@@ -56,7 +56,53 @@
                         <div class="mb-3">
                             <label class="form-label">Agent</label>
 
-                            <select
+                            <!-- baru -->
+
+                            <div class="position-relative">
+                                <input
+                                    type="text"
+                                    id="agent_search"
+                                    class="form-control"
+                                    placeholder="Ketik kode atau nama agent..."
+                                    autocomplete="off"
+                                    required
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="agent_id"
+                                    id="agent_id"
+                                    required
+                                >
+
+                                <div
+                                    id="agent-dropdown"
+                                    class="list-group position-absolute w-100 shadow-sm"
+                                    style="
+                                        display: none;
+                                        z-index: 1000;
+                                        max-height: 250px;
+                                        overflow-y: auto;
+                                    "
+                                ></div>
+
+                                 <div id="agent-data" style="display: none;">
+                                    {% for agent in agents %}
+                                        <span
+                                            class="agent-item"
+                                            data-id="{{ agent.id }}"
+                                            data-kode="{{ agent.kode_agent }}"
+                                            data-nama="{{ agent.nama_agent }}"
+                                        ></span>
+                                    {% endfor %}
+                                </div>
+
+                            </div>
+
+                            
+                            <!-- Lama -->
+
+                            <!-- <select
                                 name="agent_id"
                                 class="form-select"
                                 required
@@ -68,7 +114,7 @@
                                 </option>
 
                                 {% endfor %}
-                            </select>
+                            </select> -->
                         </div>
 
                         <div class="mb-3">
@@ -118,6 +164,85 @@
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const agentInput = document.getElementById("agent_search");
+    const agentIdInput = document.getElementById("agent_id");
+    const agentDropdown = document.getElementById("agent-dropdown");
+
+    const agentItems = document.querySelectorAll(".agent-item");
+
+    function showAgents(keyword = "") {
+
+        agentDropdown.innerHTML = "";
+
+        const search = keyword.toLowerCase().trim();
+
+        agentItems.forEach(function (agent) {
+
+            const id = agent.dataset.id;
+            const kode = agent.dataset.kode;
+            const nama = agent.dataset.nama;
+
+            const text = kode + " - " + nama;
+
+            if (text.toLowerCase().includes(search)) {
+
+                const item = document.createElement("button");
+
+                item.type = "button";
+                item.className = "list-group-item list-group-item-action";
+                item.textContent = text;
+
+                item.addEventListener("click", function () {
+
+                    // Yang tampil di input
+                    agentInput.value = text;
+
+                    // Yang dikirim ke Flask
+                    agentIdInput.value = id;
+
+                    // Tutup dropdown
+                    agentDropdown.style.display = "none";
+                });
+
+                agentDropdown.appendChild(item);
+            }
+        });
+
+        if (agentDropdown.children.length > 0) {
+            agentDropdown.style.display = "block";
+        } else {
+            agentDropdown.style.display = "none";
+        }
+    }
+
+    // Klik input
+    agentInput.addEventListener("focus", function () {
+        showAgents(this.value);
+    });
+
+    // Ketik
+    agentInput.addEventListener("input", function () {
+
+        // Kalau user mengubah teks setelah memilih,
+        // reset ID supaya tidak mengirim agent yang salah
+        agentIdInput.value = "";
+
+        showAgents(this.value);
+    });
+
+    // Klik di luar
+    document.addEventListener("click", function (event) {
+
+        if (
+            !agentInput.contains(event.target) &&
+            !agentDropdown.contains(event.target)
+        ) {
+            agentDropdown.style.display = "none";
+        }
+
+    });
+</script>
 
 </body>
 </html>
