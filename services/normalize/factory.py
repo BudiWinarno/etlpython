@@ -50,6 +50,14 @@ from services.normalize.lk000012 import LK000012InvoiceNormalizer
 from services.normalize.lk000046 import LK000046InvoiceNormalizer
 from services.normalize.lk000168 import LK000168InvoiceNormalizer
 from services.normalize.lk000149 import LK000149InvoiceNormalizer
+from services.normalize.lk000062 import LK000062InvoiceNormalizer
+from services.normalize.lk000071 import LK000071InvoiceNormalizer
+from services.normalize.lk000092 import LK000092InvoiceNormalizer
+from services.normalize.lk000101 import LK000101InvoiceNormalizer
+from services.normalize.lk000102 import LK000102InvoiceNormalizer
+from services.normalize.lk000120 import LK000120InvoiceNormalizer
+from services.normalize.lk000129 import LK000129InvoiceNormalizer
+from services.normalize.lk000130 import LK000130InvoiceNormalizer
 
 class NormalizeFactory:
 
@@ -211,5 +219,29 @@ class NormalizeFactory:
         
         elif agent_code == "LK-000149":
             return LK000149InvoiceNormalizer()
+        
+        elif agent_code == "LK-000062":
+            return LK000062InvoiceNormalizer()
+        
+        elif agent_code == "LK-000071":
+            return LK000071InvoiceNormalizer()
+        
+        elif agent_code == "LK-000092":
+            return LK000092InvoiceNormalizer()
+        
+        elif agent_code == "LK-000101":
+            return LK000101InvoiceNormalizer()
+        
+        elif agent_code == "LK-000102":
+            return LK000102InvoiceNormalizer()
+        
+        elif agent_code == "LK-000120":
+            return LK000120InvoiceNormalizer()
+        
+        elif agent_code == "LK-000129":
+            return LK000129InvoiceNormalizer()
+        
+        elif agent_code == "LK-000130":
+            return LK000130InvoiceNormalizer()
 
         raise Exception("Template belum didukung")
