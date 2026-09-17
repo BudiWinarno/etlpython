@@ -11,6 +11,12 @@
       href="{{ url_for('static', filename='css/dashboard.css') }}"
     />
 
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
     <style>
       /* ================================
          PAGE FORM
@@ -383,93 +389,37 @@
                 enctype="multipart/form-data"
               >
                 <!-- TEMPLATE -->
+
+                <!-- TEMPLATE -->
+
                 <div class="form-group">
                   <label class="form-label-custom" for="kode_agent">
                     Template
                   </label>
 
-                  <select
-                    id="kode_agent"
-                    name="kode_agent"
-                    class="form-select-custom"
-                    required
-                  >
-                    <option value="">-- Pilih Template --</option>
+                  <div class="position-relative">
+                    <input
+                      type="text"
+                      id="kode_agent"
+                      name="kode_agent"
+                      class="form-control-custom"
+                      placeholder="Ketik kode template..."
+                      autocomplete="off"
+                      required
+                    />
 
-                    <option value="LK-000019">LK-000019</option>
-
-                    <option value="LK-000105">LK-000105</option>
-
-                    <option value="LK-000148">LK-000148</option>
-
-                    <option value="LK-000115">LK-000115</option>
-
-                    <option value="LK-000048">LK-000048</option>
-
-                    <option value="LK-000065">LK-000065</option>
-
-                    <option value="LK-000093">LK-000093</option>
-
-                    <option value="LK-000118">LK-000118</option>
-
-                    <option value="LK-000121">LK-000121</option>
-
-                    <option value="LK-000032">LK-000032</option>
-
-                    <option value="LK-000108">LK-000108</option>
-
-                    <option value="LK-000145">LK-000145</option>
-
-                    <option value="LK-000146">LK-000146</option>
-
-                    <option value="LK-000153">LK-000153</option>
-
-                    <option value="LK-000136">LK-000136</option>
-
-                    <option value="LK-000117">LK-000117</option>
-
-                    <option value="LK-000139">LK-000139</option>
-
-                    <option value="LK-000021">LK-000021</option>
-
-                    <option value="LK-000124">LK-000124</option>
-
-                    <option value="LK-000131">LK-000131</option>
-
-                    <option value="LK-000132">LK-000132</option>
-
-                    <option value="LK-000170">LK-000170</option>
-
-                    <option value="LK-000059">LK-000059</option>
-
-                    <option value="LK-000127">LK-000127</option>
-
-                    <option value="LK-000010">LK-000010</option>
-                    <option value="LK-000035">LK-000035</option>
-                    <option value="LK-000037">LK-000037</option>
-                    <option value="LK-000042">LK-000042</option>
-                    <option value="LK-000064">LK-000064</option>
-                    <option value="LK-000106">LK-000106</option>
-                    <option value="LK-000107">LK-000107</option>
-                    <option value="LK-000138">LK-000138</option>
-                    <option value="LK-000143">LK-000143</option>
-                    <option value="LK-000150">LK-000150</option>
-                    <option value="LK-000151">LK-000151</option>
-                    <option value="LK-000155">LK-000155</option>
-                    <option value="LK-000167">LK-000167</option>
-                    <option value="LK-000003">LK-000003</option>
-                    <option value="LK-000020">LK-000020</option>
-                    <option value="LK-000031">LK-000031</option>
-                    <option value="LK-000045">LK-000045</option>
-                    <option value="LK-000109">LK-000109</option>
-                    <option value="LK-000126">LK-000126</option>
-                    <option value="LK-000128">LK-000128</option>
-                    <option value="LK-000014">LK-000014</option>
-                    <option value="LK-000004">LK-000004</option>
-                    <option value="LK-000046">LK-000046</option>
-                    <option value="LK-000168">LK-000168</option>
-                    <option value="LK-000149">LK-000149</option>
-                  </select>
+                    <div
+                      id="template-dropdown"
+                      class="list-group position-absolute w-100 shadow-sm"
+                      style="
+                        display: none;
+                        z-index: 9999;
+                        max-height: 250px;
+                        overflow-y: auto;
+                        background: white;
+                      "
+                    ></div>
+                  </div>
                 </div>
 
                 <!-- FILE -->
@@ -560,5 +510,119 @@
         });
       });
     </script>
+
+    <script>
+      const templates = [
+        "LK-000019",
+        "LK-000105",
+        "LK-000148",
+        "LK-000115",
+        "LK-000048",
+        "LK-000065",
+        "LK-000093",
+        "LK-000118",
+        "LK-000121",
+        "LK-000032",
+        "LK-000108",
+        "LK-000145",
+        "LK-000146",
+        "LK-000153",
+        "LK-000136",
+        "LK-000117",
+        "LK-000139",
+        "LK-000021",
+        "LK-000124",
+        "LK-000131",
+        "LK-000132",
+        "LK-000170",
+        "LK-000059",
+        "LK-000127",
+        "LK-000010",
+        "LK-000035",
+        "LK-000037",
+        "LK-000042",
+        "LK-000064",
+        "LK-000106",
+        "LK-000107",
+        "LK-000138",
+        "LK-000143",
+        "LK-000150",
+        "LK-000151",
+        "LK-000155",
+        "LK-000167",
+        "LK-000003",
+        "LK-000020",
+        "LK-000031",
+        "LK-000045",
+        "LK-000109",
+        "LK-000126",
+        "LK-000128",
+        "LK-000014",
+        "LK-000004",
+        "LK-000046",
+        "LK-000168",
+        "LK-000149",
+        "LK-000062",
+        "LK-000071",
+        "LK-000092",
+        "LK-000101",
+        "LK-000102",
+        "LK-000120",
+        "LK-000129",
+        "LK-000130",
+      ];
+
+      const input = document.getElementById("kode_agent");
+      const dropdown = document.getElementById("template-dropdown");
+
+      function showTemplates(keyword = "") {
+        dropdown.innerHTML = "";
+
+        const search = keyword.toLowerCase();
+
+        const filtered = templates.filter(function (template) {
+          return template.toLowerCase().includes(search);
+        });
+
+        filtered.forEach(function (template) {
+          const item = document.createElement("button");
+
+          item.type = "button";
+          item.className = "list-group-item list-group-item-action";
+          item.textContent = template;
+
+          item.addEventListener("click", function () {
+            input.value = template;
+            dropdown.style.display = "none";
+          });
+
+          dropdown.appendChild(item);
+        });
+
+        if (filtered.length > 0) {
+          dropdown.style.display = "block";
+        } else {
+          dropdown.style.display = "none";
+        }
+      }
+
+      input.addEventListener("focus", function () {
+        showTemplates(this.value);
+      });
+
+      input.addEventListener("input", function () {
+        showTemplates(this.value);
+      });
+
+      document.addEventListener("click", function (event) {
+        if (
+          !input.contains(event.target) &&
+          !dropdown.contains(event.target)
+        ) {
+          dropdown.style.display = "none";
+        }
+      });
+    </script>
+
   </body>
 </html>

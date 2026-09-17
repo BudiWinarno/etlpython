@@ -374,7 +374,7 @@
               >
                 <!-- TEMPLATE -->
 
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                   <label class="form-label"> Template </label>
 
                   <select name="template_id" class="form-select" required>
@@ -384,6 +384,45 @@
 
                     {% endfor %}
                   </select>
+                </div> -->
+
+                <div class="mb-3 position-relative">
+                  <label class="form-label">Template</label>
+
+                  <!-- ID yang sebenarnya dikirim ke Flask -->
+                  <input
+                    type="hidden"
+                    name="template_id"
+                    id="template_id"
+                  />
+
+                  <!-- Input pencarian -->
+                  <input
+                    type="text"
+                    id="template_search"
+                    class="form-control"
+                    placeholder="Ketik nama template..."
+                    autocomplete="off"
+                    required
+                  />
+
+                  <!-- Hasil autocomplete -->
+                  <div
+                    id="template_suggestions"
+                    class="list-group position-absolute w-100"
+                    style="z-index: 1000; display: none;"
+                  >
+                    {% for t in templates %}
+                    <button
+                      type="button"
+                      class="list-group-item list-group-item-action template-option"
+                      data-id="{{ t.id }}"
+                      data-name="{{ t.template_name }}"
+                    >
+                      {{ t.template_name }}
+                    </button>
+                    {% endfor %}
+                  </div>
                 </div>
 
                 <!-- BULAN -->
@@ -491,6 +530,63 @@
             sidebarOverlay.classList.remove("active");
           }
         });
+      });
+    </script>
+
+    <script>
+      const templateSearch = document.getElementById("template_search");
+      const templateId = document.getElementById("template_id");
+      const templateSuggestions = document.getElementById("template_suggestions");
+
+      const templateOptions = document.querySelectorAll(".template-option");
+
+      templateSearch.addEventListener("input", function () {
+        const keyword = this.value.toLowerCase().trim();
+
+        templateSuggestions.innerHTML = "";
+
+        if (!keyword) {
+          templateSuggestions.style.display = "none";
+          templateId.value = "";
+          return;
+        }
+
+        let found = false;
+
+        templateOptions.forEach((option) => {
+          const name = option.dataset.name;
+          const id = option.dataset.id;
+
+          if (name.toLowerCase().includes(keyword)) {
+            const item = document.createElement("button");
+
+            item.type = "button";
+            item.className = "list-group-item list-group-item-action";
+            item.textContent = name;
+
+            item.addEventListener("click", function () {
+              templateSearch.value = name;
+              templateId.value = id;
+
+              templateSuggestions.style.display = "none";
+            });
+
+            templateSuggestions.appendChild(item);
+            found = true;
+          }
+        });
+
+        templateSuggestions.style.display = found ? "block" : "none";
+
+        // Kalau user mengetik ulang, ID lama dihapus
+        templateId.value = "";
+      });
+
+      // Klik di luar autocomplete
+      document.addEventListener("click", function (event) {
+        if (!event.target.closest(".position-relative")) {
+          templateSuggestions.style.display = "none";
+        }
       });
     </script>
 
