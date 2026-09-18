@@ -74,7 +74,7 @@ class LK000108StockNormalizer(BaseNormalizer):
             ~df.astype(str)
             .apply(
                 lambda row: row.str.upper().str.contains(
-                    r"SUBTOTAL LAIN-LAIN|REPORT TOTAL|END OF REPORT",
+                    r"SUBTOTAL|TOTAL UMUM|REPORT TOTAL|END OF REPORT",
                     regex=True,
                     na=False
                 ).any(),
