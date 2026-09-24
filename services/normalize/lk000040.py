@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 from services.normalize.base import BaseNormalizer
 
@@ -28,7 +29,7 @@ class LK000040InvoiceNormalizer(BaseNormalizer):
                     return pd.NaT
 
                 # Kalau sudah datetime
-                if isinstance(value, pd.Timestamp):
+                if isinstance(value, (pd.Timestamp, datetime)):
                     return pd.Timestamp(
                         year=value.year,
                         month=value.day,
