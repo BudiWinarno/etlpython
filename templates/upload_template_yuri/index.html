@@ -9,7 +9,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title>Data Laporan CMO</title>
+    <title>Data Laporan Tempate Yuri</title>
 
     <!-- Bootstrap -->
     <link
@@ -334,6 +334,38 @@
 
         }
 
+        .autocomplete-wrapper {
+            position: relative;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+
+            max-height: 220px;
+            overflow-y: auto;
+
+            display: none;
+
+            z-index: 9999;
+        }
+
+        .autocomplete-item {
+            padding: 10px 12px;
+            cursor: pointer;
+        }
+
+        .autocomplete-item:hover {
+            background: #f1f1f1;
+        }
+
+
     </style>
 
 </head>
@@ -566,7 +598,7 @@
 
             <a href="{{ url_for('upload_template_yuri.index') }}" class="menu-item">
                 <span>◈</span>
-                Data Laporan Template Yuri
+                    Data Laporan Template Yuri
             </a>
 
 
@@ -710,21 +742,14 @@
 
                     <div class="breadcrumb-text">
 
-                        DAFTAR LAPORAN AGENT / CMO
+                        DAFTAR LAPORAN AGENT / Template Yuri
 
                     </div>
 
 
                     <h2>
-                        Data Laporan CMO
+                        Data Laporan Template Yuri
                     </h2>
-
-
-                    <div class="page-description">
-
-                        Kelola laporan CMO yang telah diupload.
-
-                    </div>
 
                 </div>
 
@@ -790,7 +815,7 @@
 
                         <div class="cmo-card-title">
 
-                            Daftar Laporan CMO
+                            Daftar Laporan Template Yuri
 
                         </div>
 
@@ -799,6 +824,66 @@
                             {{ reports|length }} laporan
 
                         </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row mb-3" style="margin-left: 15px; margin-top: 15px;">
+
+                    <!-- SEARCH NAMA -->
+                    <div class="col-md-5">
+
+                        <label class="form-label">
+                            Cari Nama Agent
+                        </label>
+
+                        <div class="autocomplete-wrapper">
+
+                            <input
+                                type="text"
+                                id="searchNama"
+                                class="form-control"
+                                placeholder="Ketik nama agent..."
+                                autocomplete="off"
+                            >
+
+                            <div
+                                id="namaAgentDropdown"
+                                class="autocomplete-dropdown">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FILTER PERIODE -->
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Filter Periode
+                        </label>
+
+                        <input
+                            type="month"
+                            id="searchPeriode"
+                            class="form-control"
+                        >
+                    </div>
+
+
+                    <!-- RESET -->
+                    <div class="col-md-3 d-flex align-items-end">
+
+                        <button
+                            type="button"
+                            id="resetFilter"
+                            class="btn btn-secondary">
+
+                            Reset
+
+                        </button>
 
                     </div>
 
@@ -846,7 +931,10 @@
 
                             {% for report in reports %}
 
-                            <tr>
+                            <tr
+                                data-nama="{{ report.nama }}"
+                                data-periode="{% if report.periode %}{{ report.periode.strftime('%Y-%m') }}{% endif %}"
+                            >
 
                                 <td>
                                     {{ loop.index }}
@@ -856,7 +944,7 @@
                                 <td>
 
                                     <strong>
-                                        {{ report.nama_cmo or '-' }}
+                                        {{ report.nama or '-' }}
                                     </strong>
 
                                     {% if report.cmo_id %}
@@ -877,7 +965,7 @@
 
                                     {% if report.periode %}
 
-                                        {{ report.periode.strftime('%m-%Y') }}
+                                        {{ report.periode.strftime('%B %Y') }}
 
                                     {% else %}
 
@@ -898,7 +986,7 @@
                                 <td>
 
                                     <a
-                                        href="{{ url_for('upload_cmo_report.download', id=report.id) }}"
+                                        href="{{ url_for('upload_template_yuri.download', id=report.id) }}"
                                         class="btn-download">
 
                                         Download
@@ -907,7 +995,7 @@
 
 
                                     <form
-                                        action="{{ url_for('upload_cmo_report.delete', id=report.id) }}"
+                                        action="{{ url_for('upload_template_yuri.delete', id=report.id) }}"
                                         method="POST"
                                         class="delete-form d-inline">
 
@@ -934,7 +1022,7 @@
                                     colspan="5"
                                     class="empty-data">
 
-                                    Belum ada laporan CMO.
+                                    Belum ada laporan template yuri.
 
                                 </td>
 
@@ -945,6 +1033,67 @@
                         </tbody>
 
                     </table>
+
+                    <!-- PAGINATION -->
+                    <div
+                        class="d-flex justify-content-between align-items-center mt-3"
+                        style="margin-left: 15px; margin-right: 15px;"
+                    >
+
+                        <div>
+                            Menampilkan halaman {{ page }}
+                            dari {{ total_pages }}
+                        </div>
+
+                        <div>
+
+                            {% if page > 1 %}
+                                <a
+                                    href="{{ url_for(
+                                        'upload_template_yuri.index',
+                                        page=page-1
+                                    ) }}"
+                                    class="btn btn-secondary">
+                                    Previous
+                                </a>
+                            {% endif %}
+
+
+                            {% for p in range(1, total_pages + 1) %}
+
+                                <a
+                                    href="{{ url_for(
+                                        'upload_template_yuri.index',
+                                        page=p
+                                    ) }}"
+                                    class="btn
+                                    {% if p == page %}
+                                        btn-primary
+                                    {% else %}
+                                        btn-outline-primary
+                                    {% endif %}">
+
+                                    {{ p }}
+
+                                </a>
+
+                            {% endfor %}
+
+
+                            {% if page < total_pages %}
+                                <a
+                                    href="{{ url_for(
+                                        'upload_template_yuri.index',
+                                        page=page+1
+                                    ) }}"
+                                    class="btn btn-secondary">
+                                    Next
+                                </a>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -994,7 +1143,7 @@
             <div class="modal-header">
 
                 <h5 class="modal-title">
-                    Upload Laporan CMO
+                    Upload Laporan Template Yuri
                 </h5>
 
                 <button
@@ -1007,7 +1156,7 @@
 
 
             <form
-                action="{{ url_for('upload_cmo_report.upload') }}"
+                action="{{ url_for('upload_template_yuri.upload') }}"
                 method="POST"
                 enctype="multipart/form-data">
 
@@ -1023,9 +1172,9 @@
 
                         <input
                             type="text"
-                            name="nama_cmo"
+                            name="nama"
                             class="form-control"
-                            placeholder="Masukkan Nama CMO"
+                            placeholder="Masukkan Nama Agent"
                             required>
 
                     </div>
@@ -1461,6 +1610,277 @@ showPage(1);
 
 </script>
 
+<script>
+
+const searchNama =
+    document.getElementById("searchNama");
+
+const namaDropdown =
+    document.getElementById("namaAgentDropdown");
+
+
+// =====================================================
+// AMBIL DATA AGENT DARI TABEL
+// =====================================================
+
+function getNamaAgents() {
+
+    const rows =
+        document.querySelectorAll(
+            "#cmoTable tbody tr"
+        );
+
+    const namaAgents = [];
+
+    rows.forEach(function (row) {
+
+        const nama =
+            row.dataset.nama || "";
+
+        if (
+            nama &&
+            !namaAgents.includes(nama)
+        ) {
+
+            namaAgents.push(nama);
+
+        }
+
+    });
+
+    return namaAgents.sort();
+
+}
+
+
+// =====================================================
+// TAMPILKAN DROPDOWN
+// =====================================================
+
+function showAgentDropdown(keyword = "") {
+
+    const namaAgents =
+        getNamaAgents();
+
+    namaDropdown.innerHTML = "";
+
+
+    const hasil =
+        namaAgents.filter(function (nama) {
+
+            return nama
+                .toLowerCase()
+                .includes(keyword.toLowerCase());
+
+        });
+
+
+    hasil.forEach(function (nama) {
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "autocomplete-item";
+
+        item.textContent =
+            nama;
+
+
+        // =============================================
+        // KLIK AGENT
+        // =============================================
+
+        item.addEventListener("click", function () {
+
+            searchNama.value = nama;
+
+            namaDropdown.style.display = "none";
+
+
+            // BARU JALANKAN FILTER
+            filterTable(nama);
+
+        });
+
+
+        namaDropdown.appendChild(item);
+
+    });
+
+
+    if (hasil.length > 0) {
+
+        namaDropdown.style.display = "block";
+
+    } else {
+
+        namaDropdown.style.display = "none";
+
+    }
+
+}
+
+
+// =====================================================
+// KLIK INPUT
+// =====================================================
+
+searchNama.addEventListener(
+    "click",
+    function () {
+
+        showAgentDropdown();
+
+    }
+);
+
+
+// =====================================================
+// KETIK → HANYA FILTER DROPDOWN
+// =====================================================
+
+searchNama.addEventListener(
+    "input",
+    function () {
+
+        const keyword =
+            this.value.trim();
+
+        showAgentDropdown(keyword);
+
+    }
+);
+
+
+// =====================================================
+// FILTER TABLE
+// =====================================================
+
+function filterTable(namaAgent) {
+
+    const rows =
+        document.querySelectorAll(
+            "#cmoTable tbody tr"
+        );
+
+
+    rows.forEach(function (row) {
+
+        const nama =
+            row.dataset.nama || "";
+
+
+        if (nama === namaAgent) {
+
+            row.style.display = "";
+
+        } else {
+
+            row.style.display = "none";
+
+        }
+
+    });
+
+}
+
+
+// =====================================================
+// KLIK DI LUAR DROPDOWN
+// =====================================================
+
+document.addEventListener(
+    "click",
+    function (e) {
+
+        if (
+            !searchNama.contains(e.target) &&
+            !namaDropdown.contains(e.target)
+        ) {
+
+            namaDropdown.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+</script>
+
+<script>
+    // =====================================================
+// RESET FILTER
+// =====================================================
+
+const resetFilter =
+    document.getElementById("resetFilter");
+
+resetFilter.addEventListener("click", function () {
+
+    // Kosongkan input nama agent
+    searchNama.value = "";
+
+    // Sembunyikan dropdown
+    namaDropdown.style.display = "none";
+
+    // Tampilkan semua row
+    const rows =
+        document.querySelectorAll(
+            "#cmoTable tbody tr"
+        );
+
+    rows.forEach(function (row) {
+
+        row.style.display = "";
+
+    });
+
+});
+</script>
+
+<script>
+    // =====================================================
+// FILTER PERIODE
+// =====================================================
+
+const searchPeriode =
+    document.getElementById("searchPeriode");
+
+searchPeriode.addEventListener("change", function () {
+
+    const periode =
+        this.value;
+
+    const rows =
+        document.querySelectorAll(
+            "#cmoTable tbody tr"
+        );
+
+    rows.forEach(function (row) {
+
+        const rowPeriode =
+            row.dataset.periode || "";
+
+        if (periode === "") {
+
+            row.style.display = "";
+
+        } else if (rowPeriode === periode) {
+
+            row.style.display = "";
+
+        } else {
+
+            row.style.display = "none";
+
+        }
+
+    });
+
+});
+</script>
 
 </body>
 
