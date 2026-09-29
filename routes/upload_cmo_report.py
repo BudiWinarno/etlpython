@@ -1,10 +1,11 @@
-from flask import Blueprint, request, render_template, redirect, flash, send_from_directory
+from flask import Blueprint, request, render_template, redirect, flash, send_from_directory, jsonify
 import os
 from datetime import datetime
 
 from config import Config
 from database import SessionLocal
 from models.upload_cmo_report import UploadCmoReport
+from sqlalchemy import extract
 
 
 upload_cmo_report_bp = Blueprint(
@@ -17,14 +18,127 @@ upload_cmo_report_bp = Blueprint(
 # LIST DATA LAPORAN CMO
 # =========================================================
 
+# @upload_cmo_report_bp.route("/upload-cmo-report")
+# def index():
+
+#     db = SessionLocal()
+
+#     reports = (
+#         db.query(UploadCmoReport)
+#         .order_by(UploadCmoReport.id.desc())
+#         .all()
+#     )
+
+#     db.close()
+
+#     return render_template(
+#         "upload_cmo_report/index.html",
+#         reports=reports
+#     )
+
+# @upload_cmo_report_bp.route("/upload-cmo-report")
+# def index():
+
+#     db = SessionLocal()
+
+#     # ==========================================
+#     # PAGINATION
+#     # ==========================================
+
+#     page = request.args.get("page", 1, type=int)
+
+#     per_page = 1
+
+#     query = (
+#         db.query(UploadCmoReport)
+#         .order_by(UploadCmoReport.id.desc())
+#     )
+
+#     total = query.count()
+
+#     total_pages = (total + per_page - 1) // per_page
+
+#     reports = (
+#         query
+#         .offset((page - 1) * per_page)
+#         .limit(per_page)
+#         .all()
+#     )
+
+#     db.close()
+
+#     return render_template(
+#         "upload_cmo_report/index.html",
+#         reports=reports,
+#         page=page,
+#         total_pages=total_pages
+#     )
+
 @upload_cmo_report_bp.route("/upload-cmo-report")
 def index():
 
     db = SessionLocal()
 
-    reports = (
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+
+    search_nama = request.args.get("nama", "").strip()
+    search_periode = request.args.get("periode", "").strip()
+
+    query = (
         db.query(UploadCmoReport)
         .order_by(UploadCmoReport.id.desc())
+    )
+
+    # ==========================
+    # FILTER NAMA
+    # ==========================
+
+    if search_nama:
+        query = query.filter(
+            UploadCmoReport.nama_cmo.ilike(
+                f"%{search_nama}%"
+            )
+        )
+
+    # ==========================
+    # FILTER PERIODE
+    # ==========================
+
+    if search_periode:
+        tahun, bulan = search_periode.split("-")
+
+        query = query.filter(
+            extract(
+                "year",
+                UploadCmoReport.periode
+            ) == int(tahun)
+        ).filter(
+            extract(
+                "month",
+                UploadCmoReport.periode
+            ) == int(bulan)
+        )
+
+    # ==========================
+    # TOTAL DATA
+    # ==========================
+
+    total = query.count()
+
+    total_pages = max(
+        1,
+        (total + per_page - 1) // per_page
+    )
+
+    # ==========================
+    # PAGINATION
+    # ==========================
+
+    reports = (
+        query
+        .offset((page - 1) * per_page)
+        .limit(per_page)
         .all()
     )
 
@@ -32,8 +146,35 @@ def index():
 
     return render_template(
         "upload_cmo_report/index.html",
-        reports=reports
+        reports=reports,
+        page=page,
+        total_pages=total_pages,
+        search_nama=search_nama,
+        search_periode=search_periode
     )
+    
+@upload_cmo_report_bp.route("/upload-cmo-report/agents")
+def get_agents():
+
+    db = SessionLocal()
+
+    agents = (
+        db.query(UploadCmoReport.nama_cmo)
+        .filter(
+            UploadCmoReport.nama_cmo.isnot(None),
+            UploadCmoReport.nama_cmo != ""
+        )
+        .distinct()
+        .order_by(UploadCmoReport.nama_cmo.asc())
+        .all()
+    )
+
+    db.close()
+
+    return jsonify([
+        row[0]
+        for row in agents
+    ])
 
 
 # =========================================================

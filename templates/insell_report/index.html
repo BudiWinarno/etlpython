@@ -280,6 +280,8 @@
             Data Laporan CMO
           </a>
 
+          {% if session.get('user_role') == 'admin' %}
+
           <p class="menu-title">
             MASTER DATA
           </p>
@@ -324,6 +326,19 @@
             SQL Server SAP Data Insell
           </a>
 
+          <a
+                href="{{ url_for('users.index') }}"
+                class="menu-item
+                {% if request.path.startswith('/dashboard/users') %}active{% endif %}">
+
+                <span>◆</span>
+
+                Daftar User
+
+            </a>
+
+            {% endif %}
+
         </nav>
 
         <div class="sidebar-bottom">
@@ -336,12 +351,23 @@
 
             <div>
               <strong>
+                  {{ session.get('user_name', 'User') }}
+              </strong>
+
+              <small>
+                  {{ session.get('user_email', '') }}
+              </small>
+
+              <small>
+                  {{ session.get('user_role', 'user') }}
+              </small>
+              <!-- <strong>
                 Administrator
               </strong>
 
               <small>
                 {{ session.get('user_email', 'User') }}
-              </small>
+              </small> -->
             </div>
 
           </div>
@@ -524,12 +550,12 @@
                     </td>
 
                     <td class="text-end">
-                      {{ item.so_qty_pcs }}
-                    </td>
+                      {{ item.so_qty_pcs|int }}
+                  </td>
 
-                    <td class="text-end">
-                      {{ item.so_qty_karton }}
-                    </td>
+                  <td class="text-end">
+                      {{ item.so_qty_karton|int }}
+                  </td>
 
                   </tr>
 
@@ -543,7 +569,96 @@
 
 
             <!-- PAGINATION -->
-            <div class="pagination-wrapper">
+             <div class="pagination-wrapper">
+                <nav>
+                    <ul class="pagination mb-0">
+
+                        <!-- PREVIOUS -->
+                        {% if page > 1 %}
+                        <li class="page-item">
+                            <a
+                                class="page-link"
+                                href="?page={{ page - 1 }}"
+                            >
+                                Previous
+                            </a>
+                        </li>
+                        {% endif %}
+
+
+                        <!-- HALAMAN 1 -->
+                        {% if page > 3 %}
+                        <li class="page-item">
+                            <a
+                                class="page-link"
+                                href="?page=1"
+                            >
+                                1
+                            </a>
+                        </li>
+
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        {% endif %}
+
+
+                        <!-- HALAMAN SEKITAR CURRENT PAGE -->
+                        {% set start_page = [1, page - 2] | max %}
+                        {% set end_page = [total_pages, page + 2] | min %}
+
+                        {% for p in range(start_page, end_page + 1) %}
+
+                        <li
+                            class="page-item {% if p == page %}active{% endif %}"
+                        >
+                            <a
+                                class="page-link"
+                                href="?page={{ p }}"
+                            >
+                                {{ p }}
+                            </a>
+                        </li>
+
+                        {% endfor %}
+
+
+                        <!-- HALAMAN TERAKHIR -->
+                        {% if page < total_pages - 2 %}
+
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+
+                        <li class="page-item">
+                            <a
+                                class="page-link"
+                                href="?page={{ total_pages }}"
+                            >
+                                {{ total_pages }}
+                            </a>
+                        </li>
+
+                        {% endif %}
+
+
+                        <!-- NEXT -->
+                        {% if page < total_pages %}
+                        <li class="page-item">
+                            <a
+                                class="page-link"
+                                href="?page={{ page + 1 }}"
+                            >
+                                Next
+                            </a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                </nav>
+            </div>
+             
+            <!-- <div class="pagination-wrapper">
 
               <nav>
 
@@ -602,7 +717,7 @@
 
               </nav>
 
-            </div>
+            </div> -->
 
           </div>
 

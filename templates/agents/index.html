@@ -141,6 +141,8 @@
           <!-- MASTER DATA -->
           <!-- ============================================= -->
 
+          {% if session.get('user_role') == 'admin' %}
+
           <p class="menu-title">MASTER DATA</p>
 
           <!-- ACTIVE MENU -->
@@ -168,6 +170,19 @@
             <span>◫</span>
             SQL Server SAP Data Insell
           </a>
+
+          <a
+                href="{{ url_for('users.index') }}"
+                class="menu-item
+                {% if request.path.startswith('/dashboard/users') %}active{% endif %}">
+
+                <span>◆</span>
+
+                Daftar User
+
+            </a>
+
+            {% endif %}
         </nav>
 
         <!-- ============================================= -->
@@ -179,9 +194,24 @@
             <div class="avatar">A</div>
 
             <div>
-              <strong> Administrator </strong>
+              <strong>
+                  {{ session.get('user_name', 'User') }}
+              </strong>
 
-              <small> {{ session.get('user_email', 'User') }} </small>
+              <small>
+                  {{ session.get('user_email', '') }}
+              </small>
+
+              <small>
+                  {{ session.get('user_role', 'user') }}
+              </small>
+
+              <!-- <span class="user-role">
+                  {{ session.get('user_role', 'user') }}
+              </span> -->
+              <!-- <strong> Administrator </strong>
+
+              <small> {{ session.get('user_email', 'User') }} </small> -->
             </div>
           </div>
 

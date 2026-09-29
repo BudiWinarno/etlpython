@@ -20,6 +20,7 @@ from routes.insell_report import insell_report_bp
 from routes.auth import auth_bp
 from routes.upload_cmo_report import upload_cmo_report_bp
 from routes.upload_templateyuri_report import upload_template_yuri_bp
+from routes.users import user_bp
 
 
 app = Flask(__name__)
@@ -44,6 +45,7 @@ app.register_blueprint(insell_report_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(upload_cmo_report_bp)
 app.register_blueprint(upload_template_yuri_bp)
+app.register_blueprint(user_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
