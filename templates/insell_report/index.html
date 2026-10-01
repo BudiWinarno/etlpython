@@ -116,6 +116,11 @@
           gap: 12px;
         }
       }
+
+      .table-wrapper {
+          margin: 0 20px;
+          overflow-x: auto;
+      }
     </style>
   </head>
 
@@ -265,9 +270,9 @@
             Daftar Laporan Agent
           </p>
 
-          <a href="#" class="menu-item">
-            <span>◈</span>
-            Data Laporan Raw Agent
+          <a href="{{ url_for('raw_agent.index') }}" class="menu-item">
+              <span>◈</span>
+              Data Laporan Raw Agent
           </a>
 
           <a href="{{ url_for('upload_template_yuri.index') }}" class="menu-item">

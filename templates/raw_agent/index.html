@@ -9,7 +9,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0">
 
-    <title>Data Laporan Tempate Yuri</title>
+    <title>Data Laporan Raw Agent</title>
 
     <!-- Bootstrap -->
     <link
@@ -23,20 +23,11 @@
 
     <style>
 
-        /* ==========================================
-           PAGE CONTENT
-        ========================================== */
-
         .page-content {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
         }
-
-
-        /* ==========================================
-           PAGE HEADER
-        ========================================== */
 
         .page-header {
             display: flex;
@@ -64,11 +55,6 @@
             font-size: 13px;
         }
 
-
-        /* ==========================================
-           CARD
-        ========================================== */
-
         .cmo-card {
             background: #fff;
             border: 1px solid #f0f0f0;
@@ -76,11 +62,6 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             overflow: hidden;
         }
-
-
-        /* ==========================================
-           CARD HEADER
-        ========================================== */
 
         .cmo-card-header {
             display: flex;
@@ -100,11 +81,6 @@
             color: #8c8c8c;
             font-size: 12px;
         }
-
-
-        /* ==========================================
-           TABLE
-        ========================================== */
 
         .cmo-table {
             margin: 0;
@@ -136,11 +112,6 @@
             border-bottom: none;
         }
 
-
-        /* ==========================================
-           BUTTON ADD
-        ========================================== */
-
         .btn-add {
             display: inline-flex;
             align-items: center;
@@ -162,11 +133,6 @@
             border-color: #4096ff;
         }
 
-
-        /* ==========================================
-           DOWNLOAD
-        ========================================== */
-
         .btn-download {
             padding: 5px 10px;
             color: #1677ff;
@@ -181,11 +147,6 @@
             color: #0958d9;
             background: #bae0ff;
         }
-
-
-        /* ==========================================
-           DELETE
-        ========================================== */
 
         .btn-delete {
             padding: 5px 10px;
@@ -202,11 +163,6 @@
             background: #ffccc7;
         }
 
-
-        /* ==========================================
-           EMPTY DATA
-        ========================================== */
-
         .empty-data {
             padding: 50px 20px !important;
             text-align: center;
@@ -214,24 +170,89 @@
             font-size: 13px;
         }
 
+        .badge-type {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+        }
 
-        /* ==========================================
-           PAGINATION
-        ========================================== */
+        .badge-sellout {
+            color: #1677ff;
+            background: #e6f4ff;
+            border: 1px solid #91caff;
+        }
+
+        .badge-stock {
+            color: #389e0d;
+            background: #f6ffed;
+            border: 1px solid #b7eb8f;
+        }
+
+        .badge-uploaded {
+            color: #d48806;
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+        }
+
+        .badge-processing {
+            color: #1677ff;
+            background: #e6f4ff;
+            border: 1px solid #91caff;
+        }
+
+        .badge-processed {
+            color: #389e0d;
+            background: #f6ffed;
+            border: 1px solid #b7eb8f;
+        }
+
+        .badge-failed {
+            color: #cf1322;
+            background: #fff1f0;
+            border: 1px solid #ffa39e;
+        }
+
+        .autocomplete-wrapper {
+            position: relative;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            max-height: 220px;
+            overflow-y: auto;
+            display: none;
+            z-index: 9999;
+        }
+
+        .autocomplete-item {
+            padding: 10px 12px;
+            cursor: pointer;
+        }
+
+        .autocomplete-item:hover {
+            background: #f1f1f1;
+        }
 
         .pagination-wrapper {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
-            padding: 18px 24px 20px;
-            border-top: 1px solid #f0f0f0;
-            background: #fff;
+            gap: 6px;
+            margin-top: 20px;
+            padding-right: 5px;
         }
 
         #pagination-info {
             color: #8c8c8c;
             font-size: 13px;
-            line-height: 34px;
         }
 
         #pagination {
@@ -241,11 +262,6 @@
             margin: 0;
             padding: 0;
             list-style: none;
-        }
-
-        #pagination .page-item {
-            margin: 0;
-            padding: 0;
         }
 
         #pagination .page-link {
@@ -275,31 +291,6 @@
             border-color: #1677ff;
         }
 
-        #pagination .page-item.disabled .page-link {
-            color: #bfbfbf;
-            background: #f5f5f5;
-            border-color: #d9d9d9;
-            cursor: not-allowed;
-        }
-
-
-        /* ==========================================
-           MODAL
-        ========================================== */
-
-        .modal-header {
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .modal-footer {
-            border-top: 1px solid #f0f0f0;
-        }
-
-
-        /* ==========================================
-           RESPONSIVE
-        ========================================== */
-
         @media (max-width: 800px) {
 
             .page-header {
@@ -309,7 +300,7 @@
             }
 
             .cmo-table {
-                min-width: 700px;
+                min-width: 900px;
             }
 
         }
@@ -320,11 +311,6 @@
                 flex-direction: column;
                 align-items: stretch;
                 gap: 14px;
-                padding: 16px 18px 18px;
-            }
-
-            #pagination-info {
-                line-height: normal;
             }
 
             .pagination-nav {
@@ -334,37 +320,44 @@
 
         }
 
-        .autocomplete-wrapper {
-            position: relative;
+        .pagination-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
         }
 
-        .autocomplete-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
+        .pagination-btn {
+            min-width: 36px;
+            height: 36px;
 
-            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 10px;
+
             border: 1px solid #ddd;
             border-radius: 6px;
 
-            max-height: 220px;
-            overflow-y: auto;
+            background: #fff;
+            color: #333;
 
-            display: none;
+            text-decoration: none;
 
-            z-index: 9999;
+            font-size: 14px;
         }
 
-        .autocomplete-item {
-            padding: 10px 12px;
-            cursor: pointer;
+        .pagination-btn:hover {
+            background: #f5f5f5;
         }
 
-        .autocomplete-item:hover {
-            background: #f1f1f1;
+        .pagination-btn.active {
+            background: #333;
+            color: #fff;
+            border-color: #333;
         }
-
 
     </style>
 
@@ -376,9 +369,7 @@
 <div class="dashboard">
 
 
-    <!-- ==========================================
-         SIDEBAR
-    ========================================== -->
+    <!-- SIDEBAR -->
 
     <aside class="sidebar">
 
@@ -411,8 +402,6 @@
             </p>
 
 
-            <!-- DASHBOARD -->
-
             <a
                 href="/dashboard"
                 class="menu-item">
@@ -424,9 +413,7 @@
             </a>
 
 
-            <!-- ==========================================
-                 SELL OUT
-            ========================================== -->
+            <!-- SELL OUT -->
 
             <div
                 class="menu-dropdown
@@ -487,9 +474,7 @@
             </div>
 
 
-            <!-- ==========================================
-                 STOCK
-            ========================================== -->
+            <!-- STOCK -->
 
             <div
                 class="menu-dropdown
@@ -550,12 +535,9 @@
             </div>
 
 
-            <!-- GENERATE YURI -->
-
             <a
                 href="/generate-yuri"
-                class="menu-item
-                {% if request.path == '/generate-yuri' %}active{% endif %}">
+                class="menu-item">
 
                 <span>◈</span>
 
@@ -564,12 +546,9 @@
             </a>
 
 
-            <!-- GENERATE CMO -->
-
             <a
                 href="/generate-cmo"
-                class="menu-item
-                {% if request.path == '/generate-cmo' %}active{% endif %}">
+                class="menu-item">
 
                 <span>◈</span>
 
@@ -585,29 +564,32 @@
             </p>
 
 
-            <a href="{{ url_for('raw_agent.index') }}" class="menu-item">
+            <a 
+                href="{{ url_for('raw_agent.index') }}" 
+                class="menu-item
+                {% if request.path == url_for('raw_agent.index') %}active{% endif %}">
+
                 <span>◈</span>
+
                 Data Laporan Raw Agent
+
             </a>
+
 
             <a
                 href="{{ url_for('upload_template_yuri.index') }}"
-                class="menu-item
-                {% if request.path == '/upload-template-yuri' %}
-                    active
-                {% endif %}"
-            >
+                class="menu-item">
+
                 <span>◈</span>
+
                 Data Laporan Template Yuri
+
             </a>
 
 
-            <!-- CMO ACTIVE -->
-
             <a
                 href="{{ url_for('upload_cmo_report.index') }}"
-                class="menu-item
-                {% if request.path == '/upload-cmo-report' %}active{% endif %}">
+                class="menu-item">
 
                 <span>◈</span>
 
@@ -627,8 +609,7 @@
 
             <a
                 href="/agents"
-                class="menu-item
-                {% if request.path == '/agents' %}active{% endif %}">
+                class="menu-item">
 
                 <span>◆</span>
 
@@ -639,8 +620,7 @@
 
             <a
                 href="/item-agent-mapping"
-                class="menu-item
-                {% if request.path == '/item-agent-mapping' %}active{% endif %}">
+                class="menu-item">
 
                 <span>▦</span>
 
@@ -651,8 +631,7 @@
 
             <a
                 href="/cmo-template"
-                class="menu-item
-                {% if request.path == '/cmo-template' %}active{% endif %}">
+                class="menu-item">
 
                 <span>▦</span>
 
@@ -663,8 +642,7 @@
 
             <a
                 href="/insell-reports"
-                class="menu-item
-                {% if request.path == '/insell-reports' %}active{% endif %}">
+                class="menu-item">
 
                 <span>◫</span>
 
@@ -675,8 +653,7 @@
 
             <a
                 href="/ods-ec-detail"
-                class="menu-item
-                {% if request.path == '/ods-ec-detail' %}active{% endif %}">
+                class="menu-item">
 
                 <span>◫</span>
 
@@ -684,10 +661,10 @@
 
             </a>
 
+
             <a
                 href="{{ url_for('users.index') }}"
-                class="menu-item
-                {% if request.path.startswith('/dashboard/users') %}active{% endif %}">
+                class="menu-item">
 
                 <span>◆</span>
 
@@ -724,14 +701,6 @@
                         {{ session.get('user_role', 'user') }}
                     </small>
 
-                    <!-- <strong>
-                        Administrator
-                    </strong>
-
-                    <small>
-                        {{ session.get('user_email', 'User') }}
-                    </small> -->
-
                 </div>
 
             </div>
@@ -750,33 +719,30 @@
     </aside>
 
 
-    <!-- ==========================================
-         MAIN CONTENT
-    ========================================== -->
+    <!-- MAIN CONTENT -->
 
     <main class="main-content">
 
         <div class="page-content">
 
 
-            <!-- ==========================================
-                 PAGE HEADER
-            ========================================== -->
+            <!-- HEADER -->
 
             <div class="page-header">
 
                 <div>
 
                     <div class="breadcrumb-text">
-
-                        DAFTAR LAPORAN AGENT / Template Yuri
-
+                        DAFTAR LAPORAN AGENT / Raw Agent
                     </div>
 
-
                     <h2>
-                        Data Laporan Template Yuri
+                        Data Laporan Raw Agent
                     </h2>
+
+                    <div class="page-description">
+                        Daftar file raw yang diupload oleh agent.
+                    </div>
 
                 </div>
 
@@ -785,7 +751,7 @@
                     type="button"
                     class="btn-add"
                     data-bs-toggle="modal"
-                    data-bs-target="#uploadCmoModal">
+                    data-bs-target="#uploadRawAgentModal">
 
                     <span>＋</span>
 
@@ -796,9 +762,7 @@
             </div>
 
 
-            <!-- ==========================================
-                 FLASH MESSAGE
-            ========================================== -->
+            <!-- FLASH MESSAGE -->
 
             {% with messages = get_flashed_messages(with_categories=true) %}
 
@@ -827,9 +791,7 @@
             {% endwith %}
 
 
-            <!-- ==========================================
-                 TABLE CARD
-            ========================================== -->
+            <!-- CARD -->
 
             <div class="cmo-card">
 
@@ -841,25 +803,27 @@
                     <div>
 
                         <div class="cmo-card-title">
-
-                            Daftar Laporan Template Yuri
-
+                            Daftar Laporan Raw Agent
                         </div>
 
                         <div class="cmo-card-count">
-
-                            {{ reports|length }} laporan
-
+                            {{ uploads|length }} laporan
                         </div>
 
                     </div>
 
                 </div>
 
-                <div class="row mb-3" style="margin-left: 15px; margin-top: 15px;">
 
-                    <!-- SEARCH NAMA -->
-                    <div class="col-md-5">
+                <!-- FILTER -->
+
+                <div
+                    class="row mb-3"
+                    style="margin-left: 15px; margin-top: 15px; margin-right: 15px;">
+
+                    <!-- SEARCH AGENT -->
+
+                    <div class="col-md-4">
 
                         <label class="form-label">
                             Cari Nama Agent
@@ -872,8 +836,7 @@
                                 id="searchNama"
                                 class="form-control"
                                 placeholder="Ketik nama agent..."
-                                autocomplete="off"
-                            >
+                                autocomplete="off">
 
                             <div
                                 id="namaAgentDropdown"
@@ -885,8 +848,9 @@
                     </div>
 
 
-                    <!-- FILTER PERIODE -->
-                    <div class="col-md-4">
+                    <!-- PERIODE -->
+
+                    <div class="col-md-3">
 
                         <label class="form-label">
                             Filter Periode
@@ -895,13 +859,43 @@
                         <input
                             type="month"
                             id="searchPeriode"
-                            class="form-control"
-                        >
+                            class="form-control">
+
+                    </div>
+
+
+                    <!-- JENIS DATA -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Jenis Data
+                        </label>
+
+                        <select
+                            id="searchJenisData"
+                            class="form-control">
+
+                            <option value="">
+                                Semua Jenis Data
+                            </option>
+
+                            <option value="SELL_OUT">
+                                SELL OUT
+                            </option>
+
+                            <option value="STOCK">
+                                STOCK
+                            </option>
+
+                        </select>
+
                     </div>
 
 
                     <!-- RESET -->
-                    <div class="col-md-3 d-flex align-items-end">
+
+                    <div class="col-md-2 d-flex align-items-end">
 
                         <button
                             type="button"
@@ -923,13 +917,13 @@
 
                     <table
                         class="table cmo-table"
-                        id="cmoTable">
+                        id="rawAgentTable">
 
                         <thead>
 
                             <tr>
 
-                                <th width="70">
+                                <th width="60">
                                     No
                                 </th>
 
@@ -937,15 +931,27 @@
                                     Nama Agent
                                 </th>
 
-                                <th width="150">
+                                <th>
+                                    Kode Agent
+                                </th>
+
+                                <th width="130">
                                     Periode
+                                </th>
+
+                                <th width="120">
+                                    Jenis Data
                                 </th>
 
                                 <th>
                                     Nama File
                                 </th>
 
-                                <th width="190">
+                                <th width="110">
+                                    Status
+                                </th>
+
+                                <th width="180">
                                     Aksi
                                 </th>
 
@@ -956,12 +962,12 @@
 
                         <tbody>
 
-                            {% for report in reports %}
+                            {% for upload in uploads %}
 
                             <tr
-                                data-nama="{{ report.nama }}"
-                                data-periode="{% if report.periode %}{{ report.periode.strftime('%Y-%m') }}{% endif %}"
-                            >
+                                data-nama="{{ upload.nama or '' }}"
+                                data-periode="{% if upload.periode %}{{ upload.periode.strftime('%Y-%m') }}{% endif %}"
+                                data-jenis="{{ upload.jenis_data or '' }}">
 
                                 <td>
                                     {{ loop.index }}
@@ -971,28 +977,22 @@
                                 <td>
 
                                     <strong>
-                                        {{ report.nama or '-' }}
+                                        {{ upload.nama or '-' }}
                                     </strong>
-
-                                    {% if report.cmo_id %}
-
-                                    <div
-                                        style="font-size:11px;color:#8c8c8c;margin-top:3px;">
-
-                                        ID: {{ report.cmo_id }}
-
-                                    </div>
-
-                                    {% endif %}
 
                                 </td>
 
 
                                 <td>
+                                    {{ upload.kode_agent or '-' }}
+                                </td>
 
-                                    {% if report.periode %}
 
-                                        {{ report.periode.strftime('%B %Y') }}
+                                <td>
+
+                                    {% if upload.periode %}
+
+                                        {{ upload.periode.strftime('%B %Y') }}
 
                                     {% else %}
 
@@ -1005,7 +1005,63 @@
 
                                 <td>
 
-                                    {{ report.file_name }}
+                                    {% if upload.jenis_data == 'SELL_OUT' %}
+
+                                        <span class="badge-type badge-sellout">
+                                            SELL OUT
+                                        </span>
+
+                                    {% elif upload.jenis_data == 'STOCK' %}
+
+                                        <span class="badge-type badge-stock">
+                                            STOCK
+                                        </span>
+
+                                    {% else %}
+
+                                        {{ upload.jenis_data or '-' }}
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+                                    {{ upload.file_name }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if upload.status == 'uploaded' %}
+
+                                        <span class="badge-type badge-uploaded">
+                                            Uploaded
+                                        </span>
+
+                                    {% elif upload.status == 'processing' %}
+
+                                        <span class="badge-type badge-processing">
+                                            Processing
+                                        </span>
+
+                                    {% elif upload.status == 'processed' %}
+
+                                        <span class="badge-type badge-processed">
+                                            Processed
+                                        </span>
+
+                                    {% elif upload.status == 'failed' %}
+
+                                        <span class="badge-type badge-failed">
+                                            Failed
+                                        </span>
+
+                                    {% else %}
+
+                                        {{ upload.status or '-' }}
+
+                                    {% endif %}
 
                                 </td>
 
@@ -1013,7 +1069,7 @@
                                 <td>
 
                                     <a
-                                        href="{{ url_for('upload_template_yuri.download', id=report.id) }}"
+                                        href="{{ url_for('raw_agent.download', id=upload.id) }}"
                                         class="btn-download">
 
                                         Download
@@ -1022,7 +1078,7 @@
 
 
                                     <form
-                                        action="{{ url_for('upload_template_yuri.delete', id=report.id) }}"
+                                        action="{{ url_for('raw_agent.delete', id=upload.id) }}"
                                         method="POST"
                                         class="delete-form d-inline ms-2">
 
@@ -1040,16 +1096,15 @@
 
                             </tr>
 
-
                             {% else %}
 
                             <tr>
 
                                 <td
-                                    colspan="5"
+                                    colspan="8"
                                     class="empty-data">
 
-                                    Belum ada laporan template yuri.
+                                    Belum ada laporan raw agent.
 
                                 </td>
 
@@ -1062,65 +1117,49 @@
                     </table>
 
                     <!-- PAGINATION -->
-                    <div
-                        class="d-flex justify-content-between align-items-center mt-3"
-                        style="margin-left: 15px; margin-right: 15px;"
-                    >
+                    {% if total_pages > 1 %}
+                    <div class="pagination-wrapper">
 
-                        <div>
-                            Menampilkan halaman {{ page }}
-                            dari {{ total_pages }}
-                        </div>
-
-                        <div>
-
-                            {% if page > 1 %}
-                                <a
-                                    href="{{ url_for(
-                                        'upload_template_yuri.index',
-                                        page=page-1
-                                    ) }}"
-                                    class="btn btn-secondary">
-                                    Previous
-                                </a>
-                            {% endif %}
+                        {% if page > 1 %}
+                            <a
+                                href="{{ url_for('raw_agent.index', page=page-1) }}"
+                                class="pagination-btn">
+                                &laquo;
+                            </a>
+                        {% endif %}
 
 
-                            {% for p in range(1, total_pages + 1) %}
+                        {% for p in range(1, total_pages + 1) %}
 
-                                <a
-                                    href="{{ url_for(
-                                        'upload_template_yuri.index',
-                                        page=p
-                                    ) }}"
-                                    class="btn
-                                    {% if p == page %}
-                                        btn-primary
-                                    {% else %}
-                                        btn-outline-primary
-                                    {% endif %}">
+                            {% if p == page %}
 
+                                <span class="pagination-btn active">
                                     {{ p }}
+                                </span>
 
-                                </a>
+                            {% else %}
 
-                            {% endfor %}
-
-
-                            {% if page < total_pages %}
                                 <a
-                                    href="{{ url_for(
-                                        'upload_template_yuri.index',
-                                        page=page+1
-                                    ) }}"
-                                    class="btn btn-secondary">
-                                    Next
+                                    href="{{ url_for('raw_agent.index', page=p) }}"
+                                    class="pagination-btn">
+                                    {{ p }}
                                 </a>
+
                             {% endif %}
 
-                        </div>
+                        {% endfor %}
+
+
+                        {% if page < total_pages %}
+                            <a
+                                href="{{ url_for('raw_agent.index', page=page+1) }}"
+                                class="pagination-btn">
+                                &raquo;
+                            </a>
+                        {% endif %}
 
                     </div>
+                    {% endif %}
 
                 </div>
 
@@ -1144,7 +1183,6 @@
 
             </div>
 
-
         </div>
 
     </main>
@@ -1152,13 +1190,11 @@
 </div>
 
 
-<!-- ==========================================
-     UPLOAD MODAL
-========================================== -->
+<!-- UPLOAD MODAL -->
 
 <div
     class="modal fade"
-    id="uploadCmoModal"
+    id="uploadRawAgentModal"
     tabindex="-1"
     aria-hidden="true">
 
@@ -1170,7 +1206,7 @@
             <div class="modal-header">
 
                 <h5 class="modal-title">
-                    Upload Laporan Template Yuri
+                    Upload Laporan Raw Agent
                 </h5>
 
                 <button
@@ -1183,13 +1219,15 @@
 
 
             <form
-                action="{{ url_for('upload_template_yuri.upload') }}"
+                action="{{ url_for('raw_agent.upload') }}"
                 method="POST"
                 enctype="multipart/form-data">
 
 
                 <div class="modal-body">
 
+
+                    <!-- NAMA -->
 
                     <div class="mb-3">
 
@@ -1207,6 +1245,8 @@
                     </div>
 
 
+                    <!-- KODE -->
+
                     <div class="mb-3">
 
                         <label class="form-label">
@@ -1221,6 +1261,8 @@
 
                     </div>
 
+
+                    <!-- PERIODE -->
 
                     <div class="mb-3">
 
@@ -1237,6 +1279,38 @@
                     </div>
 
 
+                    <!-- JENIS DATA -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Jenis Data
+                        </label>
+
+                        <select
+                            name="jenis_data"
+                            class="form-control"
+                            required>
+
+                            <option value="">
+                                Pilih Jenis Data
+                            </option>
+
+                            <option value="SELL_OUT">
+                                SELL OUT
+                            </option>
+
+                            <option value="STOCK">
+                                STOCK
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FILE -->
+
                     <div class="mb-3">
 
                         <label class="form-label">
@@ -1251,9 +1325,7 @@
                             required>
 
                         <div class="form-text">
-
                             Format file: XLS atau XLSX.
-
                         </div>
 
                     </div>
@@ -1294,27 +1366,21 @@
 </div>
 
 
-<!-- ==========================================
-     BOOTSTRAP JS
-========================================== -->
+<!-- BOOTSTRAP -->
 
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
 </script>
 
 
-<!-- ==========================================
-     SWEETALERT
-========================================== -->
+<!-- SWEETALERT -->
 
 <script
     src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
 </script>
 
 
-<!-- ==========================================
-     SIDEBAR DROPDOWN
-========================================== -->
+<!-- SIDEBAR DROPDOWN -->
 
 <script>
 
@@ -1336,9 +1402,7 @@ document
 </script>
 
 
-<!-- ==========================================
-     DELETE CONFIRMATION
-========================================== -->
+<!-- DELETE -->
 
 <script>
 
@@ -1354,7 +1418,7 @@ document
 
                 title: "Yakin ingin menghapus?",
 
-                text: "Laporan yang dihapus tidak dapat dikembalikan.",
+                text: "Laporan raw yang dihapus tidak dapat dikembalikan.",
 
                 icon: "warning",
 
@@ -1385,16 +1449,14 @@ document
 </script>
 
 
-<!-- ==========================================
-     PAGINATION
-========================================== -->
+<!-- FILTER + PAGINATION -->
 
 <script>
 
 const rowsPerPage = 10;
 
 const table =
-    document.getElementById("cmoTable");
+    document.getElementById("rawAgentTable");
 
 const tbody =
     table.querySelector("tbody");
@@ -1403,11 +1465,6 @@ const allRows =
     Array.from(
         tbody.querySelectorAll("tr")
     );
-
-/*
- * Jangan masukkan empty-data
- * sebagai data pagination.
- */
 
 const rows =
     allRows.filter(function(row) {
@@ -1423,39 +1480,124 @@ const pagination =
 const paginationInfo =
     document.getElementById("pagination-info");
 
+
 let currentPage = 1;
 
 
-const totalPages =
-    Math.ceil(rows.length / rowsPerPage);
+function getFilteredRows() {
+
+    const nama =
+        document
+            .getElementById("searchNama")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const periode =
+        document
+            .getElementById("searchPeriode")
+            .value;
+
+    const jenis =
+        document
+            .getElementById("searchJenisData")
+            .value;
+
+
+    return rows.filter(function(row) {
+
+        const rowNama =
+            (row.dataset.nama || "")
+            .toLowerCase();
+
+        const rowPeriode =
+            row.dataset.periode || "";
+
+        const rowJenis =
+            row.dataset.jenis || "";
+
+
+        const matchNama =
+            nama === "" ||
+            rowNama.includes(nama);
+
+        const matchPeriode =
+            periode === "" ||
+            rowPeriode === periode;
+
+        const matchJenis =
+            jenis === "" ||
+            rowJenis === jenis;
+
+
+        return (
+            matchNama &&
+            matchPeriode &&
+            matchJenis
+        );
+
+    });
+
+}
 
 
 function showPage(page) {
 
+    const filteredRows =
+        getFilteredRows();
+
+    const totalPages =
+        Math.ceil(
+            filteredRows.length /
+            rowsPerPage
+        ) || 1;
+
+
+    if (page > totalPages) {
+        page = totalPages;
+    }
+
     currentPage = page;
 
+
+    rows.forEach(function(row) {
+
+        row.style.display = "none";
+
+    });
+
+
     const start =
-        (page - 1) * rowsPerPage;
+        (page - 1) *
+        rowsPerPage;
 
     const end =
         start + rowsPerPage;
 
 
-    rows.forEach(function(row, index) {
+    filteredRows.forEach(
+        function(row, index) {
 
-        row.style.display =
-            index >= start && index < end
-                ? ""
-                : "none";
+            if (
+                index >= start &&
+                index < end
+            ) {
 
-    });
+                row.style.display = "";
+
+            }
+
+        }
+    );
 
 
-    renderPagination();
+    renderPagination(
+        totalPages
+    );
 
 
     const total =
-        rows.length;
+        filteredRows.length;
 
     const from =
         total === 0
@@ -1463,7 +1605,10 @@ function showPage(page) {
             : start + 1;
 
     const to =
-        Math.min(end, total);
+        Math.min(
+            end,
+            total
+        );
 
 
     paginationInfo.innerText =
@@ -1472,19 +1617,17 @@ function showPage(page) {
 }
 
 
-function renderPagination() {
+function renderPagination(totalPages) {
 
     pagination.innerHTML = "";
 
 
     if (totalPages <= 1) {
-
         return;
-
     }
 
 
-    /* PREVIOUS */
+    // PREVIOUS
 
     const prev =
         document.createElement("li");
@@ -1498,15 +1641,9 @@ function renderPagination() {
 
 
     prev.innerHTML = `
-
-        <a
-            class="page-link"
-            href="#">
-
+        <a class="page-link" href="#">
             ‹
-
         </a>
-
     `;
 
 
@@ -1531,7 +1668,7 @@ function renderPagination() {
     pagination.appendChild(prev);
 
 
-    /* NUMBER */
+    // NUMBER
 
     for (
         let i = 1;
@@ -1551,15 +1688,9 @@ function renderPagination() {
 
 
         li.innerHTML = `
-
-            <a
-                class="page-link"
-                href="#">
-
+            <a class="page-link" href="#">
                 ${i}
-
             </a>
-
         `;
 
 
@@ -1580,7 +1711,7 @@ function renderPagination() {
     }
 
 
-    /* NEXT */
+    // NEXT
 
     const next =
         document.createElement("li");
@@ -1594,15 +1725,9 @@ function renderPagination() {
 
 
     next.innerHTML = `
-
-        <a
-            class="page-link"
-            href="#">
-
+        <a class="page-link" href="#">
             ›
-
         </a>
-
     `;
 
 
@@ -1631,284 +1756,67 @@ function renderPagination() {
 }
 
 
-/* Jalankan pertama kali */
+function filterTable() {
+
+    showPage(1);
+
+}
+
+
+document
+    .getElementById("searchNama")
+    .addEventListener(
+        "input",
+        filterTable
+    );
+
+
+document
+    .getElementById("searchPeriode")
+    .addEventListener(
+        "change",
+        filterTable
+    );
+
+
+document
+    .getElementById("searchJenisData")
+    .addEventListener(
+        "change",
+        filterTable
+    );
+
+
+document
+    .getElementById("resetFilter")
+    .addEventListener(
+        "click",
+        function() {
+
+            document
+                .getElementById("searchNama")
+                .value = "";
+
+            document
+                .getElementById("searchPeriode")
+                .value = "";
+
+            document
+                .getElementById("searchJenisData")
+                .value = "";
+
+            showPage(1);
+
+        }
+    );
+
 
 showPage(1);
 
 </script>
 
-<script>
-
-const searchNama =
-    document.getElementById("searchNama");
-
-const namaDropdown =
-    document.getElementById("namaAgentDropdown");
-
-
-// =====================================================
-// AMBIL DATA AGENT DARI TABEL
-// =====================================================
-
-function getNamaAgents() {
-
-    const rows =
-        document.querySelectorAll(
-            "#cmoTable tbody tr"
-        );
-
-    const namaAgents = [];
-
-    rows.forEach(function (row) {
-
-        const nama =
-            row.dataset.nama || "";
-
-        if (
-            nama &&
-            !namaAgents.includes(nama)
-        ) {
-
-            namaAgents.push(nama);
-
-        }
-
-    });
-
-    return namaAgents.sort();
-
-}
-
-
-// =====================================================
-// TAMPILKAN DROPDOWN
-// =====================================================
-
-function showAgentDropdown(keyword = "") {
-
-    const namaAgents =
-        getNamaAgents();
-
-    namaDropdown.innerHTML = "";
-
-
-    const hasil =
-        namaAgents.filter(function (nama) {
-
-            return nama
-                .toLowerCase()
-                .includes(keyword.toLowerCase());
-
-        });
-
-
-    hasil.forEach(function (nama) {
-
-        const item =
-            document.createElement("div");
-
-        item.className =
-            "autocomplete-item";
-
-        item.textContent =
-            nama;
-
-
-        // =============================================
-        // KLIK AGENT
-        // =============================================
-
-        item.addEventListener("click", function () {
-
-            searchNama.value = nama;
-
-            namaDropdown.style.display = "none";
-
-
-            // BARU JALANKAN FILTER
-            filterTable(nama);
-
-        });
-
-
-        namaDropdown.appendChild(item);
-
-    });
-
-
-    if (hasil.length > 0) {
-
-        namaDropdown.style.display = "block";
-
-    } else {
-
-        namaDropdown.style.display = "none";
-
-    }
-
-}
-
-
-// =====================================================
-// KLIK INPUT
-// =====================================================
-
-searchNama.addEventListener(
-    "click",
-    function () {
-
-        showAgentDropdown();
-
-    }
-);
-
-
-// =====================================================
-// KETIK → HANYA FILTER DROPDOWN
-// =====================================================
-
-searchNama.addEventListener(
-    "input",
-    function () {
-
-        const keyword =
-            this.value.trim();
-
-        showAgentDropdown(keyword);
-
-    }
-);
-
-
-// =====================================================
-// FILTER TABLE
-// =====================================================
-
-function filterTable(namaAgent) {
-
-    const rows =
-        document.querySelectorAll(
-            "#cmoTable tbody tr"
-        );
-
-
-    rows.forEach(function (row) {
-
-        const nama =
-            row.dataset.nama || "";
-
-
-        if (nama === namaAgent) {
-
-            row.style.display = "";
-
-        } else {
-
-            row.style.display = "none";
-
-        }
-
-    });
-
-}
-
-
-// =====================================================
-// KLIK DI LUAR DROPDOWN
-// =====================================================
-
-document.addEventListener(
-    "click",
-    function (e) {
-
-        if (
-            !searchNama.contains(e.target) &&
-            !namaDropdown.contains(e.target)
-        ) {
-
-            namaDropdown.style.display =
-                "none";
-
-        }
-
-    }
-);
-
-</script>
-
-<script>
-    // =====================================================
-// RESET FILTER
-// =====================================================
-
-const resetFilter =
-    document.getElementById("resetFilter");
-
-resetFilter.addEventListener("click", function () {
-
-    // Kosongkan input nama agent
-    searchNama.value = "";
-
-    // Sembunyikan dropdown
-    namaDropdown.style.display = "none";
-
-    // Tampilkan semua row
-    const rows =
-        document.querySelectorAll(
-            "#cmoTable tbody tr"
-        );
-
-    rows.forEach(function (row) {
-
-        row.style.display = "";
-
-    });
-
-});
-</script>
-
-<script>
-    // =====================================================
-// FILTER PERIODE
-// =====================================================
-
-const searchPeriode =
-    document.getElementById("searchPeriode");
-
-searchPeriode.addEventListener("change", function () {
-
-    const periode =
-        this.value;
-
-    const rows =
-        document.querySelectorAll(
-            "#cmoTable tbody tr"
-        );
-
-    rows.forEach(function (row) {
-
-        const rowPeriode =
-            row.dataset.periode || "";
-
-        if (periode === "") {
-
-            row.style.display = "";
-
-        } else if (rowPeriode === periode) {
-
-            row.style.display = "";
-
-        } else {
-
-            row.style.display = "none";
-
-        }
-
-    });
-
-});
-</script>
 
 </body>
 
 </html>
+

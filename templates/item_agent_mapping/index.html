@@ -262,13 +262,9 @@
                 Daftar Laporan Agent
             </p>
 
-            <a
-                href="#"
-                class="menu-item">
-
+            <a href="{{ url_for('raw_agent.index') }}" class="menu-item">
                 <span>◈</span>
                 Data Laporan Raw Agent
-
             </a>
 
             <a href="{{ url_for('upload_template_yuri.index') }}" class="menu-item">
@@ -809,11 +805,9 @@
                                         {{ item.nama_sku_jim }}
                                     </td>
 
-
                                     <td class="text-end">
-                                        {{ item.item_box }}
+                                        {{ item.item_box|int }}
                                     </td>
-
 
                                     <td>
                                         {{ item.item_group }}
